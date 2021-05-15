@@ -451,7 +451,7 @@ namespace Loans
                 foreach(Expense e in Expenses){
                     if(e != null){
                         if (e.Name != null){
-                            text += e.PrintExpense(MonthlyDisposable());
+                            text += e.PrintExpense(MonthlyIncome() - CalcLoanPayment());
                         }
                     }
                 }
@@ -530,9 +530,12 @@ namespace Loans
         }
 
 
+
         private double MonthlyIncome(){
             return Salary / 12 * (1-(Tax + FederalTax()));
         }
+
+
 
         private double FederalTax(){
             if(Salary <= 9875){
@@ -566,10 +569,7 @@ namespace Loans
             return -1;
         }
 
-        private double MonthlyDisposable(){
-            return MonthlyIncome() - CalcLoanPayment();
-        }
-
+        
         
 
         
@@ -589,6 +589,8 @@ namespace Loans
             btnCalc_Click(sender, e);
         }
 
+
+
         private int GetExpenseByName(string name)
         {
             int index = 0;
@@ -602,6 +604,8 @@ namespace Loans
             }
             return -1;
         }
+
+
 
         private void btnManageExpense_Click(object sender, EventArgs e)
         {
@@ -633,6 +637,8 @@ namespace Loans
             btnCalc_Click(sender, e);
         }
 
+
+
         //Priority Down
         private void btnPriorityDown_Click(object sender, EventArgs e)
         {
@@ -654,6 +660,8 @@ namespace Loans
             RefreshExpenses();
         }
 
+
+
         //Priority Up
         private void btnPriorityUp_Click(object sender, EventArgs e)
         {
@@ -674,6 +682,8 @@ namespace Loans
             RefreshExpenses();
         }
 
+
+
         public void createStates()
         {
             string[] stateNames = new string[] { "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY" };
@@ -685,6 +695,8 @@ namespace Loans
                 i++;
             }
         }
+
+
 
         public State getState(string name)
         {
@@ -699,6 +711,8 @@ namespace Loans
             return null;
         }
 
+
+
         public int getStateIndex(string name)
         {
             int i = 0;
@@ -711,6 +725,8 @@ namespace Loans
             }
             return -1;
         }
+
+
 
         public void fillStates()
         {
@@ -776,15 +792,18 @@ namespace Loans
             States[index] = new State("FL", salaries, taxes);
         }
 
+
+
         private void printIncomeInfo()
         {
             txtMonthlyIncome.Text = MonthlyIncome().ToString("C0");
-            txtDisposable.Text = MonthlyDisposable().ToString("C0");
+            txtDisposable.Text = (MonthlyIncome() - CalcLoanPayment()).ToString("C0");
             txtStateTax.Text = (Tax * 100).ToString() + "%";
             txtFederalTax.Text = (FederalTax() * 100).ToString() + "%";
         }
 
         
+
         private void cmbStates_SelectedIndexChanged(object sender, EventArgs e)
         {
             string name = cmbStates.SelectedItem.ToString();
@@ -793,6 +812,8 @@ namespace Loans
             }
             btnCalc_Click(sender, e);
         }
+
+
 
         private void PrintError(){
             txtYears.Text = "Over Budget";
