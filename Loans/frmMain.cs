@@ -315,57 +315,6 @@ namespace Loans
 
 
 
-
-        //Saved Calc2
-        private void SaveMe() {
-
-            //ReadValues(sender, e);
-            printIncomeInfo();
-
-            //Track time internally
-            DateTime timer = DateTime.Today;
-
-            //Create Total Loan Cost/Time Trackers
-            int monthsPaid = 0;
-            double totalLoansPaid = 0;
-
-            //Reset Expense Amounts and Times, and Date
-            ZeroTimes();
-
-            //Store function results for efficiency
-            double monthlyAvailable = MonthlyIncome();
-            bool useLoans = UseLoans();
-            double loanPayment = CalcLoanPayment();
-
-            //While Expenses remain, or there are outstanding Loans
-            while (!CheckDone(timer)) {
-
-                //"Progress time"
-                timer.AddMonths(1);
-                monthsPaid++;
-
-                //Loan logic
-                if (useLoans) {
-
-                    monthlyAvailable -= loanPayment;
-                    Loans -= loanPayment;
-                    totalLoansPaid += loanPayment;
-                }
-
-                //Expense logic
-                string result = IncrementAll(monthlyAvailable, timer);
-
-                //Show over-budget result
-                if (result != null) {
-                    MessageBox.Show(result + " on " + timer.ToShortDateString());
-                    OverBudget();
-                }
-            }
-        }
-
-
-
-
         public void OverBudget()
         {
             txtYears.Text = "Over Budget";
