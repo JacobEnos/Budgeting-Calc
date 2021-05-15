@@ -385,16 +385,25 @@ namespace Loans
 
 
 
-        public bool ExpensesFinished(){
+        public bool ExpensesFinished(DateTime today){
 
             foreach(Expense e in Expenses){
-                if (!e.recurring){
-                    if (e.CurrentAmount > 0){
-                        if (e.ToExpense > 0){
+
+                if (!e.recurring  &&  e.Amount > 0)
+                    return false;
+
+                if (e.recurring  &&  (e.EndDate == null  ||  today < e.EndDate))
+                    return false;
+
+                /*
+                if (!e.recurring) {
+                    if (e.CurrentAmount > 0) {
+                        if (e.ToExpense > 0) {
                             return false;
                         }
                     }
-                }
+                }*/
+
             }
             return true;
         }
