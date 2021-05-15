@@ -215,9 +215,9 @@ namespace Loans
 
 
         //Determine if there are ongoing expenses or an outstanding loan amount
-        private bool CheckDone() {
+        private bool CheckDone(DateTime today) {
 
-            if (!ExpensesFinished()) return false;
+            if (!ExpensesFinished(today)) return false;
             if (Loans <= 0) return true;
             if (!UseLoans()) return true;
             return false;
@@ -273,7 +273,7 @@ namespace Loans
 
 
             //While Expenses remain, or there are outstanding Loans
-            while (!CheckDone()) {
+            while (!CheckDone(timer)) {
 
                 //"Progress time"
                 timer.AddMonths(1);
@@ -338,7 +338,7 @@ namespace Loans
             double loanPayment = CalcLoanPayment();
 
             //While Expenses remain, or there are outstanding Loans
-            while (!CheckDone()) {
+            while (!CheckDone(timer)) {
 
                 //"Progress time"
                 timer.AddMonths(1);
