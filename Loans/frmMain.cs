@@ -13,13 +13,11 @@ namespace Loans
     public partial class frmMain : Form
     {
         public double Salary;
-        //public double Principal;
         public double Loans;
         public double Interest;
         public double ToLoans;
         public double Tax;
         public List<Expense> Expenses = new List<Expense>();
-        DateTime Date = DateTime.Today;
         State[] States = new State[50];
         
 
@@ -60,12 +58,16 @@ namespace Loans
             Set_Defaults();
         }
 
+
+
         private void tbrSalary_Scroll(object sender, EventArgs e)
         {
             Read_Salary();
             printIncomeInfo();
-            btnCalc_Click2(sender, e);
+            btnCalc_Click(sender, e);
         }
+
+
 
         public void Read_Salary()
         {
@@ -73,11 +75,15 @@ namespace Loans
             txtSalary.Text = Salary.ToString("C0");
         }
 
+
+
         private void txtLoans_Leave(object sender, EventArgs e)
         {
             Read_Loans();
             btnCalc_Click(sender, e);
         }
+
+
 
         private void Read_Loans()
         {
@@ -94,11 +100,14 @@ namespace Loans
         }
 
 
+
         private void txtInterest_Leave(object sender, EventArgs e)
         {
             Read_Interest();
             btnCalc_Click(sender, e);
         }
+
+
 
         private void Read_Interest()
         {
@@ -113,11 +122,14 @@ namespace Loans
         }
 
 
+
         private void txtToLoans_Leave(object sender, EventArgs e)
         {
             Read_ToLoans();
             btnCalc_Click(sender, e);
         }
+
+
 
         private void Read_ToLoans()
         {
@@ -131,10 +143,14 @@ namespace Loans
             txtToLoans.Text = (ToLoans * 100).ToString();
         }
 
+
+
         private void txtTax_Leave(object sender, EventArgs e)
         {
             Read_Tax();
         }
+
+
 
         private void Read_Tax()
         {
@@ -164,6 +180,8 @@ namespace Loans
                 Tax = read.getTax(Salary);
             }
         }
+
+
 
         public void ReadValues(object sender, EventArgs e)
         {
@@ -230,7 +248,7 @@ namespace Loans
 
         //An improved version of the Calc function that performs the actual logic
         //Design simplified by psuedo-coding on whiteboard
-        private void btnCalc_Click2(object sender, EventArgs e) {
+        private void btnCalc_Click(object sender, EventArgs e) {
 
             ReadValues(sender, e);
             printIncomeInfo();
@@ -258,7 +276,7 @@ namespace Loans
             while (!CheckDone()) {
 
                 //"Progress time"
-                Date.AddMonths(1);
+                timer.AddMonths(1);
                 monthsPaid++;
 
                 //Loan logic
@@ -323,7 +341,7 @@ namespace Loans
             while (!CheckDone()) {
 
                 //"Progress time"
-                Date.AddMonths(1);
+                timer.AddMonths(1);
                 monthsPaid++;
 
                 //Loan logic
@@ -347,12 +365,6 @@ namespace Loans
 
 
 
-        private void btnCalc_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
 
         public void OverBudget()
         {
@@ -362,6 +374,7 @@ namespace Loans
         }
 
 
+
         public double CalcLoanPayment()
         {
             if (Loans == 0){
@@ -369,6 +382,7 @@ namespace Loans
             }
             return MonthlyIncome() * ToLoans;
         }        
+
 
 
         public bool ExpensesFinished(){
@@ -386,13 +400,13 @@ namespace Loans
         }
 
 
+
         public void ZeroTimes()
         {
             foreach (Expense ex in Expenses){
                 ex.Time = new int[2];
                 ex.CurrentAmount = ex.Amount;
             }
-            Date = DateTime.Today;
         }
         
 
@@ -440,6 +454,8 @@ namespace Loans
             txtExpenses.Text = text;
         }
 
+
+
         private void LoadExpenses()
         {
             lstExpenses.Items.Clear();
@@ -458,6 +474,8 @@ namespace Loans
                 MessageBox.Show("Expenses was null in func LoadExpenses()");
             }
         }
+
+
 
         private void PrintTimes()
         {
@@ -545,39 +563,7 @@ namespace Loans
 
         
 
-        private double ExpensesPayment(bool useLoans)
-        {
-            double payment = 0;
-
-            double monthly;
-            if (useLoans){
-                monthly = MonthlyDisposable();
-            }
-            else{
-                monthly = MonthlyIncome();
-            }
-            
-            //Iterate over Expenses List
-            //Sum expenses in date range
-            foreach (Expense e in Expenses){
-
-                if (e.StartDate <= Date || e.StartDate == null){
-                    
-                    payment += e.PaymentAmount(monthly);
-
-                    // if the payment has exceeded MonthlyIncome
-                    if (payment > monthly){
-                        double overage = payment - monthly;
-                        MessageBox.Show(e.Name + " put you over budget by " + overage.ToString("C") + "on " + Date.ToShortDateString());
-                        OverBudget();
-                        return (0 - overage);
-                    }
-                }
-            }
-
-            return payment;
-        }
-
+        
         private void btnDeleteExpense_Click(object sender, EventArgs e)
         {
             int index = lstExpenses.SelectedIndex;
@@ -789,18 +775,7 @@ namespace Loans
             txtFederalTax.Text = (FederalTax() * 100).ToString() + "%";
         }
 
-        private void tbrSalary_Leave(object sender, EventArgs e)
-        {
-        }
-
-        private void tbrSalary_MouseLeave(object sender, EventArgs e)
-        {
-        }
-
-        private void tbrSalary_KeyUp(object sender, KeyEventArgs e)
-        {
-        }
-
+        
         private void cmbStates_SelectedIndexChanged(object sender, EventArgs e)
         {
             string name = cmbStates.SelectedItem.ToString();
