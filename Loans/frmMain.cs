@@ -517,8 +517,6 @@ namespace Loans
 
             return -1;
         }
-
-        
         
 
         
@@ -560,9 +558,9 @@ namespace Loans
         {
             int index = lstExpenses.SelectedIndex;
             if (index != -1){
+
                 frmNewExpense modify = new frmNewExpense(Expenses[index], Expenses);
                 modify.ShowDialog();
-
 
                 if (modify.Tag.GetType().Name == "Expense"){
                     
@@ -575,7 +573,6 @@ namespace Loans
                 else{
                     //MessageBox.Show("No expense returned by frmNewExpense");
                 }
-
 
                 RefreshExpenses();
             }
