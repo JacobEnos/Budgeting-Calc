@@ -215,9 +215,9 @@ namespace Loans
 
 
         //Determine if there are ongoing expenses or an outstanding loan amount
-        private bool CheckDone() {
+        private bool CheckDone(DateTime today) {
 
-            if (!ExpensesFinished()) return false;
+            if (!ExpensesFinished(today)) return false;
             if (Loans <= 0) return true;
             if (!UseLoans()) return true;
             return false;
@@ -273,7 +273,7 @@ namespace Loans
 
 
             //While Expenses remain, or there are outstanding Loans
-            while (!CheckDone()) {
+            while (!CheckDone(timer)) {
 
                 //"Progress time"
                 timer.AddMonths(1);
@@ -315,57 +315,6 @@ namespace Loans
 
 
 
-
-        //Saved Calc2
-        private void SaveMe() {
-
-            //ReadValues(sender, e);
-            printIncomeInfo();
-
-            //Track time internally
-            DateTime timer = DateTime.Today;
-
-            //Create Total Loan Cost/Time Trackers
-            int monthsPaid = 0;
-            double totalLoansPaid = 0;
-
-            //Reset Expense Amounts and Times, and Date
-            ZeroTimes();
-
-            //Store function results for efficiency
-            double monthlyAvailable = MonthlyIncome();
-            bool useLoans = UseLoans();
-            double loanPayment = CalcLoanPayment();
-
-            //While Expenses remain, or there are outstanding Loans
-            while (!CheckDone()) {
-
-                //"Progress time"
-                timer.AddMonths(1);
-                monthsPaid++;
-
-                //Loan logic
-                if (useLoans) {
-
-                    monthlyAvailable -= loanPayment;
-                    Loans -= loanPayment;
-                    totalLoansPaid += loanPayment;
-                }
-
-                //Expense logic
-                string result = IncrementAll(monthlyAvailable, timer);
-
-                //Show over-budget result
-                if (result != null) {
-                    MessageBox.Show(result + " on " + timer.ToShortDateString());
-                    OverBudget();
-                }
-            }
-        }
-
-
-
-
         public void OverBudget()
         {
             txtYears.Text = "Over Budget";
@@ -385,16 +334,25 @@ namespace Loans
 
 
 
-        public bool ExpensesFinished(){
+        public bool ExpensesFinished(DateTime today){
 
             foreach(Expense e in Expenses){
-                if (!e.recurring){
-                    if (e.CurrentAmount > 0){
-                        if (e.ToExpense > 0){
+
+                if (!e.recurring  &&  e.Amount > 0)
+                    return false;
+
+                if (e.recurring  &&  (e.EndDate == null  ||  today < e.EndDate))
+                    return false;
+
+                /*
+                if (!e.recurring) {
+                    if (e.CurrentAmount > 0) {
+                        if (e.ToExpense > 0) {
                             return false;
                         }
                     }
-                }
+                }*/
+
             }
             return true;
         }
@@ -442,7 +400,7 @@ namespace Loans
                 foreach(Expense e in Expenses){
                     if(e != null){
                         if (e.Name != null){
-                            text += e.PrintExpense(MonthlyDisposable());
+                            text += e.PrintExpense(MonthlyIncome() - CalcLoanPayment());
                         }
                     }
                 }
@@ -521,9 +479,12 @@ namespace Loans
         }
 
 
+
         private double MonthlyIncome(){
             return Salary / 12 * (1-(Tax + FederalTax()));
         }
+
+
 
         private double FederalTax(){
             if(Salary <= 9875){
@@ -556,11 +517,6 @@ namespace Loans
 
             return -1;
         }
-
-        private double MonthlyDisposable(){
-            return MonthlyIncome() - CalcLoanPayment();
-        }
-
         
 
         
@@ -580,6 +536,8 @@ namespace Loans
             btnCalc_Click(sender, e);
         }
 
+
+
         private int GetExpenseByName(string name)
         {
             int index = 0;
@@ -594,13 +552,15 @@ namespace Loans
             return -1;
         }
 
+
+
         private void btnManageExpense_Click(object sender, EventArgs e)
         {
             int index = lstExpenses.SelectedIndex;
             if (index != -1){
+
                 frmNewExpense modify = new frmNewExpense(Expenses[index], Expenses);
                 modify.ShowDialog();
-
 
                 if (modify.Tag.GetType().Name == "Expense"){
                     
@@ -614,7 +574,6 @@ namespace Loans
                     //MessageBox.Show("No expense returned by frmNewExpense");
                 }
 
-
                 RefreshExpenses();
             }
             else{
@@ -623,6 +582,8 @@ namespace Loans
 
             btnCalc_Click(sender, e);
         }
+
+
 
         //Priority Down
         private void btnPriorityDown_Click(object sender, EventArgs e)
@@ -645,6 +606,8 @@ namespace Loans
             RefreshExpenses();
         }
 
+
+
         //Priority Up
         private void btnPriorityUp_Click(object sender, EventArgs e)
         {
@@ -665,6 +628,8 @@ namespace Loans
             RefreshExpenses();
         }
 
+
+
         public void createStates()
         {
             string[] stateNames = new string[] { "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY" };
@@ -676,6 +641,8 @@ namespace Loans
                 i++;
             }
         }
+
+
 
         public State getState(string name)
         {
@@ -690,6 +657,8 @@ namespace Loans
             return null;
         }
 
+
+
         public int getStateIndex(string name)
         {
             int i = 0;
@@ -702,6 +671,8 @@ namespace Loans
             }
             return -1;
         }
+
+
 
         public void fillStates()
         {
@@ -767,15 +738,18 @@ namespace Loans
             States[index] = new State("FL", salaries, taxes);
         }
 
+
+
         private void printIncomeInfo()
         {
             txtMonthlyIncome.Text = MonthlyIncome().ToString("C0");
-            txtDisposable.Text = MonthlyDisposable().ToString("C0");
+            txtDisposable.Text = (MonthlyIncome() - CalcLoanPayment()).ToString("C0");
             txtStateTax.Text = (Tax * 100).ToString() + "%";
             txtFederalTax.Text = (FederalTax() * 100).ToString() + "%";
         }
 
         
+
         private void cmbStates_SelectedIndexChanged(object sender, EventArgs e)
         {
             string name = cmbStates.SelectedItem.ToString();
@@ -784,6 +758,8 @@ namespace Loans
             }
             btnCalc_Click(sender, e);
         }
+
+
 
         private void PrintError(){
             txtYears.Text = "Over Budget";

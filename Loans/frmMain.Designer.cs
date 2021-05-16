@@ -77,9 +77,7 @@
             this.tbrSalary.TickFrequency = 1000;
             this.tbrSalary.Value = 60000;
             this.tbrSalary.Scroll += new System.EventHandler(this.tbrSalary_Scroll);
-            this.tbrSalary.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbrSalary_KeyUp);
-            this.tbrSalary.Leave += new System.EventHandler(this.tbrSalary_Leave);
-            this.tbrSalary.MouseLeave += new System.EventHandler(this.tbrSalary_MouseLeave);
+            
             // 
             // lblSalary
             // 
@@ -160,7 +158,7 @@
             resources.ApplyResources(this.btnCalc, "btnCalc");
             this.btnCalc.Name = "btnCalc";
             this.btnCalc.UseVisualStyleBackColor = true;
-            this.btnCalc.Click += new System.EventHandler(this.btnCalc_Click2);
+            this.btnCalc.Click += new System.EventHandler(this.btnCalc_Click);
             // 
             // lblTotal
             // 
