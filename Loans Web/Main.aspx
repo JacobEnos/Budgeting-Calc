@@ -74,7 +74,7 @@
                                 <span class="input-group-text">State</span>
                             </div>
 
-                            <asp:DropDownList ID="DropDownListState" runat="server">
+                            <asp:DropDownList ID="ddlState" runat="server">
                                 <asp:ListItem Value="AL">Alabama</asp:ListItem>
                                 <asp:ListItem Value="AK">Alaska</asp:ListItem>
                                 <asp:ListItem Value="AZ">Arizona</asp:ListItem>
@@ -136,6 +136,17 @@
                             </div>
                             <asp:TextBox ID="txtStateTax" runat="server" Enabled="false" Style="background-color: gray"></asp:TextBox>
                         </div>
+
+
+                        <!-- Federal Tax -->
+                        <div class="input-group w-50 my-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Federal Tax(%)</span>
+                            </div>
+                            <asp:TextBox ID="txtFederalTax" runat="server" Enabled="false" Style="background-color: gray"></asp:TextBox>
+                        </div>
+
+
                     </div>
 
 
@@ -160,6 +171,19 @@
                             </div>
                             <asp:TextBox ID="txtLoanInterest" CssClass="form-control" runat="server"></asp:TextBox>
                         </div>
+
+                    </div>
+
+
+                    <!-- Expenses -->
+                    <div class="bg-white">
+
+                        <asp:Button Text="Create Expense" runat="server" ID="btnCreateExpense" OnClick="btnCreateExpense_Click"/>
+
+                        <asp:Repeater ID="rptExpenses" runat="server"></asp:Repeater>
+
+                        <asp:Label ID="lblExpenseResults" runat="server"/>
+
 
                     </div>
 
@@ -191,6 +215,9 @@
                             </div>
                             <asp:TextBox ID="txtTotalPaid" Enabled="false" runat="server"></asp:TextBox>
                         </div>
+
+
+
                     </div>
 
 
