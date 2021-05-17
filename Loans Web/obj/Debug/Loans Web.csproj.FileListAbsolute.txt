@@ -54,3 +54,5 @@ C:\Users\jacob\Documents\GitHub\Budgeting-Calc\Loans Web\obj\Debug\Loans Web.csp
 C:\Users\jacob\Documents\GitHub\Budgeting-Calc\Loans Web\obj\Debug\Loans Web.csproj.CopyComplete
 C:\Users\jacob\Documents\GitHub\Budgeting-Calc\Loans Web\obj\Debug\Loans Web.dll
 C:\Users\jacob\Documents\GitHub\Budgeting-Calc\Loans Web\obj\Debug\Loans Web.pdb
+C:\Users\jacob\Documents\GitHub\Budgeting-Calc\Loans Web\bin\Newtonsoft.Json.dll
+C:\Users\jacob\Documents\GitHub\Budgeting-Calc\Loans Web\bin\Newtonsoft.Json.xml

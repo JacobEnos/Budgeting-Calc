@@ -27,6 +27,18 @@ namespace Loans_Web
             }
         }
 
+        public Expense(Expense copy) {
+
+            this.Name = copy.Name;
+            this.Amount = copy.Amount;
+            this.ToExpense = copy.ToExpense;
+            this.recurring = copy.recurring;
+            this.Time = copy.Time;
+            StartDate = copy.StartDate;
+            EndDate = copy.EndDate;
+        }
+
+
         public Expense()
         {
             this.Name = null;
@@ -92,37 +104,37 @@ namespace Loans_Web
             string toReturn;
 
             if (recurring){
-                toReturn = ("Name: " + Name + "\r\n" +
-                            "Recurring Payment: " + Amount.ToString("C0") + "\r\n");
+                toReturn = ("Name: " + Name + "<br/>" +
+                            "Recurring Payment: " + Amount.ToString("C0") + "<br/>");
                 
                 //If recurring Expense has a StartDate
                 if (DateTime.Today <= StartDate){
 
                     //Print StartDate
-                    toReturn += "Start: " + StartDate.ToShortDateString() + "\r\n";
+                    toReturn += "Start: " + StartDate.ToShortDateString() + "<br/>";
                     
                     //If the recurring Expense has an EndDate
                     if (StartDate < EndDate   &&  EndDate != DateTime.MaxValue){
 
                         //Print EndDate
-                        toReturn += "End: " + EndDate.ToShortDateString() + "\r\n";
+                        toReturn += "End: " + EndDate.ToShortDateString() + "<br/>";
                     }
                 }
-                toReturn += "\r\n";
+                toReturn += "<br/>";
             }
             else{
-                toReturn = ("Name: " + Name + "\r\n" +
-                            "Amount: " + Amount.ToString("C0") + "\r\n" +
-                            "Percent: " + ToExpense * 100 + "\r\n");
+                toReturn = ("Name: " + Name + "<br/>" +
+                            "Amount: " + Amount.ToString("C0") + "<br/>" +
+                            "Percent: " + ToExpense * 100 + "<br/>");
 
                             //If there are payments
                             if(ToExpense != 0){
                                 
                                 //Print the payment amount
-                                toReturn += "Monthly: " + PaymentAmount(MonthlyDisposable).ToString("C0") + "\r\n";
+                                toReturn += "Monthly: " + PaymentAmount(MonthlyDisposable).ToString("C0") + "<br/>";
                             }
 
-                toReturn += "\r\n";
+                toReturn += "<br/>";
             }
             return toReturn;
         }
