@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Loans.exe" size="204752">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Loans.exe" size="203728">
       <assemblyIdentity name="Loans" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>7R85HpPEfYVf1+nsv6ktGXD2dAmlnAp2BWXYJcKpKgo=</dsig:DigestValue>
+        <dsig:DigestValue>umc9zkbGTBLug/RX4wtN2DrdrRY3l1lIxxNBjAXT1g4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -61,7 +61,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>/j3YNqgvTjx5Jb3o/sWEZcAsKbPqQiPO3Osq4rWgxCk=</dsig:DigestValue>
+        <dsig:DigestValue>eTzpQ3zPFDeY/bcJpYtU0mg0FWDWkWmJtiiU7iNwOJM=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
