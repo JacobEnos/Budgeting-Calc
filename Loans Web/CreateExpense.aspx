@@ -58,12 +58,12 @@
 
             <div class="">
                 Start Date:<br/>
-                <asp:Calendar ID="cdrStart" CssClass="mx-2 px-2" runat="server" OnSelectionChanged="cdrStart_SelectionChanged"></asp:Calendar>
+                <asp:Calendar ID="cdrStart" CssClass="mx-2 px-2" runat="server" OnSelectionChanged="cdrStart_SelectionChanged" AutoPostBack="true"></asp:Calendar>
             </div>
 
             <div class="">
                 End Date:<br/>
-                <asp:Calendar ID="cdrEnd" CssClass="mx-2" runat="server" OnSelectionChanged="cdrEnd_SelectionChanged"></asp:Calendar>
+                <asp:Calendar ID="cdrEnd" CssClass="mx-2" runat="server" OnSelectionChanged="cdrEnd_SelectionChanged" AutoPostBack="true"></asp:Calendar>
             </div>
 
         </div>

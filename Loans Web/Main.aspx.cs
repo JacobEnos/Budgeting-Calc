@@ -51,10 +51,15 @@ namespace Loans_Web {
 
                 Expense toAdd = (new Expense((Expense)Session["NewExpense"]));
 
+                Expense zzz = this[toAdd.Name];
+
                 //If the name already exists
                 if (this[toAdd.Name] != null) {
 
-                    this[toAdd.Name] = toAdd;
+
+                    Expenses.Remove(this[toAdd.Name]);
+                    Expenses.Add(toAdd);
+                    //this[toAdd.Name] = new Expense(toAdd);
                 }
                 else {
 
@@ -62,11 +67,12 @@ namespace Loans_Web {
                 }
 
                 Session.Remove("NewExpense");
-                rptExpenses.DataBind();
             }
 
             rptExpenses.DataBind();
             PrintExpenses();
+
+            btnCalc_Click(sender, e);
         }
 
 
@@ -127,6 +133,7 @@ namespace Loans_Web {
         public double ToLoans;
         public double Tax;
         public List<Expense> Expenses = new List<Expense>();
+        public List<monthArgs> LoanPayments = new List<monthArgs>();
         State[] States = new State[50];
 
 
@@ -156,9 +163,7 @@ namespace Loans_Web {
                 }
             }
         }
-        
-
-
+       
 
 
         private void Set_Defaults() {
@@ -414,7 +419,7 @@ namespace Loans_Web {
             double loanPayment = CalcLoanPayment();
             txtMonthlyPayment.Text = loanPayment.ToString("C");
 
-            if (useLoans) monthlyAvailable -= loanPayment;
+            //if (useLoans) monthlyAvailable -= loanPayment;
 
 
             //While Expenses remain, or there are outstanding Loans
@@ -435,15 +440,26 @@ namespace Loans_Web {
                 //Loan logic
                 if (useLoans) {
 
-                    if (Loans < loanPayment) {
-                        loanPayment = Loans;
+                    //If Loans are not paid
+                    if(1 < Loans) {
+
+                        //If this is last payment
+                        if (Loans < loanPayment) {
+
+                            //Only pay the remainder
+                            loanPayment = Loans;
+                        }
+                        else {
+                            Loans *= (1 + Interest / 12);
+                        }
+
+                        leftThisMonth -= loanPayment;
+                        Loans -= loanPayment;
+                        totalLoansPaid += loanPayment;
+
+                        //Loan Payment record
+                        LoanPayments.Add(new monthArgs(timer.ToShortDateString(), Math.Truncate(loanPayment)));
                     }
-                    else {
-                        Loans *= (1 + Interest / 12);
-                    }
-                    leftThisMonth -= loanPayment;
-                    Loans -= loanPayment;
-                    totalLoansPaid += loanPayment;
                 }
 
                 //Expense logic
@@ -456,22 +472,40 @@ namespace Loans_Web {
                 }
                 else {
                     spendingMoney.Add(leftThisMonth);
-                    xLabels.Add(timer.Month.ToString() + timer.Year.ToString());
+                    xLabels.Add(timer.ToShortDateString());
 
-                    //toSpend data;
+                    
+
+                    //Unspent data;
                     data.Add(new monthArgs(timer.ToShortDateString(), Math.Truncate(leftThisMonth)));
                 }
             }
 
 
-            //Display ToSpend charts backup data
+            //Store LoanPayments data for chart
+            if (LoanPayments.Count > 0) {
+
+                string loanPaymentJson = JsonConvert.SerializeObject(LoanPayments);
+                Session["LoanPayments"] = loanPaymentJson;
+            }
+
+
+            //Generate Date-Labels in Order
+            string xLabelData = JsonConvert.SerializeObject(xLabels);
+            Session["xLabels"] = xLabelData;
+            //Store Date-Labels in Session for JS
+
+
+
+
+            //Display ToSpend charts data
             string jsonData = JsonConvert.SerializeObject(data);
             Session["json"] = jsonData;
 
             txtTotalPaid.Text = totalLoansPaid.ToString("C");
             txtTimeToPay.Text = "" + (monthsPaid / 12).ToString() + " / " + (monthsPaid % 12).ToString();
 
-
+            SaveExpenses();
             RefreshExpenses();
         }
 
@@ -541,7 +575,7 @@ namespace Loans_Web {
                 if (!e.recurring && e.CurrentAmount > 0)
                     return false;
 
-                if (e.recurring   &&   today.CompareTo(e.EndDate) < 0   &&   e.EndDate.CompareTo(DateTime.MaxValue) < 0 )
+                if (e.recurring   &&   e.StartDate.CompareTo(today) < 0   &&   e.EndDate.CompareTo(DateTime.MaxValue) != 0 )
                     return false;
                 
 
