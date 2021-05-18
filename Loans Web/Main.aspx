@@ -187,7 +187,7 @@
 
 
                 <!-- Expenses -->
-                <div class="col-12 border border-dark">
+                <div class="col-12 p-5">
 
                     <asp:Button Text="Create Expense" runat="server" ID="btnCreateExpense" OnClick="btnCreateExpense_Click" />
 
@@ -195,21 +195,58 @@
 
                     <div class="row">
 
-                        <div class="col-5">
+                        <div class="col-12">
                             <asp:Repeater ID="rptExpenses" runat="server">
                                 <HeaderTemplate>
-                                    Expense Names:<br />
-                                    <br />
                                 </HeaderTemplate>
 
                                 <ItemTemplate>
-                                    <%# ((Loans_Web.Expense)Container.DataItem).Name + "<br/>" %>
+                                    <div class="my-2 p-2" style="background-color: lightgray; border-radius: 5px">
+
+                                        <div class="row">
+                                            <div class="col-1 h2">
+                                                <%# ((Loans_Web.Expense)Container.DataItem).Name %>
+                                            </div>
+
+
+                                            <div class="col-2 offset-8 d-flex justify-content-end">
+
+                                                <asp:LinkButton ID="btnManageExpense" class="btn btn-info mx-1" runat="server" CommandName="Edit"
+                                                    CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Edit</asp:LinkButton>
+
+                                                <asp:LinkButton ID="btnDeleteExpense" class="btn btn-danger mx-1" runat="server" CommandName="Delete"
+                                                    CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Delete</asp:LinkButton>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="flex-row d-flex justify-content-around">
+                                            <div class="d-inline">
+                                                <asp:Label Text="Amount:" runat="server" />
+                                                <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Amount.ToString() %>' runat="server" />
+                                            </div>
+
+                                            <div class="d-inline">
+                                                <asp:Label Text="ToExpense(%): " runat="server" />
+                                                <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).ToExpense * 100 %>' runat="server" />
+                                            </div>
+                                            
+                                            <div class="d-inline">
+                                                <asp:Label Text="Payment: " runat="server" />
+                                                <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Payment.ToString("C0") %>' runat="server" />
+                                            </div>
+
+                                            <div class="d-inline">
+                                                <asp:Label Text="Time(YY/MM): " runat="server" />
+                                                <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[0].ToString()%>' runat="server" />
+                                                /
+                                                <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[1].ToString()%>' runat="server" />
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </ItemTemplate>
                             </asp:Repeater>
-                        </div>
-
-                        <div class="col-5">
-                            <asp:Label ID="lblExpenseResults" runat="server" />
                         </div>
                     </div>
                 </div>
@@ -217,7 +254,7 @@
 
 
                 <div>
-                    <canvas id="moneyChart" style="z-index: 2" width="600" height="400"></canvas>
+                    <canvas id="moneyChart" class="border border-dark" style="z-index: 2" width="600" height="400"></canvas>
                 </div>
 
 
@@ -226,9 +263,7 @@
 
                     var moneyCanvas = document.getElementById("moneyChart").getContext("2d");
 
-                    var timeFormat = 'MM/DD/YYYY';
-
-
+                    var colorPalete = ["red", "orange", "yellow", "springgreen", "lightseagreen"];
 
 
                     var jsonData;
@@ -244,11 +279,98 @@
 
                         if (jsonData != null && jsonData != "") {
                             jsonData = JSON.parse(jsonData);
-                            console.log(jsonData);
+
+                            //console.log("GET THIS SYNTAX")
+                            //console.log(jsonData);
                         }
 
                     };
                     GetSessionData();
+
+
+
+                    var sessionExpenses = [];
+                    const exLines = [];
+
+                    function GetSessionExpenses() {
+
+                        sessionExpenses = '<%= Session["Expenses"] %>';
+
+                        if (sessionExpenses != null && sessionExpenses != "") {
+                            sessionExpenses = JSON.parse(sessionExpenses);
+
+                            //console.log("First print");
+                            //console.log(sessionExpenses);
+                        }
+
+                        
+                        var expenseIndex = 0;
+                        for (expenseIndex in sessionExpenses) {
+                            
+                            const thisExpense = {
+                                label: sessionExpenses[expenseIndex].Name,
+                                start: sessionExpenses[expenseIndex].StartDate,
+                                end: sessionExpenses[expenseIndex].EndDate,
+                                payDates: sessionExpenses[expenseIndex].payDates,
+                                payment: sessionExpenses[expenseIndex].Payment,
+                                data: [],
+                                borderColor: colorPalete[expenseIndex],
+                                backgroundColor: colorPalete[expenseIndex]
+                            };
+
+
+                            const thisLinesData = [];
+
+                            var paymentIndex = 0;
+                            const dates = sessionExpenses[expenseIndex].payDates;
+                            for (paymentIndex in dates) {
+
+                                const thePayment = { x: dates[paymentIndex], y: thisExpense.payment };
+
+                                thisLinesData.push(thePayment);
+                            }
+
+
+                            thisExpense.data = thisLinesData;
+
+                            console.log("THis Lines daya");
+                            console.log(thisLinesData);
+
+                            exLines.push(thisExpense);
+                        }
+
+
+                        const graph1 = {
+                            label: 'Unspent',
+                            data: jsonData,
+                            borderColor: "lightgreen",
+                            backgroundColor: "green"
+                        };
+
+                        exLines.push(graph1);
+
+                        console.log("exLines");
+                        console.log(exLines);
+                    };
+                    GetSessionExpenses();
+
+
+
+
+                    function ClearSessionExpenses() {
+
+                        
+
+                    };
+                    ClearSessionExpenses();
+
+
+
+
+
+
+
+
 
 
                     function PopulateAxis() {
@@ -257,7 +379,7 @@
 
                         var j = 0;
                         maxSave = 1;
-                        for (j in jsonData) {
+                        for (j in jsonExpenses) {
 
                             var z = jsonData[j].y;
 
@@ -270,7 +392,7 @@
                         }
                         monthlyRemainderData = tempY.copyWithin;
 
-                        
+
                         var tempX = [];
 
                         var k = 0;
@@ -285,79 +407,15 @@
                     };
 
 
-
-                    function GetData() {
-
-
-                        GetSessionData();
-                        PopulateAxis();
-
-
-                        var monthlyRemainders = {
-                            label: "Unallocated Money",
-                            data: monthlyRemainderData,
-                            lineTension: 0,
-                            fill: false,
-                            borderColor: 'green'
-                        };
-
-                        var speedData = {
-                            labels: xLabels,
-                            datasets: [monthlyRemainders]
-                        };
-
-                        var chartOptions = {
-                            legend: {
-                                display: true,
-                                position: 'top',
-                                labels: {
-                                    fontColor: 'black'
-                                }
-                            },
-
-                            scales: {
-                                xAxes: [{
-                                    type: "time",
-                                    time: {
-                                        parser: timeFormat,
-                                        tooltipFormat: 'll'
-                                    },
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: 'Month'
-                                    }
-                                }],
-                                yAxes: [{
-
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: 'ToSpend',
-                                    },
-
-                                    ticks: {
-                                        max: maxSave,
-                                        beginAtZero: true
-                                    }
-
-                                }]
-                            }
-                        }
-                    };
-
-
-
-
                     
+                    
+
+                    console.log("here boy PLEASW");
+                    console.log(exLines);
+
                     const graphData = {
                         labels: xLabels,
-                        datasets: [
-                            {
-                                label: 'Dataset 1',
-                                data: jsonData,
-                                borderColor: "lightgreen",
-                                backgroundColor: "green"
-                            }
-                        ]
+                        datasets: exLines
                     };
 
 
@@ -373,28 +431,12 @@
                                 },
                                 title: {
                                     display: true,
-                                    text: 'Chart.js Line Chart'
+                                    text: 'Expenses Breakdown'
                                 }
                             }
                         },
                     };
 
-
-
-
-
-
-                    function PrintData() {
-
-                        //GetSessionData;
-                        //PopulateAxis;
-
-                        console.log("Labels: ");
-                        console.log(xLabels);
-                        console.log("Data: ");
-                        console.log(monthlyRemainderData);
-                    };
-                    PrintData();
 
                     var myChart = new Chart(
                         document.getElementById('moneyChart'),

@@ -26,6 +26,10 @@ namespace Loans_Web {
 
         protected void Page_Load(object sender, EventArgs e) {
 
+            //Expense Management Window
+            rptExpenses.ItemCommand += new RepeaterCommandEventHandler(rptExpenses_ItemCommand);
+            rptExpenses.DataSource = Expenses;
+
 
             if (!IsPostBack) {
                 Set_Defaults();
@@ -44,12 +48,24 @@ namespace Loans_Web {
 
 
             if (Session["NewExpense"] != null) {
-                Expenses.Add(new Expense((Expense)Session["NewExpense"]));
+
+                Expense toAdd = (new Expense((Expense)Session["NewExpense"]));
+
+                //If the name already exists
+                if (this[toAdd.Name] != null) {
+
+                    this[toAdd.Name] = toAdd;
+                }
+                else {
+
+                    Expenses.Add(new Expense((Expense)Session["NewExpense"]));
+                }
+
                 Session.Remove("NewExpense");
                 rptExpenses.DataBind();
             }
 
-
+            rptExpenses.DataBind();
             PrintExpenses();
         }
 
@@ -57,6 +73,7 @@ namespace Loans_Web {
 
         protected void Page_Unload(object sender, EventArgs e) {
             SaveSettings();
+            SaveExpenses();
         }
 
 
@@ -75,6 +92,15 @@ namespace Loans_Web {
             //toSave.Add("State", States);
 
             Session["SavedSettings"] = toSave;
+        }
+
+
+
+        private void SaveExpenses() {
+
+            string jsonExpenses = JsonConvert.SerializeObject(Expenses);
+            Session.Remove("Expenses");
+            Session["Expenses"] = jsonExpenses;
         }
 
 
@@ -102,6 +128,37 @@ namespace Loans_Web {
         public double Tax;
         public List<Expense> Expenses = new List<Expense>();
         State[] States = new State[50];
+
+
+        public Expense this[string name] {
+
+            get {
+                foreach (Expense e in this.Expenses) {
+
+                    if (e.Name == name) {
+                        return e;
+                    }
+                }
+                return null;
+            }
+            set {
+                int i = -1;
+                foreach (Expense e in this.Expenses) {
+                    
+                    if (e.Name == name) {
+                        i++;
+                        break;
+                    }
+                }
+
+                if (i > -1) {
+                    Expenses[i] = value;
+                }
+            }
+        }
+        
+
+
 
 
         private void Set_Defaults() {
@@ -307,14 +364,17 @@ namespace Loans_Web {
 
             foreach (Expense e in Expenses) {
 
-                if (e.StartDate.CompareTo(today) < 0 && (e.EndDate == null || today.CompareTo(e.EndDate) > 0)) {
+                if (e.StartDate.CompareTo(today) <= 0 &&  e.EndDate.CompareTo(today) > 0) {
 
-                    availableLeft -= e.IncrementMonth(available);
+                    if (e.CurrentAmount > 0) {
+                        availableLeft -= e.IncrementMonth(available);
+                        e.payDates.Add(today.ToShortDateString());
 
-                    if (availableLeft < 0) {
+                        if (availableLeft < 0) {
 
-                        MsgBox(e.Name + " put you over-budget by $" + (-1 * availableLeft), this.Page, this);
-                        return availableLeft;
+                            MsgBox(e.Name + " put you over-budget by $" + (-1 * availableLeft), this.Page, this);
+                            return availableLeft;
+                        }
                     }
                 }
             }
@@ -361,7 +421,13 @@ namespace Loans_Web {
             while (!CheckDone(timer)) {
 
                 //"Progress time"
-                timer = timer.AddMonths(1);
+                try {
+                    timer = timer.AddMonths(1);
+                }
+                catch {
+                    MsgBox("You were in an infinite loop", this.Page, this);
+                    return;
+                }
                 monthsPaid++;
 
                 double leftThisMonth = monthlyAvailable;
@@ -392,12 +458,13 @@ namespace Loans_Web {
                     spendingMoney.Add(leftThisMonth);
                     xLabels.Add(timer.Month.ToString() + timer.Year.ToString());
 
+                    //toSpend data;
                     data.Add(new monthArgs(timer.ToShortDateString(), Math.Truncate(leftThisMonth)));
                 }
             }
 
 
-            //Display charts
+            //Display ToSpend charts backup data
             string jsonData = JsonConvert.SerializeObject(data);
             Session["json"] = jsonData;
 
@@ -407,6 +474,46 @@ namespace Loans_Web {
 
             RefreshExpenses();
         }
+
+
+
+
+
+
+        private void rptExpenses_ItemCommand(object source, RepeaterCommandEventArgs e) {
+
+            string func = e.CommandName;
+            string id = e.CommandArgument.ToString();
+
+            if (func == "Edit") {
+
+                //Store this Expense in Session
+                Session["EditExpense"] = this[id];
+
+                //Send to Management page
+                Server.Transfer("CreateExpense.aspx");
+                
+            }
+            else if (func == "Delete") {
+
+                //Delete Expense
+                Expenses.Remove(this[id]);
+            }
+
+            rptExpenses.DataBind();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -431,20 +538,12 @@ namespace Loans_Web {
 
             foreach (Expense e in Expenses) {
 
-                if (!e.recurring && e.Amount > 0)
+                if (!e.recurring && e.CurrentAmount > 0)
                     return false;
 
-                if (e.recurring && (e.EndDate == null || today < e.EndDate))
+                if (e.recurring   &&   today.CompareTo(e.EndDate) < 0   &&   e.EndDate.CompareTo(DateTime.MaxValue) < 0 )
                     return false;
-
-                /*
-                if (!e.recurring) {
-                    if (e.CurrentAmount > 0) {
-                        if (e.ToExpense > 0) {
-                            return false;
-                        }
-                    }
-                }*/
+                
 
             }
             return true;
@@ -504,8 +603,7 @@ namespace Loans_Web {
             else {
                 MsgBox("Expenses was null in func PrintExpenses()", this.Page, this);
             }
-
-            lblExpenseResults.Text = text;
+            
         }
 
 
@@ -566,8 +664,7 @@ namespace Loans_Web {
                     }
                 }
             }
-
-            lblExpenseResults.Text = text;
+            
         }
 
         private void RefreshExpenses() {

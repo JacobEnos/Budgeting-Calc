@@ -7,8 +7,19 @@ using System.Windows;
 
 namespace Loans_Web
 {
-    public class Expense
+    [Serializable]
+    public class Expense : IEquatable<Expense>
     {
+
+        public bool Equals(Expense other) {
+
+            if (this.Name == other.Name) {
+                return true;
+            }
+            return false;
+        }
+
+
         public string Name;
         public double Amount;
         public double CurrentAmount;
@@ -17,6 +28,9 @@ namespace Loans_Web
         public int[] Time;
         public DateTime StartDate;
         public DateTime EndDate;
+        public List<string> payDates;
+        public double Payment;
+
 
         public Expense this[int i]{
             get{
@@ -36,6 +50,7 @@ namespace Loans_Web
             this.Time = copy.Time;
             StartDate = copy.StartDate;
             EndDate = copy.EndDate;
+            payDates = new List<string>();
         }
 
 
@@ -48,6 +63,7 @@ namespace Loans_Web
             this.Time = new int[2];
             StartDate = DateTime.Today;
             EndDate = DateTime.MaxValue;
+            payDates = new List<string>();
         }
 
         public Expense(string Name)
@@ -143,9 +159,11 @@ namespace Loans_Web
         public double ExpenseAmount(double MonthlyIncome, DateTime today)
         {
             if (this.recurring){
+                Payment = this.Amount;
                 return this.Amount;
             }
             else if (StartDate < today  &&  today < EndDate){
+                Payment = MonthlyIncome * this.ToExpense; ;
                 return MonthlyIncome * this.ToExpense;
             }
             else{
@@ -156,9 +174,11 @@ namespace Loans_Web
         public double PaymentAmount(double MonthlyIncome)
         {
             if (this.recurring){
+                Payment = this.Amount;
                 return this.Amount;
             }
             else{
+                Payment = MonthlyIncome * this.ToExpense;
                 return MonthlyIncome * this.ToExpense;
             }
         }
@@ -180,6 +200,7 @@ namespace Loans_Web
                         CurrentAmount -= ExpenseAmount(MonthlyIncome, date);
 
                         //Record paid month
+                        payDates.Add(date.ToShortDateString());
                         AddMonth();
                     }
                 }   
@@ -197,11 +218,13 @@ namespace Loans_Web
 
         public double IncrementMonth(double MonthlyIncome) {
 
+            AddMonth();
+
             //if the expense is recurring
             if (recurring) return Amount;
 
             double toPay = ToExpense * MonthlyIncome;
-            Amount -= toPay;
+            CurrentAmount -= toPay;
             return toPay;
         }
 

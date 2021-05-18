@@ -4,7 +4,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <div class="w-25 mx-auto my-5 bg-dark p-5">
+    <div class="mx-auto my-5 bg-dark p-5" style="width:40%">
 
         <div class="text-white">
             <h2>Create an Expense</h2>
@@ -43,13 +43,35 @@
 
         <div class="text-white my-3">
             <label>Recurring:</label>
-            <asp:CheckBox ID="chbRecurring" runat="server" />
+            <asp:CheckBox ID="chbRecurring" runat="server" OnCheckedChanged="chbRecurring_CheckedChanged" AutoPostBack="true" />
 
             <br />
 
             <label>Schedule:</label>
-            <asp:CheckBox ID="chbScheduled" class="my-auto" runat="server" />
+            <asp:CheckBox ID="chbScheduled" class="my-auto" runat="server" OnCheckedChanged="chbScheduled_CheckedChanged" AutoPostBack="true" />
         </div>
+
+
+        <!-- Date Pickers -->
+        <div class="d-flex flex-row justify-content-center">
+            
+
+            <div class="">
+                Start Date:<br/>
+                <asp:Calendar ID="cdrStart" CssClass="mx-2 px-2" runat="server" OnSelectionChanged="cdrStart_SelectionChanged"></asp:Calendar>
+            </div>
+
+            <div class="">
+                End Date:<br/>
+                <asp:Calendar ID="cdrEnd" CssClass="mx-2" runat="server" OnSelectionChanged="cdrEnd_SelectionChanged"></asp:Calendar>
+            </div>
+
+        </div>
+
+
+
+
+
 
         <div class="col-12 mt-5 d-flex justify-content-around">
 
