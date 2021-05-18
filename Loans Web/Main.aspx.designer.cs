@@ -40,6 +40,24 @@ namespace Loans_Web {
         protected global::System.Web.UI.WebControls.TextBox txtToLoans;
         
         /// <summary>
+        /// txtLoans control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtLoans;
+        
+        /// <summary>
+        /// txtLoanInterest control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtLoanInterest;
+        
+        /// <summary>
         /// ddlState control.
         /// </summary>
         /// <remarks>
@@ -65,24 +83,6 @@ namespace Loans_Web {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtFederalTax;
-        
-        /// <summary>
-        /// txtLoans control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLoans;
-        
-        /// <summary>
-        /// txtLoanInterest control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLoanInterest;
         
         /// <summary>
         /// btnCreateExpense control.

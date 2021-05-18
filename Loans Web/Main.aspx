@@ -92,7 +92,7 @@
 
     <form id="form1" runat="server">
 
-        
+
         <div class="stars">
 
             <div class="twinkling">
@@ -105,137 +105,160 @@
 
 
 
-                    <div id="tile" class="bg-white mx-auto my-auto p-5 w-50" style="border-radius: 5px; box-shadow: 0px 0px 20px 5px;">
+                    <div id="tile" class="bg-white mx-auto my-auto p-5 w-75" style="border-radius: 5px; box-shadow: 0px 0px 20px 5px;">
 
                         <div class="row">
-                            <!-- Salary -->
-                            <div class="input-group w-50 my-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Salary($)</span>
+                            <div class="col-6 justify-content-around">
+                                <!-- Salary -->
+                                <div class="input-group w-50 my-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Salary ($)</span>
+                                    </div>
+                                    <asp:TextBox ID="txtSalary" CssClass="form-control" runat="server" OnTextChanged="txtSalary_TextChanged" AutoPostBack="true" />
                                 </div>
-                                <asp:TextBox ID="txtSalary" CssClass="form-control" runat="server" OnTextChanged="txtSalary_TextChanged" AutoPostBack="true" />
+
+
+                                <!-- Salary to Loans -->
+                                <div class="input-group w-50 my-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Salary To Loans (%)</span>
+                                    </div>
+                                    <asp:TextBox ID="txtToLoans" CssClass="form-control" runat="server"></asp:TextBox>
+                                </div>
                             </div>
 
 
-                            <!-- Salary to Loans -->
-                            <div class="input-group w-50 my-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Salary To Loans(%)</span>
+                            <!-- Loans Info -->
+                            <div class="col-6">
+
+                                <!-- Loan Amount -->
+                                <div class="input-group w-50 my-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Loan Amount ($)</span>
+                                    </div>
+                                    <asp:TextBox ID="txtLoans" CssClass="form-control" runat="server" />
                                 </div>
-                                <asp:TextBox ID="txtToLoans" CssClass="form-control" runat="server"></asp:TextBox>
+
+                                <!-- Loan Interest Rate -->
+                                <div class="input-group w-50 my-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Loan Interest Rate(%)</span>
+                                    </div>
+                                    <asp:TextBox ID="txtLoanInterest" CssClass="form-control" runat="server"></asp:TextBox>
+                                </div>
+
                             </div>
                         </div>
-
-
-
-                        <!-- States -->
-                        <div class="row">
-
-                            <!-- State Name -->
-                            <div class="input-group w-50 my-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">State</span>
-                                </div>
-
-                                <asp:DropDownList ID="ddlState" runat="server" OnSelectedIndexChanged="ddlState_SelectedIndexChanged" AutoPostBack="true">
-                                    <asp:ListItem Value="AL">Alabama</asp:ListItem>
-                                    <asp:ListItem Value="AK">Alaska</asp:ListItem>
-                                    <asp:ListItem Value="AZ">Arizona</asp:ListItem>
-                                    <asp:ListItem Value="AR">Arkansas</asp:ListItem>
-                                    <asp:ListItem Value="CA">California</asp:ListItem>
-                                    <asp:ListItem Value="CO">Colorado</asp:ListItem>
-                                    <asp:ListItem Value="CT">Connecticut</asp:ListItem>
-                                    <asp:ListItem Value="DC">District of Columbia</asp:ListItem>
-                                    <asp:ListItem Value="DE">Delaware</asp:ListItem>
-                                    <asp:ListItem Value="FL">Florida</asp:ListItem>
-                                    <asp:ListItem Value="GA">Georgia</asp:ListItem>
-                                    <asp:ListItem Value="HI">Hawaii</asp:ListItem>
-                                    <asp:ListItem Value="ID">Idaho</asp:ListItem>
-                                    <asp:ListItem Value="IL">Illinois</asp:ListItem>
-                                    <asp:ListItem Value="IN">Indiana</asp:ListItem>
-                                    <asp:ListItem Value="IA">Iowa</asp:ListItem>
-                                    <asp:ListItem Value="KS">Kansas</asp:ListItem>
-                                    <asp:ListItem Value="KY">Kentucky</asp:ListItem>
-                                    <asp:ListItem Value="LA">Louisiana</asp:ListItem>
-                                    <asp:ListItem Value="ME">Maine</asp:ListItem>
-                                    <asp:ListItem Value="MD">Maryland</asp:ListItem>
-                                    <asp:ListItem Value="MA">Massachusetts</asp:ListItem>
-                                    <asp:ListItem Value="MI">Michigan</asp:ListItem>
-                                    <asp:ListItem Value="MN">Minnesota</asp:ListItem>
-                                    <asp:ListItem Value="MS">Mississippi</asp:ListItem>
-                                    <asp:ListItem Value="MO">Missouri</asp:ListItem>
-                                    <asp:ListItem Value="MT">Montana</asp:ListItem>
-                                    <asp:ListItem Value="NE">Nebraska</asp:ListItem>
-                                    <asp:ListItem Value="NV">Nevada</asp:ListItem>
-                                    <asp:ListItem Value="NH">New Hampshire</asp:ListItem>
-                                    <asp:ListItem Value="NJ">New Jersey</asp:ListItem>
-                                    <asp:ListItem Value="NM">New Mexico</asp:ListItem>
-                                    <asp:ListItem Value="NY">New York</asp:ListItem>
-                                    <asp:ListItem Value="NC">North Carolina</asp:ListItem>
-                                    <asp:ListItem Value="ND">North Dakota</asp:ListItem>
-                                    <asp:ListItem Value="OH">Ohio</asp:ListItem>
-                                    <asp:ListItem Value="OK">Oklahoma</asp:ListItem>
-                                    <asp:ListItem Value="OR">Oregon</asp:ListItem>
-                                    <asp:ListItem Value="PA">Pennsylvania</asp:ListItem>
-                                    <asp:ListItem Value="RI">Rhode Island</asp:ListItem>
-                                    <asp:ListItem Value="SC">South Carolina</asp:ListItem>
-                                    <asp:ListItem Value="SD">South Dakota</asp:ListItem>
-                                    <asp:ListItem Value="TN">Tennessee</asp:ListItem>
-                                    <asp:ListItem Value="TX">Texas</asp:ListItem>
-                                    <asp:ListItem Value="UT">Utah</asp:ListItem>
-                                    <asp:ListItem Value="VT">Vermont</asp:ListItem>
-                                    <asp:ListItem Value="VA">Virginia</asp:ListItem>
-                                    <asp:ListItem Value="WA">Washington</asp:ListItem>
-                                    <asp:ListItem Value="WV">West Virginia</asp:ListItem>
-                                    <asp:ListItem Value="WI">Wisconsin</asp:ListItem>
-                                    <asp:ListItem Value="WY">Wyoming</asp:ListItem>
-                                </asp:DropDownList>
-                            </div>
-
-                            <!-- State Tax -->
-                            <div class="input-group w-50 my-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">State Tax(%)</span>
-                                </div>
-                                <asp:TextBox ID="txtStateTax" runat="server" Enabled="false" Style="background-color: gray"></asp:TextBox>
-                            </div>
-
-
-                            <!-- Federal Tax -->
-                            <div class="input-group w-50 my-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Federal Tax(%)</span>
-                                </div>
-                                <asp:TextBox ID="txtFederalTax" runat="server" Enabled="false" Style="background-color: gray"></asp:TextBox>
-                            </div>
-
-
-                        </div>
-
 
                         <br />
 
+                        <!-- State Info/Selection -->
+                        <div class="col-12 my-4">
 
-                        <!-- Loans Info -->
-                        <div class="row my-4">
 
-                            <!-- Loan Amount -->
-                            <div class="input-group w-50 my-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Loan Amount</span>
+                            <!-- State Name -->
+                            <div style="width:40%">
+
+                                <div class="input-group d-inline-flex">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">State</span>
+                                    </div>
+
+                                    <!-- State Selection -->
+                                    <asp:DropDownList ID="ddlState" runat="server" OnSelectedIndexChanged="ddlState_SelectedIndexChanged" CssClass="form-control" AutoPostBack="true">
+                                        <asp:ListItem Value="AL">Alabama</asp:ListItem>
+                                        <asp:ListItem Value="AK">Alaska</asp:ListItem>
+                                        <asp:ListItem Value="AZ">Arizona</asp:ListItem>
+                                        <asp:ListItem Value="AR">Arkansas</asp:ListItem>
+                                        <asp:ListItem Value="CA">California</asp:ListItem>
+                                        <asp:ListItem Value="CO">Colorado</asp:ListItem>
+                                        <asp:ListItem Value="CT">Connecticut</asp:ListItem>
+                                        <asp:ListItem Value="DC">District of Columbia</asp:ListItem>
+                                        <asp:ListItem Value="DE">Delaware</asp:ListItem>
+                                        <asp:ListItem Value="FL">Florida</asp:ListItem>
+                                        <asp:ListItem Value="GA">Georgia</asp:ListItem>
+                                        <asp:ListItem Value="HI">Hawaii</asp:ListItem>
+                                        <asp:ListItem Value="ID">Idaho</asp:ListItem>
+                                        <asp:ListItem Value="IL">Illinois</asp:ListItem>
+                                        <asp:ListItem Value="IN">Indiana</asp:ListItem>
+                                        <asp:ListItem Value="IA">Iowa</asp:ListItem>
+                                        <asp:ListItem Value="KS">Kansas</asp:ListItem>
+                                        <asp:ListItem Value="KY">Kentucky</asp:ListItem>
+                                        <asp:ListItem Value="LA">Louisiana</asp:ListItem>
+                                        <asp:ListItem Value="ME">Maine</asp:ListItem>
+                                        <asp:ListItem Value="MD">Maryland</asp:ListItem>
+                                        <asp:ListItem Value="MA">Massachusetts</asp:ListItem>
+                                        <asp:ListItem Value="MI">Michigan</asp:ListItem>
+                                        <asp:ListItem Value="MN">Minnesota</asp:ListItem>
+                                        <asp:ListItem Value="MS">Mississippi</asp:ListItem>
+                                        <asp:ListItem Value="MO">Missouri</asp:ListItem>
+                                        <asp:ListItem Value="MT">Montana</asp:ListItem>
+                                        <asp:ListItem Value="NE">Nebraska</asp:ListItem>
+                                        <asp:ListItem Value="NV">Nevada</asp:ListItem>
+                                        <asp:ListItem Value="NH">New Hampshire</asp:ListItem>
+                                        <asp:ListItem Value="NJ">New Jersey</asp:ListItem>
+                                        <asp:ListItem Value="NM">New Mexico</asp:ListItem>
+                                        <asp:ListItem Value="NY">New York</asp:ListItem>
+                                        <asp:ListItem Value="NC">North Carolina</asp:ListItem>
+                                        <asp:ListItem Value="ND">North Dakota</asp:ListItem>
+                                        <asp:ListItem Value="OH">Ohio</asp:ListItem>
+                                        <asp:ListItem Value="OK">Oklahoma</asp:ListItem>
+                                        <asp:ListItem Value="OR">Oregon</asp:ListItem>
+                                        <asp:ListItem Value="PA">Pennsylvania</asp:ListItem>
+                                        <asp:ListItem Value="RI">Rhode Island</asp:ListItem>
+                                        <asp:ListItem Value="SC">South Carolina</asp:ListItem>
+                                        <asp:ListItem Value="SD">South Dakota</asp:ListItem>
+                                        <asp:ListItem Value="TN">Tennessee</asp:ListItem>
+                                        <asp:ListItem Value="TX">Texas</asp:ListItem>
+                                        <asp:ListItem Value="UT">Utah</asp:ListItem>
+                                        <asp:ListItem Value="VT">Vermont</asp:ListItem>
+                                        <asp:ListItem Value="VA">Virginia</asp:ListItem>
+                                        <asp:ListItem Value="WA">Washington</asp:ListItem>
+                                        <asp:ListItem Value="WV">West Virginia</asp:ListItem>
+                                        <asp:ListItem Value="WI">Wisconsin</asp:ListItem>
+                                        <asp:ListItem Value="WY">Wyoming</asp:ListItem>
+                                    </asp:DropDownList>
                                 </div>
-                                <asp:TextBox ID="txtLoans" CssClass="form-control" runat="server" />
                             </div>
 
-                            <!-- Loan Interest Rate -->
-                            <div class="input-group w-50 my-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Loan Interest Rate(%)</span>
+
+
+                            <!-- Taxes Info -->
+                            <div class="row">
+
+                                <div class="col-3">
+
+                                    <!-- State Tax -->
+                                    <div class="input-group d-inline-flex my-2">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">State Tax (%)</span>
+                                        </div>
+                                        <asp:TextBox ID="txtStateTax" runat="server" Enabled="false" CssClass="form-control" Style="background-color: gray"></asp:TextBox>
+                                    </div>
+
                                 </div>
-                                <asp:TextBox ID="txtLoanInterest" CssClass="form-control" runat="server"></asp:TextBox>
+
+                                <div class="col-3">
+
+                                    <!-- Federal Tax -->
+                                    <div class="input-group d-inline-flex my-2">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Federal Tax (%)</span>
+                                        </div>
+                                        <asp:TextBox ID="txtFederalTax" runat="server" Enabled="false" CssClass="form-control" Style="background-color: gray"></asp:TextBox>
+                                    </div>
+                                </div>
                             </div>
+
+
 
                         </div>
+
+
+
+
+
+                        <br />
 
 
 
@@ -307,8 +330,8 @@
 
 
 
-                        <div>
-                            <canvas id="moneyChart" class="border border-dark" style="z-index: 2" width="600" height="400"></canvas>
+                        <div id="moneyWrapper" class="border border-dark p-2">
+                            <canvas id="moneyChart" style="z-index: 2;" width="600" height="400";></canvas>
                         </div>
 
 
@@ -317,7 +340,7 @@
 
                             var moneyCanvas = document.getElementById("moneyChart").getContext("2d");
 
-                            var colorPalete = ["orange", "yellow", "springgreen", "lightseagreen"];
+                            var colorPalete = ["orange", "yellow", "darkorchid", "lightcoral", "lightseagreen", "navy", "springgreen"];
 
 
                             var jsonData;
@@ -460,41 +483,6 @@
 
 
 
-                            function GetDateRange() {
-
-                                var j = 0;
-                                var min = "";
-                                var max = "";
-                                for (j in xLabels) {
-
-                                    if (min == "")
-                                        min = xLabels[j];
-                                    
-                                    if (max == "")
-                                        max = xLabels[j];
-
-                                    if (Date.parse(xLabels[j]) < Date.parse(min)) {
-                                        min = xLabels[j];
-                                    }
-
-                                    if (Date.parse(max) < Date.parse(xLabels[j])) {
-                                        max = xLabels[j];
-                                    }
-                                }
-                            };
-
-
-
-                            function GetDateRange(startDateString, endDateString) {
-
-
-
-
-                            };
-
-
-
-
                             const graphData = {
                                 labels: xLabelData,
                                 datasets: exLines
@@ -521,13 +509,13 @@
 
 
                             var myChart = new Chart(
-                                document.getElementById('moneyChart'),
+                                moneyCanvas,
                                 config
                             );
 
 
-                    //Chart.defaults.global.defaultFontFamily = "Lato";
-                    //Chart.defaults.global.defaultFontSize = 18;
+                            Chart.defaults.global.defaultFontFamily = "Lato";
+                            Chart.defaults.global.defaultFontSize = 18;
 
 
                         </script>
@@ -573,7 +561,7 @@
                         </div>
 
                     </div>
-                    <!-- Close Tile -->
+                <!-- Close Tile -->
 
 
             </div>
@@ -582,7 +570,7 @@
         <!-- Close background -->
 
 
-            </div>
+        </div>
 
 
 
