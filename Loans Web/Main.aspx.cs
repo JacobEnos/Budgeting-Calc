@@ -377,7 +377,7 @@ namespace Loans_Web {
 
                         if (availableLeft < 0) {
 
-                            MsgBox(e.Name + " put you over-budget by $" + (-1 * availableLeft), this.Page, this);
+                            MsgBox(e.Name + " put you over-budget by $" + (-1 * availableLeft) + " in " + today.Month.ToString() + " of "  + today.Year.ToString(), this.Page, this);
                             return availableLeft;
                         }
                     }
@@ -399,7 +399,8 @@ namespace Loans_Web {
 
             //Track time internally
             DateTime timer = new DateTime();
-            timer = DateTime.Today;
+            //timer = DateTime.Today;
+            timer = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
 
             //Log spending money
             List<double> spendingMoney = new List<double>();
@@ -420,7 +421,7 @@ namespace Loans_Web {
             txtMonthlyPayment.Text = loanPayment.ToString("C");
 
             //if (useLoans) monthlyAvailable -= loanPayment;
-
+            LoanPayments = new List<monthArgs>();
 
             //While Expenses remain, or there are outstanding Loans
             while (!CheckDone(timer)) {
@@ -472,6 +473,7 @@ namespace Loans_Web {
                 }
                 else {
                     spendingMoney.Add(leftThisMonth);
+
                     xLabels.Add(timer.ToShortDateString());
 
                     
@@ -486,6 +488,7 @@ namespace Loans_Web {
             if (LoanPayments.Count > 0) {
 
                 string loanPaymentJson = JsonConvert.SerializeObject(LoanPayments);
+                Session.Remove("LoanPayments");
                 Session["LoanPayments"] = loanPaymentJson;
             }
 
