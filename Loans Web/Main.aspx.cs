@@ -421,7 +421,7 @@ namespace Loans_Web {
             txtMonthlyPayment.Text = loanPayment.ToString("C");
 
             //if (useLoans) monthlyAvailable -= loanPayment;
-
+            LoanPayments = new List<monthArgs>();
 
             //While Expenses remain, or there are outstanding Loans
             while (!CheckDone(timer)) {
@@ -488,6 +488,7 @@ namespace Loans_Web {
             if (LoanPayments.Count > 0) {
 
                 string loanPaymentJson = JsonConvert.SerializeObject(LoanPayments);
+                Session.Remove("LoanPayments");
                 Session["LoanPayments"] = loanPaymentJson;
             }
 

@@ -339,16 +339,11 @@
                             "use strict"
 
                             var moneyCanvas = document.getElementById("moneyChart").getContext("2d");
-
+                            var xLabels = [];
                             var colorPalete = ["orange", "yellow", "darkorchid", "lightcoral", "lightseagreen", "navy", "springgreen"];
 
 
                             var jsonData;
-                            var monthlyRemainderData = [];
-                            var xLabels = [];
-                            var maxSave;
-
-
                             //Gets Unspent data
                             function GetSessionData() {
 
@@ -369,21 +364,41 @@
                                 loansData = '<%= Session["LoanPayments"] %>';
 
                                 if (loansData != null && loansData != "") {
+                                    loansData == null;
                                     loansData = JSON.parse(loansData);
                                 }
                             };
                             GetLoansData();
 
 
+                            //Get Expense payment data
+                            var sessionExpenses = [];
+                            function GetExpenseData() {
 
-                            //Gets Loan payment data
+                                //Get Expenses
+                                sessionExpenses = '<%= Session["Expenses"] %>';
+
+                                if (sessionExpenses != null && sessionExpenses != "") {
+                                    sessionExpenses = JSON.parse(sessionExpenses);
+                                }
+                            };
+                            GetExpenseData();
+
+
+                            //Gets Chronological labels
                             var xLabelData = [];
                             function GetxLabelData() {
 
+                                /*
+                                if (xLabelData != null) {
+                                    return;
+                                }
+                                */
                                 xLabelData = '<%= Session["xLabels"] %>';
 
                                 if (xLabelData != null && xLabelData != "") {
                                     xLabelData = JSON.parse(xLabelData);
+
                                 }
 
                                 console.log("These dates in order?");
@@ -395,17 +410,8 @@
 
 
                             //Gets Expense data
-                            var sessionExpenses = [];
                             const exLines = [];
                             function GetSessionExpenses() {
-
-                                //Get Expenses
-                                sessionExpenses = '<%= Session["Expenses"] %>';
-
-                                if (sessionExpenses != null && sessionExpenses != "") {
-                                    sessionExpenses = JSON.parse(sessionExpenses);
-                                }
-
 
                                 var expenseIndex = 0;
                                 for (expenseIndex in sessionExpenses) {
@@ -442,14 +448,13 @@
                                         thisLinesData.push(thePayment);
                                     }
 
-
                                     thisExpense.data = thisLinesData;
+                                    exLines.push(thisExpense);
 
                                     console.log("THis Lines daya");
                                     console.log(thisLinesData);
-
-                                    exLines.push(thisExpense);
                                 }
+
 
                                 //Unspent Data
                                 const graph1 = {
@@ -478,8 +483,12 @@
                             GetSessionExpenses();
 
 
+
+
+                            
                             console.log("here boy PLEASW");
                             console.log(exLines);
+
 
 
 
@@ -504,7 +513,7 @@
                                             text: 'Expenses Breakdown'
                                         }
                                     }
-                                },
+                                }
                             };
 
 
@@ -514,9 +523,8 @@
                             );
 
 
-                            Chart.defaults.global.defaultFontFamily = "Lato";
-                            Chart.defaults.global.defaultFontSize = 18;
-
+                            //myChart.defaults.global.defaultFontFamily = "Lato";
+                            //myChart.defaults.global.defaultFontSize = 18;
 
                         </script>
 

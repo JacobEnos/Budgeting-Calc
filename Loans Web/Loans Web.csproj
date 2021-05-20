@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CreateExpense.aspx" />
+    <Content Include="Default.aspx" />
     <Content Include="Main.aspx" />
     <Content Include="Moment.js" />
     <Content Include="Web.config" />
@@ -82,6 +83,13 @@
     </Compile>
     <Compile Include="CreateExpense.aspx.designer.cs">
       <DependentUpon>CreateExpense.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Expense.cs" />
     <Compile Include="Main.aspx.cs">
@@ -104,6 +112,8 @@
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Master.Master" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
