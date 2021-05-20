@@ -6,11 +6,10 @@
 <head runat="server">
     <title>Budget-Calc</title>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js" integrity="sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg==" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 </head>
-<body>
+<body onload="AjaxGetAndGraph();">
 
     <style>
         body {
@@ -157,7 +156,7 @@
 
 
                             <!-- State Name -->
-                            <div style="width:40%">
+                            <div style="width: 40%">
 
                                 <div class="input-group d-inline-flex">
                                     <div class="input-group-prepend">
@@ -331,7 +330,7 @@
 
 
                         <div id="moneyWrapper" class="border border-dark p-2">
-                            <canvas id="moneyChart" style="z-index: 2;" width="600" height="400";></canvas>
+                            <canvas id="moneyChart" style="z-index: 2;" width="600" height="400"></canvas>
                         </div>
 
 
@@ -354,7 +353,7 @@
                                 }
 
                             };
-                            GetSessionData();
+                            //GetSessionData();
 
 
                             //Gets Loan payment data
@@ -368,7 +367,7 @@
                                     loansData = JSON.parse(loansData);
                                 }
                             };
-                            GetLoansData();
+                            //GetLoansData();
 
 
                             //Get Expense payment data
@@ -382,7 +381,7 @@
                                     sessionExpenses = JSON.parse(sessionExpenses);
                                 }
                             };
-                            GetExpenseData();
+                            //GetExpenseData();
 
 
                             //Gets Chronological labels
@@ -404,7 +403,7 @@
                                 console.log("These dates in order?");
                                 console.log(xLabelData);
                             };
-                            GetxLabelData();
+                            //GetxLabelData();
 
 
 
@@ -480,14 +479,14 @@
                                 console.log("exLines");
                                 console.log(exLines);
                             };
-                            GetSessionExpenses();
+                            //GetSessionExpenses();
 
 
 
 
-                            
+
                             console.log("here boy PLEASW");
-                            console.log(exLines);
+                            //console.log(exLines);
 
 
 
@@ -517,10 +516,26 @@
                             };
 
 
-                            var myChart = new Chart(
-                                moneyCanvas,
-                                config
-                            );
+
+
+
+
+                            function AjaxGetAndGraph() {
+
+                                console.log("AJAX Guy");
+
+                                GetSessionData();
+                                GetLoansData();
+                                GetExpenseData();
+                                GetxLabelData();
+                                GetSessionExpenses();
+
+                                var myChart = new Chart(
+                                    moneyCanvas,
+                                    config
+                                );
+
+                            };
 
 
                             //myChart.defaults.global.defaultFontFamily = "Lato";
@@ -569,13 +584,13 @@
                         </div>
 
                     </div>
-                <!-- Close Tile -->
+                    <!-- Close Tile -->
 
+
+                </div>
 
             </div>
-
-        </div>
-        <!-- Close background -->
+            <!-- Close background -->
 
 
         </div>

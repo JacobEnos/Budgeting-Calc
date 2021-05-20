@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 </head>
-<body>
+<body onload="AjaxGetAndGraph();">
 
     <style>
         body {
@@ -157,7 +157,7 @@
 
 
                             <!-- State Name -->
-                            <div style="width:40%">
+                            <div style="width: 40%">
 
                                 <div class="input-group d-inline-flex">
                                     <div class="input-group-prepend">
@@ -331,7 +331,7 @@
 
 
                         <div id="moneyWrapper" class="border border-dark p-2">
-                            <canvas id="moneyChart" style="z-index: 2;" width="600" height="400";></canvas>
+                            <canvas id="moneyChart" style="z-index: 2;" width="600" height="400"></canvas>
                         </div>
 
 
@@ -339,16 +339,11 @@
                             "use strict"
 
                             var moneyCanvas = document.getElementById("moneyChart").getContext("2d");
-
+                            var xLabels = [];
                             var colorPalete = ["orange", "yellow", "darkorchid", "lightcoral", "lightseagreen", "navy", "springgreen"];
 
 
                             var jsonData;
-                            var monthlyRemainderData = [];
-                            var xLabels = [];
-                            var maxSave;
-
-
                             //Gets Unspent data
                             function GetSessionData() {
 
@@ -359,7 +354,7 @@
                                 }
 
                             };
-                            GetSessionData();
+                            //GetSessionData();
 
 
                             //Gets Loan payment data
@@ -369,21 +364,36 @@
                                 loansData = '<%= Session["LoanPayments"] %>';
 
                                 if (loansData != null && loansData != "") {
+                                    loansData == null;
                                     loansData = JSON.parse(loansData);
                                 }
                             };
-                            GetLoansData();
+                            //GetLoansData();
 
 
+                            //Get Expense payment data
+                            var sessionExpenses = [];
+                            function GetExpenseData() {
 
-                            //Gets Loan payment data
+                                //Get Expenses
+                                sessionExpenses = '<%= Session["Expenses"] %>';
+
+                                if (sessionExpenses != null && sessionExpenses != "") {
+                                    sessionExpenses = JSON.parse(sessionExpenses);
+                                }
+                            };
+                            //GetExpenseData();
+
+
+                            //Gets Chronological labels
                             var xLabelData = [];
                             function GetxLabelData() {
 
+                                /*
                                 if (xLabelData != null) {
                                     return;
                                 }
-
+                                */
                                 xLabelData = '<%= Session["xLabels"] %>';
 
                                 if (xLabelData != null && xLabelData != "") {
@@ -394,23 +404,14 @@
                                 console.log("These dates in order?");
                                 console.log(xLabelData);
                             };
-                            GetxLabelData();
+                            //GetxLabelData();
 
 
 
 
                             //Gets Expense data
-                            var sessionExpenses = [];
                             const exLines = [];
                             function GetSessionExpenses() {
-
-                                //Get Expenses
-                                sessionExpenses = '<%= Session["Expenses"] %>';
-
-                                if (sessionExpenses != null && sessionExpenses != "") {
-                                    sessionExpenses = JSON.parse(sessionExpenses);
-                                }
-
 
                                 var expenseIndex = 0;
                                 for (expenseIndex in sessionExpenses) {
@@ -447,14 +448,13 @@
                                         thisLinesData.push(thePayment);
                                     }
 
-
                                     thisExpense.data = thisLinesData;
+                                    exLines.push(thisExpense);
 
                                     console.log("THis Lines daya");
                                     console.log(thisLinesData);
-
-                                    exLines.push(thisExpense);
                                 }
+
 
                                 //Unspent Data
                                 const graph1 = {
@@ -480,15 +480,15 @@
                                 console.log("exLines");
                                 console.log(exLines);
                             };
-                            GetSessionExpenses();
-
+                            //GetSessionExpenses();
 
 
 
 
 
                             console.log("here boy PLEASW");
-                            console.log(exLines);
+                            //console.log(exLines);
+
 
 
 
@@ -518,36 +518,29 @@
 
 
 
-                            var myChart = null;
-                            function DestroyChart() {
-
-                                myChart.destroy();
-                                console.log("desytroyed");
-                            };
 
 
 
-                            console.log("might destroy");
-                            if (myChart != null) {
+                            function AjaxGetAndGraph() {
 
-                                console.log("shoukf destroy");
-                                DestroyChart();
-                                console.log("chart destroyed");
-                            }
-                            else {
+                                console.log("AJAX Guy");
 
+                                GetSessionData();
+                                GetLoansData();
+                                GetExpenseData();
+                                GetxLabelData();
+                                GetSessionExpenses();
 
                                 var myChart = new Chart(
                                     moneyCanvas,
                                     config
                                 );
-                            }
+
+                            };
 
 
-
-                            myChart.defaults.global.defaultFontFamily = "Lato";
-                            myChart.defaults.global.defaultFontSize = 18;
-
+                            //myChart.defaults.global.defaultFontFamily = "Lato";
+                            //myChart.defaults.global.defaultFontSize = 18;
 
                         </script>
 
@@ -592,13 +585,13 @@
                         </div>
 
                     </div>
-                <!-- Close Tile -->
+                    <!-- Close Tile -->
 
+
+                </div>
 
             </div>
-
-        </div>
-        <!-- Close background -->
+            <!-- Close background -->
 
 
         </div>
