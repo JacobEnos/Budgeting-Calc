@@ -37,9 +37,6 @@
             height: 100vh;
         }
 
-        .bg {
-        }
-
 
         .stars {
             z-index: 0;
@@ -255,91 +252,39 @@
 
 
 
-
-
                         <br />
 
 
+                        <asp:Label ID="lblTest" runat="server"/>
 
 
-                        <!-- Expenses -->
-                        <div class="col-12 p-5">
-
-                            <asp:Button Text="Create Expense" runat="server" ID="btnCreateExpense" OnClick="btnCreateExpense_Click" />
-
-                            <br />
-
-                            <div class="row">
-
-                                <div class="col-12">
-                                    <asp:Repeater ID="rptExpenses" runat="server">
-                                        <HeaderTemplate>
-                                        </HeaderTemplate>
-
-                                        <ItemTemplate>
-                                            <div class="my-2 p-2" style="background-color: lightgray; border-radius: 5px">
-
-                                                <div class="row">
-                                                    <div class="col-1 h2">
-                                                        <%# ((Loans_Web.Expense)Container.DataItem).Name %>
-                                                    </div>
-
-
-                                                    <div class="col-2 offset-8 d-flex justify-content-end">
-
-                                                        <asp:LinkButton ID="btnManageExpense" class="btn btn-info mx-1" runat="server" CommandName="Edit"
-                                                            CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Edit</asp:LinkButton>
-
-                                                        <asp:LinkButton ID="btnDeleteExpense" class="btn btn-danger mx-1" runat="server" CommandName="Delete"
-                                                            CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Delete</asp:LinkButton>
-                                                    </div>
-                                                </div>
-
-
-                                                <div class="flex-row d-flex justify-content-around">
-                                                    <div class="d-inline">
-                                                        <asp:Label Text="Amount:" runat="server" />
-                                                        <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Amount.ToString() %>' runat="server" />
-                                                    </div>
-
-                                                    <div class="d-inline">
-                                                        <asp:Label Text="ToExpense(%): " runat="server" />
-                                                        <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).ToExpense * 100 %>' runat="server" />
-                                                    </div>
-
-                                                    <div class="d-inline">
-                                                        <asp:Label Text="Payment: " runat="server" />
-                                                        <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Payment.ToString("C0") %>' runat="server" />
-                                                    </div>
-
-                                                    <div class="d-inline">
-                                                        <asp:Label Text="Time(YY/MM): " runat="server" />
-                                                        <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[0].ToString()%>' runat="server" />
-                                                        /
-                                                <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[1].ToString()%>' runat="server" />
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </ItemTemplate>
-                                    </asp:Repeater>
-                                </div>
-                            </div>
-                        </div>
-
+                        
 
 
                         <div id="moneyWrapper" class="border border-dark p-2">
+
+
                             <canvas id="moneyChart" style="z-index: 2;" width="600" height="400"></canvas>
+
+                        </div>
+
+
+                        
+                        <!-- CSV Buttons -->
+                        <div class="col-12 justify-content-center">
+
+                            <asp:Button ID="btnSaveCSV" Text="Save CSV" runat="server" OnClick="btnSaveCSV_Click"/>
+                            <asp:Button ID="btnReadCSV" Text="Read CSV" runat="server" OnClick="btnReadCSV_Click"/>
+                            <asp:FileUpload ID="uplExpenses" runat="server" />
                         </div>
 
 
                         <script>
                             "use strict"
 
-                            var moneyCanvas = document.getElementById("moneyChart").getContext("2d");
+                            const moneyCanvas = document.getElementById("moneyChart").getContext("2d");
                             var xLabels = [];
-                            var colorPalete = ["orange", "yellow", "darkorchid", "lightcoral", "lightseagreen", "navy", "springgreen"];
+                            const colorPalete = ["orange", "yellow", "darkorchid", "lightcoral", "lightseagreen", "navy", "springgreen"];
 
 
                             var jsonData;
@@ -485,38 +430,7 @@
 
 
 
-                            console.log("here boy PLEASW");
-                            //console.log(exLines);
-
-
-
-
-                            const graphData = {
-                                labels: xLabelData,
-                                datasets: exLines
-                            };
-
-
-                            const config = {
-                                type: 'line',
-                                data: graphData,
-
-                                options: {
-                                    responsive: true,
-                                    plugins: {
-                                        legend: {
-                                            position: 'top',
-                                        },
-                                        title: {
-                                            display: true,
-                                            text: 'Expenses Breakdown'
-                                        }
-                                    }
-                                }
-                            };
-
-
-
+                            window.myChart = new Chart();
 
 
 
@@ -530,7 +444,41 @@
                                 GetxLabelData();
                                 GetSessionExpenses();
 
-                                var myChart = new Chart(
+
+                                console.log("Data git GOT");
+
+
+                                const graphData = {
+                                    labels: xLabelData,
+                                    datasets: exLines
+                                };
+
+
+                                const config = {
+                                    type: 'line',
+                                    data: graphData,
+
+                                    options: {
+                                        responsive: true,
+                                        plugins: {
+                                            legend: {
+                                                position: 'top',
+                                            },
+                                            title: {
+                                                display: true,
+                                                text: 'Expenses Breakdown'
+                                            }
+                                        }
+                                    }
+                                };
+
+
+                                if (window.myChart != null) {
+                                    window.myChart.destroy();
+                                    console.log("destroyed");
+                                }
+
+                                myChart = new Chart(
                                     moneyCanvas,
                                     config
                                 );
@@ -544,37 +492,99 @@
                         </script>
 
 
+                        <!-- Expenses -->
+                        <div class="col-12 p-5">
+
+                            <asp:Button Text="Create Expense" runat="server" ID="btnCreateExpense" OnClick="btnCreateExpense_Click" />
+
+                            <br />
+
+                            <div class="row">
+
+                                <div class="col-12">
+                                    <asp:Repeater ID="rptExpenses" runat="server">
+                                        <HeaderTemplate>
+                                        </HeaderTemplate>
+
+                                        <ItemTemplate>
+                                            <div class="my-2 p-2" style="background-color: lightgray; border-radius: 5px">
+
+                                                <div class="row">
+                                                    <div class="col-1 h2">
+                                                        <%# ((Loans_Web.Expense)Container.DataItem).Name %>
+                                                    </div>
+
+
+                                                    <div class="col-2 offset-8 d-flex justify-content-end">
+
+                                                        <asp:LinkButton ID="btnManageExpense" class="btn btn-info mx-1" runat="server" CommandName="Edit"
+                                                            CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Edit</asp:LinkButton>
+
+                                                        <asp:LinkButton ID="btnDeleteExpense" class="btn btn-danger mx-1" runat="server" CommandName="Delete"
+                                                            CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Delete</asp:LinkButton>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="flex-row d-flex justify-content-around">
+                                                    <div class="d-inline">
+                                                        <asp:Label Text="Amount:" runat="server" />
+                                                        <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Amount.ToString() %>' runat="server" />
+                                                    </div>
+
+                                                    <div class="d-inline">
+                                                        <asp:Label Text="ToExpense(%): " runat="server" />
+                                                        <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).ToExpense * 100 %>' runat="server" />
+                                                    </div>
+
+                                                    <div class="d-inline">
+                                                        <asp:Label Text="Payment: " runat="server" />
+                                                        <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Payment.ToString("C0") %>' runat="server" />
+                                                    </div>
+
+                                                    <div class="d-inline">
+                                                        <asp:Label Text="Time(YY/MM): " runat="server" />
+                                                        <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[0].ToString()%>' runat="server" />
+                                                        /
+                                                <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[1].ToString()%>' runat="server" />
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </ItemTemplate>
+                                    </asp:Repeater>
+                                </div>
+                            </div>
+                        </div>
 
 
 
                         <!-- Payment Details -->
                         <div class="my-4" style="position: relative; right: 0px">
 
-                            <!-- Monthly Payment -->
-                            <div class="input-group my-2 justify-content-end">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Monthly Payment</span>
+                                <!-- Monthly Payment -->
+                                <div class="input-group my-2 justify-content-end">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Monthly Payment</span>
+                                    </div>                                    
+                                    <asp:TextBox ID="txtMonthlyPayment" Enabled="false" runat="server" />
                                 </div>
-                                <asp:TextBox ID="txtMonthlyPayment" Enabled="false" runat="server"></asp:TextBox>
-                            </div>
 
-                            <!-- Time to Pay -->
-                            <div class="input-group my-2 justify-content-end">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Time to Pay (YY/MM)</span>
+                                <!-- Time to Pay -->
+                                <div class="input-group my-2 justify-content-end">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Time to Pay (YY/MM)</span>
+                                    </div>
+                                    <asp:TextBox ID="txtTimeToPay" Enabled="false" runat="server"></asp:TextBox>
                                 </div>
-                                <asp:TextBox ID="txtTimeToPay" Enabled="false" runat="server"></asp:TextBox>
-                            </div>
 
-                            <!-- Total Paid -->
-                            <div class="input-group my-2 justify-content-end">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Total Paid</span>
+                                <!-- Total Paid -->
+                                <div class="input-group my-2 justify-content-end">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Total Paid</span>
+                                    </div>
+                                    <asp:TextBox ID="txtTotalPaid" Enabled="false" runat="server"></asp:TextBox>
                                 </div>
-                                <asp:TextBox ID="txtTotalPaid" Enabled="false" runat="server"></asp:TextBox>
-                            </div>
-
-
 
                         </div>
 
@@ -582,6 +592,10 @@
                         <div class="col-1-xs offset-10">
                             <asp:Button Text="Calculate" Style="position: relative; right: 0px" class="btn btn-light border border-secondary" runat="server" ID="btnCalc" OnClick="btnCalc_Click" />
                         </div>
+
+
+
+
 
                     </div>
                     <!-- Close Tile -->
