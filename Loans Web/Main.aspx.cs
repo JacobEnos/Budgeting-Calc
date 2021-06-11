@@ -120,8 +120,8 @@ namespace Loans_Web {
             int propCount = 6;
             while (inputs.Count > 0) {
 
-                string[] expenseParams = new string[6];
-                expenseParams = inputs.Take(6).ToArray();
+                string[] expenseParams = new string[propCount];
+                expenseParams = inputs.Take(propCount).ToArray();
                 e.Add(new Expense(expenseParams));
                 inputs.RemoveRange(0, propCount);
             }
@@ -571,8 +571,6 @@ namespace Loans_Web {
             //Store Date-Labels in Session for JS
 
 
-
-
             //Display ToSpend charts data
             string jsonData = JsonConvert.SerializeObject(data);
             Session["json"] = jsonData;
@@ -616,16 +614,6 @@ namespace Loans_Web {
 
 
 
-
-
-
-
-
-
-
-
-
-
         public void OverBudget() {
             txtTimeToPay.Text = "Over Budget";
             txtMonthlyPayment.Text = "Over Budget";
@@ -650,9 +638,10 @@ namespace Loans_Web {
                 if (!e.recurring && e.CurrentAmount > 0)
                     return false;
 
-                if (e.recurring   &&   e.StartDate.CompareTo(today) < 0   &&   e.EndDate.CompareTo(DateTime.MaxValue) != 0 )
+
+                bool endDateSet = e.EndDate.Year < DateTime.MaxValue.Year;
+                if (e.recurring   &&   e.StartDate.CompareTo(today) < 0   &&   endDateSet)
                     return false;
-                
 
             }
             return true;
