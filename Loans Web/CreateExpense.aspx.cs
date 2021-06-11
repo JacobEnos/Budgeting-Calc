@@ -34,6 +34,7 @@ namespace Loans_Web {
                     cdrStart.Visible = false;
                     cdrEnd.Visible = false;
                     newExpense.recurring = false;
+                    divDatePickers.Visible = false;
                 }
             }
 
@@ -59,6 +60,7 @@ namespace Loans_Web {
 
             if (!e.recurring) {
                 txtToExpense.Text = (e.ToExpense * 100).ToString();
+                cdrEnd.Visible = false;
             }
             else {
 
@@ -79,7 +81,10 @@ namespace Loans_Web {
 
                 cdrStart.TodaysDate = e.StartDate;
 
-                if (e.EndDate != DateTime.MaxValue) {
+                int z = e.EndDate.CompareTo(DateTime.MaxValue);
+
+
+                if (e.EndDate.Year < 3000) {
                     cdrEnd.TodaysDate = e.EndDate;
                 }
                 else {
@@ -87,7 +92,6 @@ namespace Loans_Web {
                 }
 
                 cdrStart.Visible = true;
-                cdrEnd.Visible = true;
             }
             else {
                 cdrStart.Visible = false;
@@ -152,34 +156,81 @@ namespace Loans_Web {
 
         protected void chbScheduled_CheckedChanged(object sender, EventArgs e) {
 
-            if (chbScheduled.Checked) {
+            if (chbRecurring.Checked) {
 
-                cdrStart.Visible = true;
-                cdrEnd.Visible = true;
+                if (chbScheduled.Checked) {
+
+                    cdrStart.Visible = true;
+                    cdrEnd.Visible = true;
+                    divDatePickers.Visible = true;
+                }
+                else {
+
+                    newExpense.StartDate = DateTime.Today;
+                    newExpense.EndDate = DateTime.MaxValue;
+
+                    divDatePickers.Visible = false;
+                    cdrStart.Visible = false;
+                    cdrEnd.Visible = false;
+                }
             }
             else {
 
-                newExpense.StartDate = DateTime.Today;
-                newExpense.EndDate = DateTime.MaxValue;
-                cdrStart.Visible = false;
-                cdrEnd.Visible = false;
-            }
+                if (chbScheduled.Checked) {
 
+                    cdrStart.Visible = true;
+                    divDatePickers.Visible = true;
+                }
+                else {
+
+                    newExpense.StartDate = DateTime.Today;
+                    newExpense.EndDate = DateTime.MaxValue;
+
+                    divDatePickers.Visible = false;
+                    cdrStart.Visible = false;
+                    cdrEnd.Visible = false;
+                }
+            }
         }
 
 
 
         protected void chbRecurring_CheckedChanged(object sender, EventArgs e) {
 
-            if (chbRecurring.Checked) {
+            if (chbScheduled.Checked) {
 
-                txtToExpense.Text = "As Necessary";
-                txtToExpense.Enabled = false;
+                if (chbRecurring.Checked) {
+
+                    txtToExpense.Text = "As Necessary";
+                    txtToExpense.Enabled = false;
+
+                    cdrEnd.Enabled = true;
+                    cdrEnd.Visible = true;
+                }
+                else {
+
+                    txtToExpense.Enabled = true;
+                    txtToExpense.Text = "";
+
+                    cdrEnd.Enabled = false;
+                    cdrEnd.Visible = false;
+                }
+
             }
             else {
 
-                txtToExpense.Enabled = true;
-                txtToExpense.Text = "";
+
+                if (chbRecurring.Checked) {
+
+                    txtToExpense.Text = "As Necessary";
+                    txtToExpense.Enabled = false;
+                }
+                else {
+
+                    txtToExpense.Enabled = true;
+                    txtToExpense.Text = "";
+                }
+
             }
 
             newExpense.recurring = chbRecurring.Checked;

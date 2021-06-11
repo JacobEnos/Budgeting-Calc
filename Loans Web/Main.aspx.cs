@@ -57,7 +57,6 @@ namespace Loans_Web {
                 //If the name already exists
                 if (this[toAdd.Name] != null) {
 
-
                     Expenses.Remove(this[toAdd.Name]);
                     Expenses.Add(toAdd);
                     //this[toAdd.Name] = new Expense(toAdd);
@@ -65,6 +64,7 @@ namespace Loans_Web {
                 else {
 
                     Expenses.Add(new Expense((Expense)Session["NewExpense"]));
+                    btnCalc_Click(sender, e);
                 }
 
                 Session.Remove("NewExpense");
@@ -72,8 +72,6 @@ namespace Loans_Web {
 
             rptExpenses.DataBind();
             PrintExpenses();
-
-            //btnCalc_Click(sender, e);
         }
 
 
@@ -82,7 +80,6 @@ namespace Loans_Web {
         private string ExpensesToString() {
 
             string test = String.Join(",", Expenses.Select(x => x.ToString()).ToArray());
-            lblTest.Text = test;
             return test;
         }
 
@@ -95,11 +92,10 @@ namespace Loans_Web {
             master += Loans.ToString() + ",";
             master += Interest.ToString() + ",";
             master += ToLoans.ToString() + ",";
-            master += ddlState.SelectedItem.ToString() + ",";
+            master += ddlState.SelectedValue.ToString() + ",";
 
             master += ExpensesToString();
-            lblTest.Text = master;
-
+            
             //FileStream fs = File.Create("Expense Loadout", 1024, FileOptions.WriteThrough);
             Response.Clear();
             Response.Buffer = true;
@@ -153,7 +149,7 @@ namespace Loans_Web {
             stuff.RemoveAt(0);
 
             //ddlState.SelectedValue = stuff[0];
-            ddlState.SelectedValue = "MA";
+            ddlState.SelectedValue = stuff[0];
             stuff.RemoveAt(0);
 
             ExpensesFromString(stuff);
@@ -283,15 +279,6 @@ namespace Loans_Web {
             RefreshExpenses();
         }
 
-
-
-        /*
-        private void tbrSalary_Scroll(object sender, EventArgs e) {
-            Read_Salary();
-            printIncomeInfo();
-            btnCalc_Click(sender, e);
-        }
-        */
 
 
         public void Read_Salary() {

@@ -6,7 +6,6 @@
 <head runat="server">
     <title>Budget-Calc</title>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js" integrity="sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg==" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 </head>
@@ -36,9 +35,6 @@
             right: 0;
             width: 100%;
             height: 100vh;
-        }
-
-        .bg {
         }
 
 
@@ -331,16 +327,19 @@
 
 
                         <div id="moneyWrapper" class="border border-dark p-2">
+
+
                             <canvas id="moneyChart" style="z-index: 2;" width="600" height="400"></canvas>
+
                         </div>
 
 
                         <script>
                             "use strict"
 
-                            var moneyCanvas = document.getElementById("moneyChart").getContext("2d");
+                            const moneyCanvas = document.getElementById("moneyChart").getContext("2d");
                             var xLabels = [];
-                            var colorPalete = ["orange", "yellow", "darkorchid", "lightcoral", "lightseagreen", "navy", "springgreen"];
+                            const colorPalete = ["orange", "yellow", "darkorchid", "lightcoral", "lightseagreen", "navy", "springgreen"];
 
 
                             var jsonData;
@@ -486,38 +485,7 @@
 
 
 
-                            console.log("here boy PLEASW");
-                            //console.log(exLines);
-
-
-
-
-                            const graphData = {
-                                labels: xLabelData,
-                                datasets: exLines
-                            };
-
-
-                            const config = {
-                                type: 'line',
-                                data: graphData,
-
-                                options: {
-                                    responsive: true,
-                                    plugins: {
-                                        legend: {
-                                            position: 'top',
-                                        },
-                                        title: {
-                                            display: true,
-                                            text: 'Expenses Breakdown'
-                                        }
-                                    }
-                                }
-                            };
-
-
-
+                            window.myChart = new Chart();
 
 
 
@@ -531,7 +499,41 @@
                                 GetxLabelData();
                                 GetSessionExpenses();
 
-                                var myChart = new Chart(
+
+                                console.log("Data git GOT");
+
+
+                                const graphData = {
+                                    labels: xLabelData,
+                                    datasets: exLines
+                                };
+
+
+                                const config = {
+                                    type: 'line',
+                                    data: graphData,
+
+                                    options: {
+                                        responsive: true,
+                                        plugins: {
+                                            legend: {
+                                                position: 'top',
+                                            },
+                                            title: {
+                                                display: true,
+                                                text: 'Expenses Breakdown'
+                                            }
+                                        }
+                                    }
+                                };
+
+
+                                if (window.myChart != null) {
+                                    window.myChart.destroy();
+                                    console.log("destroyed");
+                                }
+
+                                myChart = new Chart(
                                     moneyCanvas,
                                     config
                                 );
@@ -551,31 +553,29 @@
                         <!-- Payment Details -->
                         <div class="my-4" style="position: relative; right: 0px">
 
-                            <!-- Monthly Payment -->
-                            <div class="input-group my-2 justify-content-end">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Monthly Payment</span>
+                                <!-- Monthly Payment -->
+                                <div class="input-group my-2 justify-content-end">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Monthly Payment</span>
+                                    </div>                                    
+                                    <asp:TextBox ID="txtMonthlyPayment" Enabled="false" runat="server" />
                                 </div>
-                                <asp:TextBox ID="txtMonthlyPayment" Enabled="false" runat="server"></asp:TextBox>
-                            </div>
 
-                            <!-- Time to Pay -->
-                            <div class="input-group my-2 justify-content-end">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Time to Pay (YY/MM)</span>
+                                <!-- Time to Pay -->
+                                <div class="input-group my-2 justify-content-end">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Time to Pay (YY/MM)</span>
+                                    </div>
+                                    <asp:TextBox ID="txtTimeToPay" Enabled="false" runat="server"></asp:TextBox>
                                 </div>
-                                <asp:TextBox ID="txtTimeToPay" Enabled="false" runat="server"></asp:TextBox>
-                            </div>
 
-                            <!-- Total Paid -->
-                            <div class="input-group my-2 justify-content-end">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Total Paid</span>
+                                <!-- Total Paid -->
+                                <div class="input-group my-2 justify-content-end">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Total Paid</span>
+                                    </div>
+                                    <asp:TextBox ID="txtTotalPaid" Enabled="false" runat="server"></asp:TextBox>
                                 </div>
-                                <asp:TextBox ID="txtTotalPaid" Enabled="false" runat="server"></asp:TextBox>
-                            </div>
-
-
 
                         </div>
 

@@ -53,16 +53,20 @@
 
 
         <!-- Date Pickers -->
-        <div class="d-flex flex-row justify-content-center">
+        <div class="d-flex justify-content-around" id="divDatePickers" runat="server">
             
 
-            <div class="">
-                Start Date:<br/>
+            <div class="col-6 bg-white p-1 m-1" style="border-radius: 8px">
+
+                <div class="d-flex justify-content-center h3">Start Date</div>
                 <asp:Calendar ID="cdrStart" CssClass="mx-2 px-2" runat="server" OnSelectionChanged="cdrStart_SelectionChanged" AutoPostBack="true"></asp:Calendar>
             </div>
 
-            <div class="">
-                End Date:<br/>
+
+
+            <div class="col-6 bg-white p-1 m-1 justify-content-center" style="border-radius: 8px">
+                
+                <div class="d-flex justify-content-center h3">End Date</div>
                 <asp:Calendar ID="cdrEnd" CssClass="mx-2" runat="server" OnSelectionChanged="cdrEnd_SelectionChanged" AutoPostBack="true"></asp:Calendar>
             </div>
 
@@ -76,7 +80,7 @@
         <div class="col-12 mt-5 d-flex justify-content-around">
 
             <asp:Button ID="btnCancel" class="btn btn-danger d-inline" Text="Cancel" runat="server" OnClick="btnCancel_Click" />
-            <asp:Button ID="btnCreateExpense" class="btn btn-info" Text="Create" runat="server" OnClick="btnCreateExpense_Click" />
+            <asp:Button ID="btnCreateExpense" class="btn btn-success" Text="Create" runat="server" OnClick="btnCreateExpense_Click" />
         </div>
     </div>
 

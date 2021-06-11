@@ -111,9 +111,52 @@ namespace Loans_Web
             this.Time = new int[2];
         }
 
+        public Expense(string[] inputs) {
+
+            FromString(inputs);
+        }
+
         public void Recur(){
             this.recurring = true;
         }
+
+
+        public override string ToString() {
+
+            string storageString = "";
+
+            storageString += this.Name + ",";
+            storageString += this.Amount.ToString() + ",";            //double
+            //storageString += this.CurrentAmount.ToString() + ",";     //double
+            storageString += this.ToExpense.ToString() + ",";         //double
+            storageString += this.recurring.ToString() + ",";
+            //storageString += this.Time.ToString();
+            storageString += this.StartDate.ToString() + ",";
+            storageString += this.EndDate.ToString();
+            //storageString += this.payDates.ToString();
+            //storageString += this.Payment.ToString();
+
+            return storageString;
+            //return base.ToString();
+        }
+
+
+        public string FromString(string[] inputs) {
+
+            string[] storageString = inputs;
+
+            this.Name = storageString[0];
+            this.Amount = double.Parse(storageString[1]);       //double
+            this.ToExpense = double.Parse(storageString[2]);    //double
+            this.recurring = bool.Parse(storageString[3]);
+            this.StartDate = DateTime.Parse(storageString[4]);
+            this.EndDate = DateTime.Parse(storageString[5]);
+            
+            payDates = new List<string>();
+
+            return storageString.ToString();
+        }
+
 
         public string PrintExpense(double MonthlyDisposable)
         {
