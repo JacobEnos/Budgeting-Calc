@@ -40,24 +40,6 @@ namespace Loans_Web {
         protected global::System.Web.UI.WebControls.TextBox txtToLoans;
         
         /// <summary>
-        /// txtLoans control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLoans;
-        
-        /// <summary>
-        /// txtLoanInterest control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLoanInterest;
-        
-        /// <summary>
         /// ddlState control.
         /// </summary>
         /// <remarks>
@@ -85,22 +67,22 @@ namespace Loans_Web {
         protected global::System.Web.UI.WebControls.TextBox txtFederalTax;
         
         /// <summary>
-        /// btnCreateExpense control.
+        /// txtLoans control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCreateExpense;
+        protected global::System.Web.UI.WebControls.TextBox txtLoans;
         
         /// <summary>
-        /// rptExpenses control.
+        /// txtLoanInterest control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptExpenses;
+        protected global::System.Web.UI.WebControls.TextBox txtLoanInterest;
         
         /// <summary>
         /// txtMonthlyPayment control.
@@ -137,5 +119,50 @@ namespace Loans_Web {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnCalc;
+        
+        /// <summary>
+        /// btnSaveCSV control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnSaveCSV;
+        
+        /// <summary>
+        /// rptExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptExpenses;
+        
+        /// <summary>
+        /// uplExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.FileUpload uplExpenses;
+        
+        /// <summary>
+        /// btnReadCSV control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnReadCSV;
+        
+        /// <summary>
+        /// btnCreateExpense control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCreateExpense;
     }
 }

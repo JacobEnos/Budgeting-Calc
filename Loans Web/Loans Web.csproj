@@ -73,7 +73,6 @@
     <Content Include="CreateExpense.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="Main.aspx" />
-    <Content Include="Moment.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -56,7 +57,6 @@ namespace Loans_Web {
                 //If the name already exists
                 if (this[toAdd.Name] != null) {
 
-
                     Expenses.Remove(this[toAdd.Name]);
                     Expenses.Add(toAdd);
                     //this[toAdd.Name] = new Expense(toAdd);
@@ -64,6 +64,7 @@ namespace Loans_Web {
                 else {
 
                     Expenses.Add(new Expense((Expense)Session["NewExpense"]));
+                    btnCalc_Click(sender, e);
                 }
 
                 Session.Remove("NewExpense");
@@ -71,9 +72,90 @@ namespace Loans_Web {
 
             rptExpenses.DataBind();
             PrintExpenses();
-
-            btnCalc_Click(sender, e);
         }
+
+
+
+        //Prepare a CSV string from the Expenses list
+        private string ExpensesToString() {
+
+            string test = String.Join(",", Expenses.Select(x => x.ToString()).ToArray());
+            return test;
+        }
+
+
+        public void AllToString() {
+
+            string master = "";
+
+            master += Salary.ToString() + ",";
+            master += Loans.ToString() + ",";
+            master += Interest.ToString() + ",";
+            master += ToLoans.ToString() + ",";
+            master += ddlState.SelectedValue.ToString() + ",";
+
+            master += ExpensesToString();
+            
+            //FileStream fs = File.Create("Expense Loadout", 1024, FileOptions.WriteThrough);
+            Response.Clear();
+            Response.Buffer = true;
+            Response.AddHeader("content-disposition", "attachment;filename=SqlExport.csv");
+            Response.Charset = "";
+            Response.ContentType = "application/text";
+            Response.Output.Write(master);
+            Response.Flush();
+            Response.End();
+            //Response.Write(master);
+        }
+
+        
+
+
+
+
+        private void ExpensesFromString(List<string> inputs) {
+
+            List<Expense> e = new List<Expense>();
+
+            int propCount = 6;
+            while (inputs.Count > 0) {
+
+                string[] expenseParams = new string[6];
+                expenseParams = inputs.Take(6).ToArray();
+                e.Add(new Expense(expenseParams));
+                inputs.RemoveRange(0, propCount);
+            }
+
+            Expenses.Clear();
+            Expenses = new List<Expense>(e);
+        }
+
+
+        private void AllFromString(string input) {
+
+            string master = input;
+            List<string> stuff = master.Split(',').ToList();
+
+            Salary = double.Parse(stuff[0]);
+            stuff.RemoveAt(0);
+
+            Loans = double.Parse(stuff[0]);
+            stuff.RemoveAt(0);
+
+            Interest = double.Parse(stuff[0]);
+            stuff.RemoveAt(0);
+
+            ToLoans = double.Parse(stuff[0]);
+            stuff.RemoveAt(0);
+
+            //ddlState.SelectedValue = stuff[0];
+            ddlState.SelectedValue = stuff[0];
+            stuff.RemoveAt(0);
+
+            ExpensesFromString(stuff);
+        }
+
+
 
 
 
@@ -199,15 +281,6 @@ namespace Loans_Web {
 
 
 
-
-        private void tbrSalary_Scroll(object sender, EventArgs e) {
-            Read_Salary();
-            printIncomeInfo();
-            btnCalc_Click(sender, e);
-        }
-
-
-
         public void Read_Salary() {
 
             double temp = -1;
@@ -216,7 +289,6 @@ namespace Loans_Web {
 
                 Salary = temp;
             }
-
 
             txtSalary.Text = Salary.ToString("0");
         }
@@ -476,11 +548,11 @@ namespace Loans_Web {
 
                     xLabels.Add(timer.ToShortDateString());
 
-                    
-
                     //Unspent data;
                     data.Add(new monthArgs(timer.ToShortDateString(), Math.Truncate(leftThisMonth)));
                 }
+
+                PrintExpenses();
             }
 
 
@@ -1016,6 +1088,22 @@ namespace Loans_Web {
             Read_Salary();
         }
 
+        protected void btnSaveCSV_Click(object sender, EventArgs e) {
+            AllToString();
+        }
+
+        protected void btnReadCSV_Click(object sender, EventArgs e) {
+
+            if (uplExpenses.HasFile) {
+
+                // get the file stream in a readable way
+                StreamReader reader = new StreamReader(uplExpenses.PostedFile.InputStream);
+                
+                AllFromString(reader.ReadToEnd());
+
+                btnCalc_Click(sender, e);
+            }
+        }
     }
 
 

@@ -8,6 +8,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body onload="AjaxGetAndGraph();">
 
@@ -35,9 +36,6 @@
             right: 0;
             width: 100%;
             height: 100vh;
-        }
-
-        .bg {
         }
 
 
@@ -83,6 +81,22 @@
                 background-position: 10000px 0;
             }
         }
+
+        #divSaveCSV:hover {
+            background-color: lightgreen;
+            transition: background-color 1s ease-out;
+        }
+
+
+        #divReadCSV:hover {
+            background-color: lightblue;
+            transition: background-color 1s ease-out;
+        }
+
+        #divAddExpense:hover {
+            background-color: lightgray;
+            transition: background-color 1s ease-out;
+        }
     </style>
 
 
@@ -106,10 +120,16 @@
 
                     <div id="tile" class="bg-white mx-auto my-auto p-5 w-75" style="border-radius: 5px; box-shadow: 0px 0px 20px 5px;">
 
-                        <div class="row">
-                            <div class="col-6 justify-content-around">
+
+
+
+
+                        <div class="row mr-4">
+
+                            <div class="col-5 justify-content-around">
+
                                 <!-- Salary -->
-                                <div class="input-group w-50 my-2">
+                                <div class="input-group w-75 my-2">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Salary ($)</span>
                                     </div>
@@ -118,46 +138,21 @@
 
 
                                 <!-- Salary to Loans -->
-                                <div class="input-group w-50 my-2">
+                                <div class="input-group w-75 my-2">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Salary To Loans (%)</span>
                                     </div>
                                     <asp:TextBox ID="txtToLoans" CssClass="form-control" runat="server"></asp:TextBox>
                                 </div>
-                            </div>
-
-
-                            <!-- Loans Info -->
-                            <div class="col-6">
-
-                                <!-- Loan Amount -->
-                                <div class="input-group w-50 my-2">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Loan Amount ($)</span>
-                                    </div>
-                                    <asp:TextBox ID="txtLoans" CssClass="form-control" runat="server" />
-                                </div>
-
-                                <!-- Loan Interest Rate -->
-                                <div class="input-group w-50 my-2">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Loan Interest Rate(%)</span>
-                                    </div>
-                                    <asp:TextBox ID="txtLoanInterest" CssClass="form-control" runat="server"></asp:TextBox>
-                                </div>
 
                             </div>
-                        </div>
-
-                        <br />
-
-                        <!-- State Info/Selection -->
-                        <div class="col-12 my-4">
 
 
-                            <!-- State Name -->
-                            <div style="width: 40%">
 
+                            <!-- State Info/Selection -->
+                            <div class="col-6 offset-1 my-2">
+
+                                <!-- State Name -->
                                 <div class="input-group d-inline-flex">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">State</span>
@@ -218,386 +213,469 @@
                                         <asp:ListItem Value="WY">Wyoming</asp:ListItem>
                                     </asp:DropDownList>
                                 </div>
-                            </div>
 
 
+                                <!-- Taxes Info -->
+                                <div class="row mr-5 pr-5">
 
-                            <!-- Taxes Info -->
-                            <div class="row">
+                                    <div class="col-6">
 
-                                <div class="col-3">
-
-                                    <!-- State Tax -->
-                                    <div class="input-group d-inline-flex my-2">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">State Tax (%)</span>
+                                        <!-- State Tax -->
+                                        <div class="input-group d-inline-flex my-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">State Tax (%)</span>
+                                            </div>
+                                            <asp:TextBox ID="txtStateTax" runat="server" Enabled="false" CssClass="form-control" Style="background-color: gray"></asp:TextBox>
                                         </div>
-                                        <asp:TextBox ID="txtStateTax" runat="server" Enabled="false" CssClass="form-control" Style="background-color: gray"></asp:TextBox>
+
                                     </div>
 
-                                </div>
+                                    <div class="col-6">
 
-                                <div class="col-3">
-
-                                    <!-- Federal Tax -->
-                                    <div class="input-group d-inline-flex my-2">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Federal Tax (%)</span>
+                                        <!-- Federal Tax -->
+                                        <div class="input-group d-inline-flex my-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Federal Tax (%)</span>
+                                            </div>
+                                            <asp:TextBox ID="txtFederalTax" runat="server" Enabled="false" CssClass="form-control" Style="background-color: gray"></asp:TextBox>
                                         </div>
-                                        <asp:TextBox ID="txtFederalTax" runat="server" Enabled="false" CssClass="form-control" Style="background-color: gray"></asp:TextBox>
+
                                     </div>
                                 </div>
                             </div>
-
-
-
                         </div>
-
-
-
 
 
                         <br />
 
+                        <div class="row">
+                            <!-- Loans Info -->
+                            <div class="col-sm-4">
 
-
-
-                        <!-- Expenses -->
-                        <div class="col-12 p-5">
-
-                            <asp:Button Text="Create Expense" runat="server" ID="btnCreateExpense" OnClick="btnCreateExpense_Click" />
-
-                            <br />
-
-                            <div class="row">
-
-                                <div class="col-12">
-                                    <asp:Repeater ID="rptExpenses" runat="server">
-                                        <HeaderTemplate>
-                                        </HeaderTemplate>
-
-                                        <ItemTemplate>
-                                            <div class="my-2 p-2" style="background-color: lightgray; border-radius: 5px">
-
-                                                <div class="row">
-                                                    <div class="col-1 h2">
-                                                        <%# ((Loans_Web.Expense)Container.DataItem).Name %>
-                                                    </div>
-
-
-                                                    <div class="col-2 offset-8 d-flex justify-content-end">
-
-                                                        <asp:LinkButton ID="btnManageExpense" class="btn btn-info mx-1" runat="server" CommandName="Edit"
-                                                            CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Edit</asp:LinkButton>
-
-                                                        <asp:LinkButton ID="btnDeleteExpense" class="btn btn-danger mx-1" runat="server" CommandName="Delete"
-                                                            CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Delete</asp:LinkButton>
-                                                    </div>
-                                                </div>
-
-
-                                                <div class="flex-row d-flex justify-content-around">
-                                                    <div class="d-inline">
-                                                        <asp:Label Text="Amount:" runat="server" />
-                                                        <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Amount.ToString() %>' runat="server" />
-                                                    </div>
-
-                                                    <div class="d-inline">
-                                                        <asp:Label Text="ToExpense(%): " runat="server" />
-                                                        <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).ToExpense * 100 %>' runat="server" />
-                                                    </div>
-
-                                                    <div class="d-inline">
-                                                        <asp:Label Text="Payment: " runat="server" />
-                                                        <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Payment.ToString("C0") %>' runat="server" />
-                                                    </div>
-
-                                                    <div class="d-inline">
-                                                        <asp:Label Text="Time(YY/MM): " runat="server" />
-                                                        <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[0].ToString()%>' runat="server" />
-                                                        /
-                                                <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[1].ToString()%>' runat="server" />
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </ItemTemplate>
-                                    </asp:Repeater>
+                                <!-- Loan Amount -->
+                                <div class="input-group my-2 mr-4">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Loan Amount ($)</span>
+                                    </div>
+                                    <asp:TextBox ID="txtLoans" CssClass="form-control" runat="server" />
                                 </div>
+
+                                <!-- Loan Interest Rate -->
+                                <div class="input-group my-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Loan Interest Rate(%)</span>
+                                    </div>
+                                    <asp:TextBox ID="txtLoanInterest" CssClass="form-control" runat="server"></asp:TextBox>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 offset-2 pr-4">
+
+                                <!-- Payment Details -->
+                                <!-- <div class="my-4" style="position: relative; right: 0px">
+                                    -->
+                                <div class="">
+
+                                    <!-- Monthly Payment -->
+                                    <div class="input-group my-2 justify-content-end">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Monthly Payment</span>
+                                        </div>
+                                        <asp:TextBox ID="txtMonthlyPayment" Enabled="false" runat="server" />
+                                    </div>
+
+                                    <!-- Time to Pay -->
+                                    <div class="input-group my-2 justify-content-end">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Time to Pay (YY/MM)</span>
+                                        </div>
+                                        <asp:TextBox ID="txtTimeToPay" Enabled="false" runat="server"></asp:TextBox>
+                                    </div>
+
+                                    <!-- Total Paid -->
+                                    <div class="input-group my-2 justify-content-end">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Total Paid</span>
+                                        </div>
+                                        <asp:TextBox ID="txtTotalPaid" Enabled="false" runat="server"></asp:TextBox>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-1-xs offset-9">
+                                    <asp:Button Text="Calculate" Style="position: relative; right: 0px" class="btn btn-light border border-secondary" runat="server" ID="btnCalc" OnClick="btnCalc_Click" />
+                                </div>
+
                             </div>
                         </div>
 
+                        <br />
 
 
-                        <div id="moneyWrapper" class="border border-dark p-2">
-                            <canvas id="moneyChart" style="z-index: 2;" width="600" height="400"></canvas>
-                        </div>
+                        <div class="">
+
+                            <div id="moneyWrapper" class="border border-dark p-2 mt-2">
+                                <canvas id="moneyChart" style="z-index: 2;" width="600" height="400"></canvas>
+
+                                <!-- CSV Buttons -->
+                                <div class="row mx-1" style="height: 10vh;">
+
+                                    <div class="col-6 d-flex justify-content-center" id="divSaveCSV" title="Download Budget" onclick="SaveCSV()" >
+
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="80" fill="currentColor" class="bi bi-download mx-auto my-auto" viewBox="0 0 16 16">
+                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                                        </svg>
+                                        <asp:LinkButton ID="btnSaveCSV" runat="server" OnClick="btnSaveCSV_Click" />
+
+                                    </div>
 
 
-                        <script>
-                            "use strict"
+                                    <div class="col-6 d-flex justify-content-center" id="divReadCSV" onclick="PickCSV()" title="Upload Budget">
 
-                            var moneyCanvas = document.getElementById("moneyChart").getContext("2d");
-                            var xLabels = [];
-                            var colorPalete = ["orange", "yellow", "darkorchid", "lightcoral", "lightseagreen", "navy", "springgreen"];
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="80" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16">
+                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                                            <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
+                                        </svg>
 
+                                    </div>
 
-                            var jsonData;
-                            //Gets Unspent data
-                            function GetSessionData() {
+                                </div>
 
-                                jsonData = '<%= Session["json"] %>';
-
-                                if (jsonData != null && jsonData != "") {
-                                    jsonData = JSON.parse(jsonData);
-                                }
-
-                            };
-                            //GetSessionData();
-
-
-                            //Gets Loan payment data
-                            var loansData;
-                            function GetLoansData() {
-
-                                loansData = '<%= Session["LoanPayments"] %>';
-
-                                if (loansData != null && loansData != "") {
-                                    loansData == null;
-                                    loansData = JSON.parse(loansData);
-                                }
-                            };
-                            //GetLoansData();
-
-
-                            //Get Expense payment data
-                            var sessionExpenses = [];
-                            function GetExpenseData() {
-
-                                //Get Expenses
-                                sessionExpenses = '<%= Session["Expenses"] %>';
-
-                                if (sessionExpenses != null && sessionExpenses != "") {
-                                    sessionExpenses = JSON.parse(sessionExpenses);
-                                }
-                            };
-                            //GetExpenseData();
-
-
-                            //Gets Chronological labels
-                            var xLabelData = [];
-                            function GetxLabelData() {
-
-                                /*
-                                if (xLabelData != null) {
-                                    return;
-                                }
-                                */
-                                xLabelData = '<%= Session["xLabels"] %>';
-
-                                if (xLabelData != null && xLabelData != "") {
-                                    xLabelData = JSON.parse(xLabelData);
-
-                                }
-
-                                console.log("These dates in order?");
-                                console.log(xLabelData);
-                            };
-                            //GetxLabelData();
+                            </div>
 
 
 
 
-                            //Gets Expense data
-                            const exLines = [];
-                            function GetSessionExpenses() {
+                            <script>
+                                "use strict"
 
-                                var expenseIndex = 0;
-                                for (expenseIndex in sessionExpenses) {
+                                function SaveCSV() { document.getElementById("btnSaveCSV").click(); };
 
-                                    const thisExpense = {
-                                        label: sessionExpenses[expenseIndex].Name,
-                                        start: sessionExpenses[expenseIndex].StartDate,
-                                        end: sessionExpenses[expenseIndex].EndDate,
-                                        payDates: sessionExpenses[expenseIndex].payDates,
-                                        amount: sessionExpenses[expenseIndex].Amount,
-                                        payment: sessionExpenses[expenseIndex].Payment,
-                                        data: [],
-                                        recurring: sessionExpenses[expenseIndex].recurring,
-                                        borderColor: colorPalete[expenseIndex],
-                                        backgroundColor: colorPalete[expenseIndex]
+                                function PickCSV() { document.getElementById("uplExpenses").click(); };
+                                function ReadCSV() { document.getElementById("btnReadCSV").click(); };
+
+                            </script>
+
+
+
+
+
+                            <script>
+                                "use strict"
+
+                                const moneyCanvas = document.getElementById("moneyChart").getContext("2d");
+                                var xLabels = [];
+                                const colorPalete = ["orange", "yellow", "darkorchid", "lightcoral", "lightseagreen", "navy", "springgreen"];
+
+
+                                var jsonData;
+                                //Gets Unspent data
+                                function GetSessionData() {
+
+                                    jsonData = '<%= Session["json"] %>';
+
+                                    if (jsonData != null && jsonData != "") {
+                                        jsonData = JSON.parse(jsonData);
+                                    }
+
+                                };
+                                //GetSessionData();
+
+
+                                //Gets Loan payment data
+                                var loansData;
+                                function GetLoansData() {
+
+                                    loansData = '<%= Session["LoanPayments"] %>';
+
+                                    if (loansData != null && loansData != "") {
+                                        loansData == null;
+                                        loansData = JSON.parse(loansData);
+                                    }
+                                };
+                                //GetLoansData();
+
+
+                                //Get Expense payment data
+                                var sessionExpenses = [];
+                                function GetExpenseData() {
+
+                                    //Get Expenses
+                                    sessionExpenses = '<%= Session["Expenses"] %>';
+
+                                    if (sessionExpenses != null && sessionExpenses != "") {
+                                        sessionExpenses = JSON.parse(sessionExpenses);
+                                    }
+                                };
+                                //GetExpenseData();
+
+
+                                //Gets Chronological labels
+                                var xLabelData = [];
+                                function GetxLabelData() {
+
+                                    /*
+                                    if (xLabelData != null) {
+                                        return;
+                                    }
+                                    */
+                                    xLabelData = '<%= Session["xLabels"] %>';
+
+                                    if (xLabelData != null && xLabelData != "") {
+                                        xLabelData = JSON.parse(xLabelData);
+
+                                    }
+
+                                    console.log("These dates in order?");
+                                    console.log(xLabelData);
+                                };
+                                //GetxLabelData();
+
+
+
+
+                                //Gets Expense data
+                                const exLines = [];
+                                function GetSessionExpenses() {
+
+                                    var expenseIndex = 0;
+                                    for (expenseIndex in sessionExpenses) {
+
+                                        const thisExpense = {
+                                            label: sessionExpenses[expenseIndex].Name,
+                                            start: sessionExpenses[expenseIndex].StartDate,
+                                            end: sessionExpenses[expenseIndex].EndDate,
+                                            payDates: sessionExpenses[expenseIndex].payDates,
+                                            amount: sessionExpenses[expenseIndex].Amount,
+                                            payment: sessionExpenses[expenseIndex].Payment,
+                                            data: [],
+                                            recurring: sessionExpenses[expenseIndex].recurring,
+                                            borderColor: colorPalete[expenseIndex],
+                                            backgroundColor: colorPalete[expenseIndex]
+                                        };
+
+
+                                        const thisLinesData = [];
+
+                                        var paymentIndex = 0;
+                                        const dates = sessionExpenses[expenseIndex].payDates;
+                                        for (paymentIndex in dates) {
+
+                                            var thePayment = {};
+
+                                            if (thisExpense.recurring) {
+                                                thePayment = { x: dates[paymentIndex], y: thisExpense.amount };
+                                            }
+                                            else {
+                                                thePayment = { x: dates[paymentIndex], y: thisExpense.payment };
+                                            }
+
+                                            thisLinesData.push(thePayment);
+                                        }
+
+                                        thisExpense.data = thisLinesData;
+                                        exLines.push(thisExpense);
+
+                                        console.log("THis Lines daya");
+                                        console.log(thisLinesData);
+                                    }
+
+
+
+                                    //Loans Data
+                                    const loansGraph = {
+                                        label: 'Loans',
+                                        data: loansData,
+                                        borderColor: "red",
+                                        backgroundColor: "red"
+                                    };
+
+                                    
+                                    //Unspent Data
+                                    const graph1 = {
+                                        label: 'Unspent',
+                                        data: jsonData,
+                                        borderColor: "lightgreen",
+                                        backgroundColor: "green"
                                     };
 
 
-                                    const thisLinesData = [];
+                                    exLines.push(loansGraph);
+                                    exLines.push(graph1);
 
-                                    var paymentIndex = 0;
-                                    const dates = sessionExpenses[expenseIndex].payDates;
-                                    for (paymentIndex in dates) {
+                                    console.log("exLines");
+                                    console.log(exLines);
+                                };
+                                //GetSessionExpenses();
 
-                                        var thePayment = {};
 
-                                        if (thisExpense.recurring) {
-                                            thePayment = { x: dates[paymentIndex], y: thisExpense.amount };
+
+
+
+                                window.myChart = new Chart();
+
+
+
+                                function AjaxGetAndGraph() {
+
+                                    console.log("AJAX Guy");
+
+                                    GetSessionData();
+                                    GetLoansData();
+                                    GetExpenseData();
+                                    GetxLabelData();
+                                    GetSessionExpenses();
+
+
+                                    console.log("Data git GOT");
+
+
+                                    const graphData = {
+                                        labels: xLabelData,
+                                        datasets: exLines
+                                    };
+
+
+                                    const config = {
+                                        type: 'line',
+                                        data: graphData,
+
+                                        options: {
+                                            responsive: true,
+                                            plugins: {
+                                                legend: {
+                                                    position: 'top',
+                                                },
+                                                title: {
+                                                    display: true,
+                                                    text: 'Budget Breakdown'
+                                                }
+                                            }
                                         }
-                                        else {
-                                            thePayment = { x: dates[paymentIndex], y: thisExpense.payment };
-                                        }
+                                    };
 
-                                        thisLinesData.push(thePayment);
+
+                                    if (window.myChart != null) {
+                                        window.myChart.destroy();
+                                        console.log("destroyed");
                                     }
 
-                                    thisExpense.data = thisLinesData;
-                                    exLines.push(thisExpense);
+                                    myChart = new Chart(
+                                        moneyCanvas,
+                                        config
+                                    );
 
-                                    console.log("THis Lines daya");
-                                    console.log(thisLinesData);
-                                }
-
-
-                                //Unspent Data
-                                const graph1 = {
-                                    label: 'Unspent',
-                                    data: jsonData,
-                                    borderColor: "lightgreen",
-                                    backgroundColor: "green"
                                 };
-
-                                //Loans Data
-                                const loansGraph = {
-                                    label: 'Loans',
-                                    data: loansData,
-                                    borderColor: "red",
-                                    backgroundColor: "red"
-                                };
-
-
-
-                                exLines.push(graph1);
-                                exLines.push(loansGraph);
-
-                                console.log("exLines");
-                                console.log(exLines);
-                            };
-                            //GetSessionExpenses();
-
-
-
-
-
-                            console.log("here boy PLEASW");
-                            //console.log(exLines);
-
-
-
-
-                            const graphData = {
-                                labels: xLabelData,
-                                datasets: exLines
-                            };
-
-
-                            const config = {
-                                type: 'line',
-                                data: graphData,
-
-                                options: {
-                                    responsive: true,
-                                    plugins: {
-                                        legend: {
-                                            position: 'top',
-                                        },
-                                        title: {
-                                            display: true,
-                                            text: 'Expenses Breakdown'
-                                        }
-                                    }
-                                }
-                            };
-
-
-
-
-
-
-                            function AjaxGetAndGraph() {
-
-                                console.log("AJAX Guy");
-
-                                GetSessionData();
-                                GetLoansData();
-                                GetExpenseData();
-                                GetxLabelData();
-                                GetSessionExpenses();
-
-                                var myChart = new Chart(
-                                    moneyCanvas,
-                                    config
-                                );
-
-                            };
 
 
                             //myChart.defaults.global.defaultFontFamily = "Lato";
                             //myChart.defaults.global.defaultFontSize = 18;
 
-                        </script>
+                            </script>
 
 
+                            <!-- Expenses -->
+                            <div class="col-12 pt-3">
 
+                                <div class="d-inline-flex p-3" id="divAddExpense" onclick="addExpense()" title="Create Expense" style="border-radius: 10px">
 
-
-                        <!-- Payment Details -->
-                        <div class="my-4" style="position: relative; right: 0px">
-
-                            <!-- Monthly Payment -->
-                            <div class="input-group my-2 justify-content-end">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Monthly Payment</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="80" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                                        <path d="M8 0a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2H9v6a1 1 0 1 1-2 0V9H1a1 1 0 0 1 0-2h6V1a1 1 0 0 1 1-1z" />
+                                    </svg>
                                 </div>
-                                <asp:TextBox ID="txtMonthlyPayment" Enabled="false" runat="server"></asp:TextBox>
+
+
+                                <script>
+
+                                    function addExpense() { document.getElementById("btnCreateExpense").click(); };
+
+                                </script>
+
+
+                                <br />
+
+                                <div class="row">
+
+                                    <div class="col-12">
+                                        <asp:Repeater ID="rptExpenses" runat="server">
+                                            <HeaderTemplate>
+                                            </HeaderTemplate>
+
+                                            <ItemTemplate>
+                                                <div class="my-2 p-2" style="background-color: lightgray; border-radius: 5px; box-shadow: 0px 3px 5px -4px;">
+
+                                                    <div class="row">
+
+                                                        <div class="col-1 offset-1 h2">
+                                                            <%# ((Loans_Web.Expense)Container.DataItem).Name %>
+                                                        </div>
+
+
+                                                        <div class="col-2 offset-6 d-flex justify-content-end">
+
+                                                            <asp:LinkButton ID="btnManageExpense" class="btn btn-warning mx-1" runat="server" CommandName="Edit"
+                                                                CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Edit</asp:LinkButton>
+
+                                                            <asp:LinkButton ID="btnDeleteExpense" class="btn btn-danger mx-1" runat="server" CommandName="Delete"
+                                                                CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Delete</asp:LinkButton>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="flex-row d-flex justify-content-around">
+                                                        <div class="d-inline">
+                                                            <asp:Label Text="Amount:" runat="server" />
+                                                            <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Amount.ToString("C0") %>' runat="server" />
+                                                        </div>
+
+                                                        <div class="d-inline">
+                                                            <asp:Label Text="ToExpense(%): " runat="server" />
+                                                            <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).ToExpense * 100 %>' runat="server" />
+                                                        </div>
+
+                                                        <div class="d-inline">
+                                                            <asp:Label Text="Payment: " runat="server" />
+                                                            <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Payment.ToString("C0") %>' runat="server" />
+                                                        </div>
+
+                                                        <div class="d-inline">
+                                                            <asp:Label Text="Time(YY/MM): " runat="server" />
+                                                            <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[0].ToString()%>' runat="server" />
+                                                            /
+                                                            <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[1].ToString()%>' runat="server" />
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </ItemTemplate>
+                                        </asp:Repeater>
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Time to Pay -->
-                            <div class="input-group my-2 justify-content-end">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Time to Pay (YY/MM)</span>
-                                </div>
-                                <asp:TextBox ID="txtTimeToPay" Enabled="false" runat="server"></asp:TextBox>
+
+
+
+
+                            <div style="overflow:hidden; height: 0px">
+                                <asp:FileUpload ID="uplExpenses" runat="server" onchange="ReadCSV()" Style="z-index: -9" />
+                                <asp:Button ID="btnReadCSV" Text="Read CSV" runat="server" OnClick="btnReadCSV_Click" Style="z-index: -8" />
+                                <asp:Button Text="Create Expense" runat="server" ID="btnCreateExpense" OnClick="btnCreateExpense_Click" />
                             </div>
-
-                            <!-- Total Paid -->
-                            <div class="input-group my-2 justify-content-end">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Total Paid</span>
-                                </div>
-                                <asp:TextBox ID="txtTotalPaid" Enabled="false" runat="server"></asp:TextBox>
-                            </div>
-
-
 
                         </div>
+                        <!-- Close Tile -->
 
-
-                        <div class="col-1-xs offset-10">
-                            <asp:Button Text="Calculate" Style="position: relative; right: 0px" class="btn btn-light border border-secondary" runat="server" ID="btnCalc" OnClick="btnCalc_Click" />
-                        </div>
 
                     </div>
-                    <!-- Close Tile -->
-
 
                 </div>
+                <!-- Close background -->
 
             </div>
-            <!-- Close background -->
-
-
         </div>
-
-
-
-
     </form>
 
 
