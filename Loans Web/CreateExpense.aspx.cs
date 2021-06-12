@@ -24,6 +24,7 @@ namespace Loans_Web {
                     newExpense = new Expense((Expense)Session["EditExpense"]);
                     LoadExpense(newExpense);
                     Session.Remove("EditExpense");
+                    Session["ToReplace"] = newExpense.Name;
                 }
 
                 //If creating
@@ -45,7 +46,8 @@ namespace Loans_Web {
         protected void btnCreateExpense_Click(object sender, EventArgs e) {
 
             //Read Inputs
-            ReadValues();
+            if (!ReadValues())
+                return;
 
             Session["NewExpense"] = newExpense;
             Server.Transfer("Main.aspx");
@@ -107,11 +109,11 @@ namespace Loans_Web {
 
 
 
-        private void ReadValues() {
+        private bool ReadValues() {
 
-            ReadName();
-            ReadAmount();
-            ReadToLoans();
+            if (!ReadName() || !ReadAmount() || !ReadToLoans()) return false;
+            
+            
 
             if (chbRecurring.Checked) {
 
@@ -124,31 +126,32 @@ namespace Loans_Web {
                 ReadEndDate();
             }
 
+            return true;
         }
 
 
-        private void ReadName() {
+        private bool ReadName() {
 
-            if (txtName.Text != null && txtName.Text != "") {
+            if (txtName.Text != null && txtName.Text.Trim() != "") {
 
                 switch (txtName.Text.ToLower()) {
 
                     case "unspent":
                         MB("Unspent is a reserved Expense name");
-                        return; ;
+                        return true;
 
                     case "loans":
                         MB("Loans is a reserved Expense name");
-                        return;
+                        return true;
                     default:
                         newExpense.Name = txtName.Text;
-                        break;
+                        return true;
                 }
             }
             else {
                 MB("No Expense name entered");
-                return;
             }
+            return false;
         }
 
 
@@ -269,7 +272,7 @@ namespace Loans_Web {
 
 
 
-        private void ReadToLoans() {
+        private bool ReadToLoans() {
 
             if (!newExpense.recurring) {
 
@@ -280,13 +283,15 @@ namespace Loans_Web {
                 }
                 else {
                     MB("Couldn't read ToExpense");
+                    return false;
                 }
             }
+            return true;
         }
 
 
 
-        private void ReadAmount() {
+        private bool ReadAmount() {
 
             //Validate Amount
             double t = -1;
@@ -294,9 +299,10 @@ namespace Loans_Web {
             if (t < 0) {
 
                 lblError.Text = "Invalid amount!";
-                return;
+                return false;
             }
             newExpense.Amount = t;
+            return true;
         }
 
 
