@@ -27,6 +27,7 @@
         @import "susy";
         @import "compass/reset";
 
+
         .stars, .twinkling, .clouds {
             position: relative;
             display: block;
@@ -106,6 +107,9 @@
             box-shadow: 0px 3px 5px -2px;
             transition: box-shadow 1s ease-out;
         }
+
+        
+
     </style>
 
 
@@ -113,6 +117,9 @@
 
 
     <form id="form1" runat="server">
+
+
+
 
 
         <div class="stars">
@@ -123,11 +130,9 @@
                 <div id="bg" class="clouds p-5" style="z-index: 3">
 
 
-                    <!-- <div id="wrapper" class="flex-container d-flex vh-100"> -->
 
 
-
-                    <div id="tile" class="bg-white mx-auto my-auto p-5 w-75" style="border-radius: 5px; box-shadow: 0px 0px 20px 5px;">
+                    <div id="tile" class="container bg-white w-75 my-auto p-5" style="border-radius: 5px; box-shadow: 0px 0px 20px 5px;">
 
 
 
@@ -135,10 +140,10 @@
 
                         <div class="row mr-4">
 
-                            <div class="col-5 justify-content-around">
+                            <div class="col-xl-4 my-4">
 
                                 <!-- Salary -->
-                                <div class="input-group w-75 my-2">
+                                <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Salary ($)</span>
                                     </div>
@@ -147,7 +152,7 @@
 
 
                                 <!-- Salary to Loans -->
-                                <div class="input-group w-75 my-2">
+                                <div class="input-group my-2">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Salary To Loans (%)</span>
                                     </div>
@@ -159,7 +164,7 @@
 
 
                             <!-- State Info/Selection -->
-                            <div class="col-6 offset-1 my-2">
+                            <div class="col-xl-6 offset-xl-2 my-4">
 
                                 <!-- State Name -->
                                 <div class="input-group d-inline-flex">
@@ -255,11 +260,11 @@
                         </div>
 
 
-                        <br />
 
                         <div class="row">
+                            
                             <!-- Loans Info -->
-                            <div class="col-sm-4">
+                            <div class="col-xl-4 my-4">
 
                                 <!-- Loan Amount -->
                                 <div class="input-group my-2 mr-4">
@@ -278,12 +283,8 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-6 offset-2 pr-4">
 
-                                <!-- Payment Details -->
-                                <!-- <div class="my-4" style="position: relative; right: 0px">
-                                    -->
-                                <div class="">
+                            <div class="col-xl-6 offset-xl-2 pr-4">
 
                                     <!-- Monthly Payment -->
                                     <div class="input-group my-2 justify-content-end">
@@ -308,8 +309,6 @@
                                         </div>
                                         <asp:TextBox ID="txtTotalPaid" Enabled="false" runat="server"></asp:TextBox>
                                     </div>
-
-                                </div>
 
 
                                 <div class="col-1-xs offset-9">
