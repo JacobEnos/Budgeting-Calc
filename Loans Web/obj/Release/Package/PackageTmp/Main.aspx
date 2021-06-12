@@ -85,17 +85,26 @@
         #divSaveCSV:hover {
             background-color: lightgreen;
             transition: background-color 1s ease-out;
+            
+            box-shadow: 0px 3px 5px -2px;
+            transition: box-shadow 1s ease-out;
         }
 
 
         #divReadCSV:hover {
             background-color: lightblue;
             transition: background-color 1s ease-out;
+            
+            box-shadow: 0px 3px 5px -2px;
+            transition: box-shadow 1s ease-out;
         }
 
         #divAddExpense:hover {
             background-color: lightgray;
             transition: background-color 1s ease-out;
+
+            box-shadow: 0px 3px 5px -2px;
+            transition: box-shadow 1s ease-out;
         }
     </style>
 
@@ -440,59 +449,6 @@
                                 const exLines = [];
                                 function GetSessionExpenses() {
 
-                                    var expenseIndex = 0;
-                                    for (expenseIndex in sessionExpenses) {
-
-                                        const thisExpense = {
-                                            label: sessionExpenses[expenseIndex].Name,
-                                            start: sessionExpenses[expenseIndex].StartDate,
-                                            end: sessionExpenses[expenseIndex].EndDate,
-                                            payDates: sessionExpenses[expenseIndex].payDates,
-                                            amount: sessionExpenses[expenseIndex].Amount,
-                                            payment: sessionExpenses[expenseIndex].Payment,
-                                            data: [],
-                                            recurring: sessionExpenses[expenseIndex].recurring,
-                                            borderColor: colorPalete[expenseIndex],
-                                            backgroundColor: colorPalete[expenseIndex]
-                                        };
-
-
-                                        const thisLinesData = [];
-
-                                        var paymentIndex = 0;
-                                        const dates = sessionExpenses[expenseIndex].payDates;
-                                        for (paymentIndex in dates) {
-
-                                            var thePayment = {};
-
-                                            if (thisExpense.recurring) {
-                                                thePayment = { x: dates[paymentIndex], y: thisExpense.amount };
-                                            }
-                                            else {
-                                                thePayment = { x: dates[paymentIndex], y: thisExpense.payment };
-                                            }
-
-                                            thisLinesData.push(thePayment);
-                                        }
-
-                                        thisExpense.data = thisLinesData;
-                                        exLines.push(thisExpense);
-
-                                        console.log("THis Lines daya");
-                                        console.log(thisLinesData);
-                                    }
-
-
-
-                                    //Loans Data
-                                    const loansGraph = {
-                                        label: 'Loans',
-                                        data: loansData,
-                                        borderColor: "red",
-                                        backgroundColor: "red"
-                                    };
-
-                                    
                                     //Unspent Data
                                     const graph1 = {
                                         label: 'Unspent',
@@ -501,12 +457,38 @@
                                         backgroundColor: "green"
                                     };
 
+                                    //Loans Data
+                                    const loansGraph = {
+                                        label: 'Loans',
+                                        data: loansData,
+                                        borderColor: "red",
+                                        backgroundColor: "red"
+                                    };                                    
 
-                                    exLines.push(loansGraph);
                                     exLines.push(graph1);
+                                    exLines.push(loansGraph);
 
-                                    console.log("exLines");
-                                    console.log(exLines);
+
+                                    var expenseIndex = 0;
+                                    for (expenseIndex in sessionExpenses) {
+
+                                        const thisExpense = {
+                                            label: sessionExpenses[expenseIndex].Name,
+                                            start: sessionExpenses[expenseIndex].StartDate,
+                                            end: sessionExpenses[expenseIndex].EndDate,
+                                            amount: sessionExpenses[expenseIndex].Amount,
+                                            payment: sessionExpenses[expenseIndex].Payment,
+                                            data: [],
+                                            recurring: sessionExpenses[expenseIndex].recurring,
+                                            borderColor: colorPalete[expenseIndex],
+                                            backgroundColor: colorPalete[expenseIndex],
+                                            Payments: sessionExpenses[expenseIndex].Payments
+                                        };
+
+                                        thisExpense.data = thisExpense.Payments;
+                                        exLines.push(thisExpense);
+                                    }
+
                                 };
                                 //GetSessionExpenses();
 
@@ -519,18 +501,19 @@
 
 
                                 function AjaxGetAndGraph() {
-
-                                    console.log("AJAX Guy");
-
+                                    
                                     GetSessionData();
                                     GetLoansData();
                                     GetExpenseData();
                                     GetxLabelData();
                                     GetSessionExpenses();
 
+                                    console.log("Data received by AJAX");
+                                    console.log(exLines);
 
-                                    console.log("Data git GOT");
-
+                                    
+                                    console.log("Expenses Received:");
+                                    console.log(sessionExpenses);
 
                                     const graphData = {
                                         labels: xLabelData,
@@ -615,10 +598,10 @@
 
                                                         <div class="col-2 offset-6 d-flex justify-content-end">
 
-                                                            <asp:LinkButton ID="btnManageExpense" class="btn btn-warning mx-1" runat="server" CommandName="Edit"
+                                                            <asp:LinkButton ID="btnManageExpense" class="btn btn-warning border border-dark mx-1" runat="server" CommandName="Edit"
                                                                 CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Edit</asp:LinkButton>
 
-                                                            <asp:LinkButton ID="btnDeleteExpense" class="btn btn-danger mx-1" runat="server" CommandName="Delete"
+                                                            <asp:LinkButton ID="btnDeleteExpense" class="btn btn-danger border border-dark mx-1" runat="server" CommandName="Delete"
                                                                 CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Delete</asp:LinkButton>
                                                         </div>
                                                     </div>
@@ -654,8 +637,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
 
 
 

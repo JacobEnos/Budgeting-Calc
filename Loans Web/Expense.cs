@@ -18,7 +18,54 @@ namespace Loans_Web
             }
             return false;
         }
+        
 
+        public class monthArgs : EventArgs {
+
+            public string x { get; set; }
+            public double y { get; set; }
+
+            private void SetY(string value) { 
+                double z = -1;
+                Double.TryParse(value, out z);
+                if (z > -1) this.y = z;
+            }
+
+            public monthArgs(string date, double remaining) {
+
+                this.x = date;
+                this.y = remaining;
+            }
+
+            public monthArgs(string date, string remaining) {
+
+                this.x = date;
+
+                double z = -1;
+                Double.TryParse(remaining, out z);
+                if(z > -1)
+                    this.y = z;
+            }
+
+
+            public monthArgs(string data) {
+
+                string[] input = data.Split(':');
+
+                this.x = input[0];
+                SetY(input[1]);
+            }
+
+
+            public override string ToString() {
+
+                string toReturn = x + ":" + y.ToString();
+                return toReturn;
+            }
+        }
+
+
+        
 
         public string Name;
         public double Amount;
@@ -28,9 +75,8 @@ namespace Loans_Web
         public int[] Time;
         public DateTime StartDate;
         public DateTime EndDate;
-        public List<string> payDates;
         public double Payment;
-
+        public List<monthArgs> Payments;
 
         public Expense this[int i]{
             get{
@@ -50,7 +96,7 @@ namespace Loans_Web
             this.Time = copy.Time;
             StartDate = copy.StartDate;
             EndDate = copy.EndDate;
-            payDates = new List<string>();
+            Payments = copy.Payments;
         }
 
 
@@ -63,7 +109,7 @@ namespace Loans_Web
             this.Time = new int[2];
             StartDate = DateTime.Today;
             EndDate = DateTime.MaxValue;
-            payDates = new List<string>();
+            Payments = new List<monthArgs>();
         }
 
         public Expense(string Name)
@@ -110,11 +156,7 @@ namespace Loans_Web
             this.recurring = false;
             this.Time = new int[2];
         }
-
-        public Expense(string[] inputs) {
-
-            FromString(inputs);
-        }
+        
 
         public void Recur(){
             this.recurring = true;
@@ -127,35 +169,50 @@ namespace Loans_Web
 
             storageString += this.Name + ",";
             storageString += this.Amount.ToString() + ",";            //double
-            //storageString += this.CurrentAmount.ToString() + ",";     //double
             storageString += this.ToExpense.ToString() + ",";         //double
             storageString += this.recurring.ToString() + ",";
-            //storageString += this.Time.ToString();
             storageString += this.StartDate.ToString() + ",";
-            storageString += this.EndDate.ToString();
-            //storageString += this.payDates.ToString();
-            //storageString += this.Payment.ToString();
-
+            storageString += this.EndDate.ToString() + ",";
+            storageString += string.Join(",", Payments);
+            
             return storageString;
-            //return base.ToString();
         }
 
 
-        public string FromString(string[] inputs) {
 
-            string[] storageString = inputs;
+        //Construct a single Expense from the string
+        public string FromString(string inputs) {
 
+            //Separate parameters
+            string[] storageString = inputs.Split(',');
+
+            //Store params
             this.Name = storageString[0];
             this.Amount = double.Parse(storageString[1]);       //double
             this.ToExpense = double.Parse(storageString[2]);    //double
             this.recurring = bool.Parse(storageString[3]);
             this.StartDate = DateTime.Parse(storageString[4]);
             this.EndDate = DateTime.Parse(storageString[5]);
-            
-            payDates = new List<string>();
 
-            return storageString.ToString();
+            //Remove params from array
+            List<string> temp = new List<string>(storageString.ToList());
+            temp.RemoveRange(0,6);
+            storageString = temp.ToArray();
+
+
+            //Re-build Payments in string
+            List<monthArgs> copiedArgs = new List<monthArgs>();
+            for(int i=0; i<storageString.Length-1; i+=2) {
+
+                monthArgs mA = new monthArgs(storageString[i]);
+                copiedArgs.Add(mA);
+            }
+            
+            this.Payments = copiedArgs;
+
+            return this.ToString();
         }
+
 
 
         public string PrintExpense(double MonthlyDisposable)
@@ -199,6 +256,7 @@ namespace Loans_Web
         }
 
 
+
         public double ExpenseAmount(double MonthlyIncome, DateTime today)
         {
             if (this.recurring){
@@ -214,6 +272,8 @@ namespace Loans_Web
             }
         }
 
+
+
         public double PaymentAmount(double MonthlyIncome)
         {
             if (this.recurring){
@@ -227,47 +287,28 @@ namespace Loans_Web
         }
 
 
-        public void IncrementExpense(double MonthlyIncome, DateTime date){
-            
-            //if the expense is not recurring
-            if (recurring == false){
-    
-                //and the Expense is not paid off
-                if (CurrentAmount > 0){
 
-                    //and a payment should be made
-                    if (StartDate <= date  &&  
-                        (date < EndDate  ||  DateTime.MaxValue == EndDate)){
-
-                        //Subtract todays amount from this expense
-                        CurrentAmount -= ExpenseAmount(MonthlyIncome, date);
-
-                        //Record paid month
-                        payDates.Add(date.ToShortDateString());
-                        AddMonth();
-                    }
-                }   
-            }
-
-            //If the expense is recurring
-            //And is occuring
-            else if(StartDate <= date  &&  date < EndDate){   
-
-                //Record paid Month
-                AddMonth();
-            }
-        }
-
-
-        public double IncrementMonth(double MonthlyIncome) {
+        public double IncrementMonth(double MonthlyIncome, DateTime today) {
 
             AddMonth();
 
             //if the expense is recurring
-            if (recurring) return Amount;
+            if (recurring) {
+
+                Payments.Add(new monthArgs(today.ToString("MM/yyyy"), Amount));
+                return Amount;
+            }
 
             double toPay = ToExpense * MonthlyIncome;
+
+            if (CurrentAmount < toPay) {
+                toPay = CurrentAmount;
+            }
+
             CurrentAmount -= toPay;
+            Payments.Add(new monthArgs(today.ToString("MM/yyyy"), toPay));
+
+
             return toPay;
         }
 
