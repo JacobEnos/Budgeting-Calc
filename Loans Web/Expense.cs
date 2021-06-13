@@ -186,19 +186,28 @@ namespace Loans_Web
             //Separate parameters
             string[] storageString = inputs.Split(',');
 
-            //Store params
-            this.Name = storageString[0];
-            this.Amount = double.Parse(storageString[1]);       //double
-            this.ToExpense = double.Parse(storageString[2]);    //double
-            this.recurring = bool.Parse(storageString[3]);
-            this.StartDate = DateTime.Parse(storageString[4]);
-            this.EndDate = DateTime.Parse(storageString[5]);
+            try {
 
-            //Remove params from array
-            List<string> temp = new List<string>(storageString.ToList());
-            temp.RemoveRange(0,6);
-            storageString = temp.ToArray();
+                //Store params
+                this.Name = storageString[0];
+                this.Amount = double.Parse(storageString[1]);       //double
+                this.ToExpense = double.Parse(storageString[2]);    //double
+                this.recurring = bool.Parse(storageString[3]);
+                this.StartDate = DateTime.Parse(storageString[4]);
+                this.EndDate = DateTime.Parse(storageString[5]);
 
+                //Remove params from array
+                List<string> temp = new List<string>(storageString.ToList());
+                temp.RemoveRange(0, 6);
+                storageString = temp.ToArray();
+
+            }
+            catch (IndexOutOfRangeException ex) {
+                //Improperly formed csv
+            }
+
+
+            
 
             //Re-build Payments in string
             List<monthArgs> copiedArgs = new List<monthArgs>();

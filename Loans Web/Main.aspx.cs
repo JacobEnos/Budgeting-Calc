@@ -88,7 +88,7 @@ namespace Loans_Web {
             Response.Buffer = true;
             Response.AddHeader("content-disposition", "attachment;filename=SqlExport.csv");
             Response.Charset = "";
-            Response.ContentType = "application/text";
+            Response.ContentType = "text/plain";
             Response.Output.Write(master);
             Response.Flush();
             Response.End();
@@ -140,7 +140,9 @@ namespace Loans_Web {
             ddlState.SelectedValue = stuff[0];
             stuff.RemoveAt(0);
 
-            ExpensesFromString(string.Join(",", stuff.ToArray()));
+            string savedExpenses = string.Join(",", stuff.ToArray());
+            if(savedExpenses != null &&  savedExpenses != "")
+                ExpensesFromString(savedExpenses);
         }
 
 
