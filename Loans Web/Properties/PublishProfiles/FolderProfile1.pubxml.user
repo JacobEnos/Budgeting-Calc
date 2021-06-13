@@ -10,10 +10,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   </PropertyGroup>
   <ItemGroup>
     <File Include="bin/Loans Web.dll">
-      <publishTime>06/12/2021 20:04:09</publishTime>
+      <publishTime>06/13/2021 12:41:41</publishTime>
     </File>
     <File Include="bin/Loans Web.pdb">
-      <publishTime>06/12/2021 20:04:09</publishTime>
+      <publishTime>06/13/2021 12:41:41</publishTime>
     </File>
     <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
       <publishTime>05/24/2018 14:38:22</publishTime>
@@ -165,8 +165,17 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Default.aspx">
       <publishTime>05/19/2021 10:32:56</publishTime>
     </File>
+    <File Include="images/download.svg">
+      <publishTime>06/13/2021 12:38:32</publishTime>
+    </File>
+    <File Include="images/plus.svg">
+      <publishTime>06/13/2021 12:38:32</publishTime>
+    </File>
+    <File Include="images/upload.svg">
+      <publishTime>06/13/2021 12:38:32</publishTime>
+    </File>
     <File Include="Main.aspx">
-      <publishTime>06/12/2021 19:44:23</publishTime>
+      <publishTime>06/13/2021 12:41:15</publishTime>
     </File>
     <File Include="Master.Master">
       <publishTime>05/20/2021 10:47:17</publishTime>

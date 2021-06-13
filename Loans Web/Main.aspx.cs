@@ -86,7 +86,7 @@ namespace Loans_Web {
             //FileStream fs = File.Create("Expense Loadout", 1024, FileOptions.WriteThrough);
             Response.Clear();
             Response.Buffer = true;
-            Response.AddHeader("content-disposition", "attachment;filename=SqlExport.csv");
+            Response.AddHeader("content-disposition", "attachment;filename=Budget_Export.txt");
             Response.Charset = "";
             Response.ContentType = "text/plain";
             Response.Output.Write(master);
