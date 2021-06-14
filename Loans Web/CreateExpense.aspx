@@ -54,15 +54,13 @@
 
         <!-- Date Pickers -->
         <div class="d-flex justify-content-around" id="divDatePickers" runat="server">
-            
+
 
             <div class="col-6 bg-white p-1 m-1" style="border-radius: 8px">
 
                 <div class="d-flex justify-content-center h3">Start Date</div>
                 <asp:Calendar ID="cdrStart" CssClass="mx-2 px-2" runat="server" OnSelectionChanged="cdrStart_SelectionChanged" AutoPostBack="true"></asp:Calendar>
             </div>
-
-
 
             <div class="col-6 bg-white p-1 m-1 justify-content-center" style="border-radius: 8px">
                 
@@ -71,9 +69,6 @@
             </div>
 
         </div>
-
-
-
 
 
 

@@ -1015,6 +1015,64 @@ namespace Loans_Web {
                 btnCalc_Click(sender, e);
             }
         }
+
+        protected void rptExpenseBound(object sender, RepeaterItemEventArgs e) {
+
+            try {
+
+                //Found objects
+                System.Web.UI.HtmlControls.HtmlGenericControl divDataRow = (System.Web.UI.HtmlControls.HtmlGenericControl)e.Item.FindControl("divExpenseData");
+                
+                string[] sa = e.Item.DataItem.ToString().Split(',');
+                bool recurring = bool.Parse(sa[3]);
+                int paymentCount = sa.Count() - 6;
+
+                //Generate Payment div
+                Label lblPayment = new Label();
+                divDataRow.Controls.Add(lblPayment);
+
+                //Generate Time div
+                Label lblTime = new Label();
+                divDataRow.Controls.Add(lblTime);
+
+
+                if (recurring) {
+                    
+                    //Populate fields
+                    lblPayment.Text = "<h3>Recurring</h3>";
+                    lblTime.Text = "Payments: " + paymentCount;
+
+                    //Add controls
+                    divDataRow.Controls.Add(lblPayment);
+                    divDataRow.Controls.Add(lblTime);
+                }
+                else {
+
+                    //Generate ToExpense div
+                    Label lblAddToExpense = new Label();
+                    divDataRow.Controls.Add(lblAddToExpense);
+                    
+                    //Populate Fields
+                    lblAddToExpense.Text = "To Expense(%): " + sa[2].Remove(0, 2);
+                    lblPayment.Text = "Payment: " + double.Parse(sa[6].Split(':')[1]).ToString("C0");
+                    lblTime.Text = "Time(YY/MM): " + (paymentCount / 12).ToString() + '/' + (paymentCount % 12).ToString();
+
+                    //Add Controls
+                    divDataRow.Controls.Add(lblAddToExpense);
+                    divDataRow.Controls.Add(lblPayment);
+                    divDataRow.Controls.Add(lblTime);
+                }
+
+
+
+
+            }
+            catch (Exception ex) {
+
+            }
+        }
+
+
     }
 
 

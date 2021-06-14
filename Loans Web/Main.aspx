@@ -6,9 +6,10 @@
 <head runat="server">
     <title>Budget-Calc</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js" integrity="sha512-VCHVc5miKoln972iJPvkQrUYYq7XpxXzvqNfiul1H4aZDwGBGC0lq373KNleaB2LpnC2a/iNfE5zoRYmB4TRDQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous" />
+
 </head>
 <body class="stars" onload="AjaxGetAndGraph();">
 
@@ -113,7 +114,7 @@
     <form id="form1" runat="server">
 
 
-        <div class="twinkling">
+        <div> <!-- class="twinkling" -->
 
             <!-- container -->
             <div id="bg" class="clouds p-5" style="z-index: 3">
@@ -274,36 +275,36 @@
 
 
                         <div class="col-xl-6 offset-xl-2 pr-4">
-
-                            <!-- Monthly Payment -->
-                            <div class="input-group my-2 justify-content-end">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Monthly Payment</span>
+                            <asp:Panel ID="Panel1" runat="server">
+                                <!-- Monthly Payment -->
+                                <div class="input-group my-2 justify-content-end">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Monthly Payment</span>
+                                    </div>
+                                    <asp:TextBox ID="txtMonthlyPayment" Enabled="false" runat="server" />
                                 </div>
-                                <asp:TextBox ID="txtMonthlyPayment" Enabled="false" runat="server" />
-                            </div>
 
-                            <!-- Time to Pay -->
-                            <div class="input-group my-2 justify-content-end">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Time to Pay (YY/MM)</span>
+                                <!-- Time to Pay -->
+                                <div class="input-group my-2 justify-content-end">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Time to Pay (YY/MM)</span>
+                                    </div>
+                                    <asp:TextBox ID="txtTimeToPay" Enabled="false" runat="server"></asp:TextBox>
                                 </div>
-                                <asp:TextBox ID="txtTimeToPay" Enabled="false" runat="server"></asp:TextBox>
-                            </div>
 
-                            <!-- Total Paid -->
-                            <div class="input-group my-2 justify-content-end">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Total Paid</span>
+                                <!-- Total Paid -->
+                                <div class="input-group my-2 justify-content-end">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Total Paid</span>
+                                    </div>
+                                    <asp:TextBox ID="txtTotalPaid" Enabled="false" runat="server"></asp:TextBox>
                                 </div>
-                                <asp:TextBox ID="txtTotalPaid" Enabled="false" runat="server"></asp:TextBox>
-                            </div>
 
 
-                            <div class="col-1-xs offset-9">
-                                <asp:Button Text="Calculate" Style="position: relative; right: 0px" class="btn btn-light border border-secondary" runat="server" ID="btnCalc" OnClick="btnCalc_Click" />
-                            </div>
-
+                                <div class="col-1-xs offset-9">
+                                    <asp:Button Text="Calculate" Style="position: relative; right: 0px" class="btn btn-light border border-secondary" runat="server" ID="btnCalc" OnClick="btnCalc_Click" />
+                                </div>
+                            </asp:Panel>
                         </div>
                     </div>
 
@@ -546,10 +547,17 @@
                                 <path d="M8 0a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2H9v6a1 1 0 1 1-2 0V9H1a1 1 0 0 1 0-2h6V1a1 1 0 0 1 1-1z" />
                             </svg> -->
 
-                            <img src="images/plus.svg" width="80"/>
+                            <img src="images/plus.svg" width="80" />
 
                         </div>
 
+
+
+                        <div style="overflow: hidden; height: 0px">
+                            <asp:FileUpload ID="uplExpenses" runat="server" onchange="ReadCSV()" />
+                            <asp:Button ID="btnReadCSV" Text="Read CSV" runat="server" OnClick="btnReadCSV_Click" />
+                            <asp:Button Text="Create Expense" runat="server" ID="btnCreateExpense" OnClick="btnCreateExpense_Click" />
+                        </div>
 
                         <script>
 
@@ -563,7 +571,7 @@
                         <div class="row">
 
                             <div class="col-12">
-                                <asp:Repeater ID="rptExpenses" runat="server">
+                                <asp:Repeater ID="rptExpenses" OnItemDataBound="rptExpenseBound" runat="server">
                                     <HeaderTemplate>
                                     </HeaderTemplate>
 
@@ -588,28 +596,13 @@
                                             </div>
 
 
-                                            <div class="flex-row d-flex justify-content-around">
+                                            <div id="divExpenseData" class="flex-row d-flex justify-content-around" runat="server">
+                                                
                                                 <div class="d-inline">
                                                     <asp:Label Text="Amount:" runat="server" />
                                                     <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Amount.ToString("C0") %>' runat="server" />
                                                 </div>
 
-                                                <div class="d-inline">
-                                                    <asp:Label Text="ToExpense(%): " runat="server" />
-                                                    <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).ToExpense * 100 %>' runat="server" />
-                                                </div>
-
-                                                <div class="d-inline">
-                                                    <asp:Label Text="Payment: " runat="server" />
-                                                    <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Payment.ToString("C0") %>' runat="server" />
-                                                </div>
-
-                                                <div class="d-inline">
-                                                    <asp:Label Text="Time(YY/MM): " runat="server" />
-                                                    <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[0].ToString()%>' runat="server" />
-                                                    /
-                                                            <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[1].ToString()%>' runat="server" />
-                                                </div>
                                             </div>
 
                                         </div>
@@ -621,11 +614,6 @@
 
 
 
-                    <div style="overflow: hidden; height: 0px">
-                        <asp:FileUpload ID="uplExpenses" runat="server" onchange="ReadCSV()" Style="z-index: -9" />
-                        <asp:Button ID="btnReadCSV" Text="Read CSV" runat="server" OnClick="btnReadCSV_Click" Style="z-index: -8" />
-                        <asp:Button Text="Create Expense" runat="server" ID="btnCreateExpense" OnClick="btnCreateExpense_Click" />
-                    </div>
 
                 </div>
                 <!-- Close Tile -->
