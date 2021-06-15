@@ -203,7 +203,7 @@ namespace Loans_Web {
         public double ToLoans;
         public double Tax;
         public List<Expense> Expenses = new List<Expense>();
-        public List<Expense.monthArgs> LoanPayments = new List<Expense.monthArgs>();
+        //public List<Expense.monthArgs> LoanPayments = new List<Expense.monthArgs>();
         State[] States = new State[50];
 
 
@@ -460,21 +460,20 @@ namespace Loans_Web {
         protected void btnCalc_Click(object sender, EventArgs e) {
 
             ReadValues();
-            printIncomeInfo();
+            //printIncomeInfo();
+
+            
+            //Log Results
+            List<string> xLabels = new List<string>();
+            List<Expense.monthArgs> loanPayments = new List<Expense.monthArgs>();
+            List<Expense.monthArgs> unspentData = new List<Expense.monthArgs>();
+            double totalLoansPaid = 0;
+
 
             //Track time internally
-            DateTime timer = new DateTime();
-            //timer = DateTime.Today;
-            timer = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-
-            //Log spending money
-            List<double> spendingMoney = new List<double>();
-            List<string> xLabels = new List<string>();
-            List<Expense.monthArgs> data = new List<Expense.monthArgs>();
-
-            //Create Total Loan Cost/Time Trackers
+            DateTime timer = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             int monthsPaid = 0;
-            double totalLoansPaid = 0;
+            
 
             //Reset Expense Amounts and Times, and Date
             ZeroTimes();
@@ -484,10 +483,6 @@ namespace Loans_Web {
             double monthlyAvailable = MonthlyIncome();
             bool useLoans = UseLoans();
             double loanPayment = CalcLoanPayment();
-            txtMonthlyPayment.Text = loanPayment.ToString("C");
-
-            //if (useLoans) monthlyAvailable -= loanPayment;
-            LoanPayments = new List<Expense.monthArgs>();
 
 
 
@@ -526,7 +521,7 @@ namespace Loans_Web {
                         totalLoansPaid += loanPayment;
 
                         //Loan Payment record
-                        LoanPayments.Add(new Expense.monthArgs(timer.ToString("MM/yyyy"), Math.Truncate(loanPayment)));
+                        loanPayments.Add(new Expense.monthArgs(timer.ToString("MM/yyyy"), Math.Truncate(loanPayment)));
                         monthsPaid++;
                     }
                 }
@@ -534,52 +529,63 @@ namespace Loans_Web {
                 //Expense logic
                 leftThisMonth = IncrementAll(leftThisMonth, timer);
 
-                //Show over-budget result
+                //If Over-Budget
                 if (leftThisMonth < 0) {
                     OverBudget();
-                    return;
+                    break;
                 }
                 else {
-                    spendingMoney.Add(leftThisMonth);
-
+                    //Log On-Budget Month
                     xLabels.Add(timer.ToString("MM/yyyy"));
-
-                    //Unspent data;
-                    data.Add(new Expense.monthArgs(timer.ToString("MM/yyyy"), Math.Truncate(leftThisMonth)));
+                    unspentData.Add(new Expense.monthArgs(timer.ToString("MM/yyyy"), Math.Truncate(leftThisMonth)));
                 }
 
-                PrintExpenses();
             }
 
 
-            //Store LoanPayments data for chart
-            if (LoanPayments.Count > 0) {
+            //Store Loans
+            StoreLoanResults(xLabels, loanPayments, unspentData);
 
-                string loanPaymentJson = JsonConvert.SerializeObject(LoanPayments);
+            //Store Expenses
+            SaveExpenses();
+            
+
+            //Print Results
+            PrintLoansResults(loanPayment, totalLoansPaid, monthsPaid);
+            RefreshExpenses();
+        }
+
+
+        protected void StoreLoanResults(List<string> xLabels, List<Expense.monthArgs> loanPayments, List<Expense.monthArgs> unspentData) {
+
+            //Store Date-Labels in Order
+            string xLabelData = JsonConvert.SerializeObject(xLabels);
+            Session["xLabels"] = xLabelData;
+
+
+            //Store LoanPayments
+            if (loanPayments.Count > 0) {
+
+                string loanPaymentJson = JsonConvert.SerializeObject(loanPayments);
                 Session.Remove("LoanPayments");
                 Session["LoanPayments"] = loanPaymentJson;
             }
 
 
-            //Generate Date-Labels in Order
-            string xLabelData = JsonConvert.SerializeObject(xLabels);
-            Session["xLabels"] = xLabelData;
-            //Store Date-Labels in Session for JS
-
-
-            //Display ToSpend charts data
-            string jsonData = JsonConvert.SerializeObject(data);
+            //Store Unspent
+            string jsonData = JsonConvert.SerializeObject(unspentData);
             Session["json"] = jsonData;
 
-            txtTotalPaid.Text = totalLoansPaid.ToString("C");
-            txtTimeToPay.Text = "" + (monthsPaid / 12).ToString() + " / " + (monthsPaid % 12).ToString();
-
-            SaveExpenses();
-            RefreshExpenses();
         }
 
 
+        protected void PrintLoansResults(double loanPayment, double totalLoansPaid, int monthsPaid) {
 
+            txtMonthlyPayment.Text = loanPayment.ToString("C");
+            txtTotalPaid.Text = totalLoansPaid.ToString("C");
+            txtTimeToPay.Text = "" + (monthsPaid / 12).ToString() + " / " + (monthsPaid % 12).ToString();
+            
+        }
 
 
 
@@ -1051,9 +1057,10 @@ namespace Loans_Web {
                     //Generate ToExpense div
                     Label lblAddToExpense = new Label();
                     divDataRow.Controls.Add(lblAddToExpense);
-                    
+
                     //Populate Fields
-                    lblAddToExpense.Text = "To Expense(%): " + sa[2].Remove(0, 2);
+                    double toExpense = double.Parse(sa[2]) * 100;
+                    lblAddToExpense.Text = "To Expense(%): " + toExpense.ToString();
                     lblPayment.Text = "Payment: " + double.Parse(sa[6].Split(':')[1]).ToString("C0");
                     lblTime.Text = "Time(YY/MM): " + (paymentCount / 12).ToString() + '/' + (paymentCount % 12).ToString();
 
