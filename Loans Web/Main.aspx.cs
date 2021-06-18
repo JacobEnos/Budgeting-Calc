@@ -444,7 +444,7 @@ namespace Loans_Web {
                         availableLeft -= e.IncrementMonth(available, today);
 
                         if (availableLeft < 0) {
-
+                            e.overBudget = true;
                             MsgBox(e.Name + " put you over-budget by $" + (-1 * availableLeft) + " in " + today.ToString("MMMM") + " of " + today.Year.ToString(), this.Page, this);
                             return availableLeft;
                         }
@@ -460,6 +460,7 @@ namespace Loans_Web {
 
             foreach (Expense e in Expenses) {
                 if (e.Payments.Count > 0) e.Payments = new List<Expense.monthArgs>();
+                e.overBudget = false;
             }
         }
 
@@ -535,6 +536,7 @@ namespace Loans_Web {
 
                 //If Over-Budget
                 if (leftThisMonth < 0) {
+
                     OverBudget();
                     break;
                 }
@@ -991,7 +993,8 @@ namespace Loans_Web {
 
                 string[] sa = e.Item.DataItem.ToString().Split(',');
                 bool recurring = bool.Parse(sa[3]);
-                int paymentCount = sa.Count() - 6;
+                bool overBudget = bool.Parse(sa[4]);
+                int paymentCount = sa.Count() - 7;
 
                 //Generate Payment div
                 Label lblPayment = new Label();
@@ -1007,10 +1010,6 @@ namespace Loans_Web {
                     //Populate fields
                     lblPayment.Text = "<h3>Recurring</h3>";
                     lblTime.Text = "Payments: " + paymentCount;
-
-                    //Add controls
-                    divDataRow.Controls.Add(lblPayment);
-                    divDataRow.Controls.Add(lblTime);
                 }
                 else {
 
@@ -1026,27 +1025,30 @@ namespace Loans_Web {
 
                     //Add Controls
                     divDataRow.Controls.Add(lblAddToExpense);
-                    divDataRow.Controls.Add(lblPayment);
-                    divDataRow.Controls.Add(lblTime);
                 }
 
+                //If over-budget flag set
+                if(overBudget) {
+                    lblTime.Text = "<span class='text-danger'>OVER BUDGET</span>";
+                }
 
-
-
+                //Add controls
+                divDataRow.Controls.Add(lblPayment);
+                divDataRow.Controls.Add(lblTime);
             }
             catch (Exception ex) {
-
             }
         }
 
 
+
         protected void PrintBudgetInfo() {
 
-            txtSalary.Text = Salary.ToString("C0");
-            txtToLoans.Text = (ToLoans * 100).ToString("C0");
+            txtSalary.Text = Salary.ToString();
+            txtToLoans.Text = (ToLoans * 100).ToString();
 
-            txtLoans.Text = Loans.ToString("C0");
-            txtLoanInterest.Text = Interest.ToString("C0");
+            txtLoans.Text = Loans.ToString();
+            txtLoanInterest.Text = (Interest * 100).ToString();
         }
 
 

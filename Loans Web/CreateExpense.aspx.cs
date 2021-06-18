@@ -111,7 +111,7 @@ namespace Loans_Web {
 
         private bool ReadValues() {
 
-            if (!ReadName() || !ReadAmount() || !ReadToLoans()) return false;
+            if (!ReadName() || !ReadAmount() || !ReadToExpense()) return false;
             
             
 
@@ -272,17 +272,19 @@ namespace Loans_Web {
 
 
 
-        private bool ReadToLoans() {
+        private bool ReadToExpense() {
+
+            if (chbRecurring.Checked) return true;
 
             if (!newExpense.recurring) {
 
                 double z = -1;
-                double.TryParse(txtToExpense.Text, out z);
-                if (0 <= z && z < 100) {
+                bool parseable = double.TryParse(txtToExpense.Text, out z);
+                if (0 <= z && z < 100  && parseable) {
                     newExpense.ToExpense = z / 100;
                 }
                 else {
-                    MB("Couldn't read ToExpense");
+                    MB("Invalid ToExpense value");
                     return false;
                 }
             }

@@ -114,7 +114,7 @@
     <form id="form1" runat="server">
 
 
-        <div class="twinkling">
+        <div> <!-- class="twinkling" -->
 
             <!-- container -->
             <div id="bg" class="clouds p-5" style="z-index: 3">
@@ -413,11 +413,7 @@
 
                             if (xLabelData != null && xLabelData != "") {
                                 xLabelData = JSON.parse(xLabelData);
-
                             }
-
-                            console.log("These dates in order?");
-                            console.log(xLabelData);
                         };
                         //GetxLabelData();
 
@@ -459,6 +455,7 @@
                                     payment: sessionExpenses[expenseIndex].Payment,
                                     data: [],
                                     recurring: sessionExpenses[expenseIndex].recurring,
+                                    overBudget: sessionExpenses[expenseIndex].overBudget,
                                     borderColor: colorPalete[expenseIndex],
                                     backgroundColor: colorPalete[expenseIndex],
                                     Payments: sessionExpenses[expenseIndex].Payments
@@ -486,6 +483,11 @@
                             GetExpenseData();
                             GetxLabelData();
                             GetSessionExpenses();
+
+
+                            console.log("Graph Labels");
+                            console.log(xLabelData);
+
 
                             console.log("Data received by AJAX");
                             console.log(exLines);
@@ -571,7 +573,7 @@
                         <div class="row">
 
                             <div class="col-12">
-                                <asp:Repeater ID="rptExpenses" runat="server">
+                                <asp:Repeater ID="rptExpenses" OnItemDataBound="rptExpenseBound" runat="server">
                                     <HeaderTemplate>
                                     </HeaderTemplate>
 
@@ -596,28 +598,13 @@
                                             </div>
 
 
-                                            <div class="flex-row d-flex justify-content-around">
+                                            <div id="divExpenseData" class="flex-row d-flex justify-content-around" runat="server">
+                                                
                                                 <div class="d-inline">
                                                     <asp:Label Text="Amount:" runat="server" />
                                                     <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Amount.ToString("C0") %>' runat="server" />
                                                 </div>
 
-                                                <div class="d-inline">
-                                                    <asp:Label Text="ToExpense(%): " runat="server" />
-                                                    <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).ToExpense * 100 %>' runat="server" />
-                                                </div>
-
-                                                <div class="d-inline">
-                                                    <asp:Label Text="Payment: " runat="server" />
-                                                    <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Payment.ToString("C0") %>' runat="server" />
-                                                </div>
-
-                                                <div class="d-inline">
-                                                    <asp:Label Text="Time(YY/MM): " runat="server" />
-                                                    <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[0].ToString()%>' runat="server" />
-                                                    /
-                                                    <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Time[1].ToString()%>' runat="server" />
-                                                </div>
                                             </div>
 
                                         </div>

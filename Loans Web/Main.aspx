@@ -413,11 +413,7 @@
 
                             if (xLabelData != null && xLabelData != "") {
                                 xLabelData = JSON.parse(xLabelData);
-
                             }
-
-                            console.log("These dates in order?");
-                            console.log(xLabelData);
                         };
                         //GetxLabelData();
 
@@ -459,6 +455,7 @@
                                     payment: sessionExpenses[expenseIndex].Payment,
                                     data: [],
                                     recurring: sessionExpenses[expenseIndex].recurring,
+                                    overBudget: sessionExpenses[expenseIndex].overBudget,
                                     borderColor: colorPalete[expenseIndex],
                                     backgroundColor: colorPalete[expenseIndex],
                                     Payments: sessionExpenses[expenseIndex].Payments
@@ -486,6 +483,11 @@
                             GetExpenseData();
                             GetxLabelData();
                             GetSessionExpenses();
+
+
+                            console.log("Graph Labels");
+                            console.log(xLabelData);
+
 
                             console.log("Data received by AJAX");
                             console.log(exLines);
