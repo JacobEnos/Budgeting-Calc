@@ -304,7 +304,7 @@
 
 
                                 <div class="col-1-xs offset-9">
-                                    <asp:Button Text="Calculate" Style="position: relative; right: 0px" class="btn btn-light border border-secondary" runat="server" ID="btnCalc" OnClick="btnCalc_Click" />
+                                    <asp:Button Text="Calculate" Style="position: relative; right: 0px" class="btn btn-light border border-secondary" runat="server" ID="btnCalc"/>
                                 </div>
                             </asp:Panel>
                         </div>
