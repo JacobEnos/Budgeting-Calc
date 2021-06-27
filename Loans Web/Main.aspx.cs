@@ -12,52 +12,105 @@ namespace Loans_Web {
     public partial class Main : System.Web.UI.Page {
 
 
-        protected void Page_Load(object sender, EventArgs e) {
+        public double Salary;
+        public double Loans;
+        public double Interest;
+        public double ToLoans;
+        public double Tax;
+        public List<Expense> Expenses;
+        State[] States = new State[51];
 
-            //Expense Management Window
-            rptExpenses.ItemCommand += new RepeaterCommandEventHandler(rptExpenses_ItemCommand);
+
+        protected override void OnPreInit(EventArgs e) {
+            
             rptExpenses.DataSource = Expenses;
+            rptExpenses.DataBind();
+        }
+
+        protected void Page_Load(object sender, EventArgs e) {
+            rptExpenses.ItemCommand += new RepeaterCommandEventHandler(rptExpenses_ItemCommand);
+            Expenses = new List<Expense>();
+
+            //Load States
+            CreateStates();
 
 
-            if (Session["SavedSettings"] != null) {
-                LoadSettings();
-            }
-
-
+            //Fist PageLoad
             if (!IsPostBack) {
-                Set_Defaults();
+
+                LoadSettings();
+
+                //Print inputs loaded after expense create/edit
+                PrintInputs();
 
                 if (Session["NewExpense"] != null) {
-
-                    string toReplaceName = (string)Session["ToReplace"];
-                    Session.Remove("ToReplace");
-                    Expense toAdd = (new Expense((Expense)Session["NewExpense"]));
-
-                    //If the name already exists
-                    if (this[toReplaceName] != null) {
-
-                        this[toReplaceName] = toAdd;
-                    }
-                    else {
-
-                        Expenses.Add(toAdd);
-                    }
-
-                    Session.Remove("NewExpense");
+                    AddExpense();
                 }
 
+
+                SaveInputs();
                 btnCalc_Click(sender, e);
             }
+            //Postbacks
             else {
+                ReadValues();
+                PrintTaxInfo();
+                LoadExpenses();
 
-                //Load States
-                createStates();
-                fillStates();
+                SaveInputs();
+
+                rptExpenses.DataSource = Expenses;
+                rptExpenses.DataBind();
             }
-            
+        }
 
-            rptExpenses.DataBind();
-            PrintExpenses();
+
+
+        private void LoadExpenses() {
+
+            if (Session["SavedSettings"] != null) {
+
+                Dictionary<string, object> toLoad = (Dictionary<string, object>)Session["SavedSettings"];
+                if (toLoad.ContainsKey("Expenses")) {
+                    List<Expense> temp = (List<Expense>)toLoad["Expenses"];
+                    Expenses = temp;
+                }
+            }
+        }
+
+
+        
+        private void SetState(string stateAbrv) {
+
+            State toSet = getState(stateAbrv.ToUpper());
+            if (toSet == null) return;
+
+            ddlState.SelectedValue = toSet.Name;
+            Tax = toSet.getTax(Salary);
+            PrintTaxInfo();
+        }
+
+
+        private void AddExpense() {
+
+            if (Session["NewExpense"] != null) {
+
+                string toReplaceName = (string)Session["ToReplace"];
+                Session.Remove("ToReplace");
+                Expense toAdd = (new Expense((Expense)Session["NewExpense"]));
+
+                //If the name already exists
+                if (this[toReplaceName] != null) {
+
+                    Expenses[Expenses.IndexOf(this[toReplaceName])] = toAdd;
+                }
+                else {
+
+                    Expenses.Add(toAdd);
+                }
+
+                Session.Remove("NewExpense");
+            }
         }
 
 
@@ -86,9 +139,9 @@ namespace Loans_Web {
             //FileStream fs = File.Create("Expense Loadout", 1024, FileOptions.WriteThrough);
             Response.Clear();
             Response.Buffer = true;
-            Response.AddHeader("content-disposition", "attachment;filename=SqlExport.csv");
+            Response.AddHeader("content-disposition", "attachment;filename=Budget_Export.txt");
             Response.Charset = "";
-            Response.ContentType = "application/text";
+            Response.ContentType = "text/plain";
             Response.Output.Write(master);
             Response.Flush();
             Response.End();
@@ -102,7 +155,7 @@ namespace Loans_Web {
             //Split expenses on ';'
             List<string> expenseStringList = fullString.Split(';').ToList();
             List<Expense> expenseList = new List<Expense>();
-            
+
             //for each expense
             foreach (string expense in expenseStringList) {
 
@@ -140,30 +193,37 @@ namespace Loans_Web {
             ddlState.SelectedValue = stuff[0];
             stuff.RemoveAt(0);
 
-            ExpensesFromString(string.Join(",", stuff.ToArray()));
+            string savedExpenses = string.Join(",", stuff.ToArray());
+            if (savedExpenses != null && savedExpenses != "")
+                ExpensesFromString(savedExpenses);
+
+            //Display updated Salary details
+            PrintInputs();
         }
 
 
-
-        protected void Page_Unload(object sender, EventArgs e) {
-            SaveSettings();
+        //Stores Inputs
+        //Stores Expenses
+        //Saves Calculated JSON
+        private void SaveInputsAndExpenses() {
+            
+            SaveInputs();
             SaveExpenses();
         }
 
-       
 
-        private void SaveSettings() {
+
+        private void SaveInputs() {
+
+            //Store Inputs
             Dictionary<string, object> toSave = new Dictionary<string, object>();
-
-            ReadValues();
-
+            
             toSave.Add("Salary", Salary);
             toSave.Add("Loans", Loans);
             toSave.Add("Interest", Interest);
             toSave.Add("ToLoans", ToLoans);
             toSave.Add("Tax", Tax);
-            toSave.Add("Expenses", Expenses);
-            //toSave.Add("State", States);
+            toSave.Add("State", ddlState.SelectedValue);
 
             Session["SavedSettings"] = toSave;
         }
@@ -172,37 +232,67 @@ namespace Loans_Web {
 
         private void SaveExpenses() {
 
+            //Store Inputs
+            Dictionary<string, object> toSave = new Dictionary<string, object>();
+
+            if (Session["SavedSettings"] != null) {
+                toSave = (Dictionary<string, object>)Session["SavedSettings"];
+            }
+
+            //Store Expenses for reloading
+            if (toSave.ContainsKey("Expenses")) {    
+                toSave["Expenses"] = Expenses;
+            }
+            else {
+                toSave.Add("Expenses", Expenses);
+            }
+
+            //Store Expenses JSON for Charting
+            SaveExpenseJSON();
+
+            Session["SavedSettings"] = toSave;
+        }
+
+
+
+        //Loads Global variables from Session["SavedSettings"]
+        //Load Expenses from Session's toAdd list
+        private void LoadSettings() {
+
+            if (Session["SavedSettings"] != null) {
+
+                Dictionary<string, object> toLoad = (Dictionary<string, object>)Session["SavedSettings"];
+
+                Salary = (double)toLoad["Salary"];
+                Loans = (double)toLoad["Loans"];
+                Interest = (double)toLoad["Interest"];
+                ToLoans = (double)toLoad["ToLoans"];
+                Tax = (double)toLoad["Tax"];
+                SetState((string)toLoad["State"]);
+
+                //Load Expenses from Session
+                if (toLoad.ContainsKey("Expenses")) {
+                    Expenses = new List<Expense>((List<Expense>)toLoad["Expenses"]);
+                }
+
+                //Delete save version
+                Session.Remove("SavedSettings"); 
+                
+            }
+            else {
+                Set_Defaults();
+            }
+        }
+
+
+
+        private void SaveExpenseJSON() {
+
             string jsonExpenses = JsonConvert.SerializeObject(Expenses);
             Session.Remove("Expenses");
             Session["Expenses"] = jsonExpenses;
         }
 
-
-
-        private void LoadSettings() {
-            Dictionary<string, object> toLoad = (Dictionary<string, object>)Session["SavedSettings"];
-
-            Salary = (double)toLoad["Salary"];
-            Loans = (double)toLoad["Loans"];
-            Interest = (double)toLoad["Interest"];
-            ToLoans = (double)toLoad["ToLoans"];
-            Tax = (double)toLoad["Tax"];
-            Expenses = (List<Expense>)toLoad["Expenses"];
-
-            rptExpenses.DataSource = Expenses;
-            rptExpenses.DataBind();
-        }
-
-
-
-        public double Salary;
-        public double Loans;
-        public double Interest;
-        public double ToLoans;
-        public double Tax;
-        public List<Expense> Expenses = new List<Expense>();
-        public List<Expense.monthArgs> LoanPayments = new List<Expense.monthArgs>();
-        State[] States = new State[50];
 
 
         public Expense this[string name] {
@@ -238,31 +328,25 @@ namespace Loans_Web {
 
             //Set Salary
             txtSalary.Text = "60000";
-            Read_Salary();
-
-            //Load States
-            createStates();
-            fillStates();
+            Salary = 60000;
 
             //Set Loans
             txtLoans.Text = "40000";
-            Read_Loans();
+            Loans = 40000;
 
             //Set Interest
             txtLoanInterest.Text = "3";
-            Read_Interest();
+            Interest = .03;
 
             //Set ToLoans
             txtToLoans.Text = "40";
-            Read_ToLoans();
-
-            //Set Tax
-            ddlState.SelectedValue = "MA";
-            Read_Tax();
+            ToLoans = .4;
+            
+            //Set State/Tax
+            SetState("MA");
 
             if (Expenses == null) MsgBox("Expenses initialization failed", this.Page, this);
-
-            RefreshExpenses();
+            
         }
 
 
@@ -276,14 +360,13 @@ namespace Loans_Web {
                 Salary = temp;
             }
 
-            txtSalary.Text = Salary.ToString("0");
+            //txtSalary.Text = Salary.ToString("0");
         }
 
 
 
         private void txtLoans_Leave(object sender, EventArgs e) {
             Read_Loans();
-            //btnCalc_Click(sender, e);
         }
 
 
@@ -296,16 +379,12 @@ namespace Loans_Web {
                 Loans = 0;
                 MsgBox("Loans could not be read.", this.Page, this);
             }
-
-            //Display Loans
-            txtLoans.Text = Loans.ToString("");
         }
 
 
 
         private void txtInterest_Leave(object sender, EventArgs e) {
             Read_Interest();
-            //btnCalc_Click(sender, e);
         }
 
 
@@ -325,7 +404,6 @@ namespace Loans_Web {
 
         private void txtToLoans_Leave(object sender, EventArgs e) {
             Read_ToLoans();
-            //btnCalc_Click(sender, e);
         }
 
 
@@ -343,20 +421,15 @@ namespace Loans_Web {
 
 
 
-        private void txtTax_Leave(object sender, EventArgs e) {
-            Read_Tax();
-        }
 
-
-
-        private void Read_Tax() {
+        private void SetState_Tax() {
             State read = new State();
 
             //if state was typed in
             if (ddlState.SelectedIndex == -1) {
+                
                 //search for state by name
-                string search = ddlState.SelectedValue;
-                search = search.ToUpper();
+                string search = ddlState.SelectedValue.ToUpper();
                 if (getState(search) != null) {
                     read = getState(search);
                 }
@@ -369,7 +442,7 @@ namespace Loans_Web {
             }
 
 
-            if (read.getTax(Salary) == -1) {
+            if (read == null  ||  read.getTax(Salary) == -1) {
                 Tax = 0;
             }
             else {
@@ -392,8 +465,8 @@ namespace Loans_Web {
             //Read Interest
             Read_Interest();
 
-            //Read Tax
-            Read_Tax();
+            //Set Tax based off State & Salary
+            SetState_Tax();
         }
 
 
@@ -421,7 +494,7 @@ namespace Loans_Web {
 
 
         //Increments all expenses
-        private double IncrementAll(double available, DateTime today) {
+        private double IncrementAllExpenses(double available, DateTime today) {
 
             double availableLeft = available;
 
@@ -431,9 +504,9 @@ namespace Loans_Web {
 
                     if (e.CurrentAmount > 0) {
                         availableLeft -= e.IncrementMonth(available, today);
-                        
-                        if (availableLeft < 0) {
 
+                        if (availableLeft < 0) {
+                            e.overBudget = true;
                             MsgBox(e.Name + " put you over-budget by $" + (-1 * availableLeft) + " in " + today.ToString("MMMM") + " of " + today.Year.ToString(), this.Page, this);
                             return availableLeft;
                         }
@@ -445,49 +518,36 @@ namespace Loans_Web {
         }
 
 
-        private void ClearPayments() {
-
-            foreach(Expense e in Expenses) {
-                if (e.Payments.Count > 0) e.Payments = new List<Expense.monthArgs>();
-            }
-        }
 
 
         //An improved version of the Calc function that performs the actual logic
-        //Design simplified by psuedo-coding on whiteboard
         protected void btnCalc_Click(object sender, EventArgs e) {
 
-            ReadValues();
-            printIncomeInfo();
+            //ReadValues();
+            //PrintTaxInfo();
 
-            //Track time internally
-            DateTime timer = new DateTime();
-            //timer = DateTime.Today;
-            timer = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            //Reset Expense Amounts and Times, and Dates
+            ZeroExpenses();
 
-            //Log spending money
-            List<double> spendingMoney = new List<double>();
+
+            //Log Results
             List<string> xLabels = new List<string>();
-            List<Expense.monthArgs> data = new List<Expense.monthArgs>();
-
-            //Create Total Loan Cost/Time Trackers
-            int monthsPaid = 0;
+            List<Expense.monthArgs> loanPayments = new List<Expense.monthArgs>();
+            List<Expense.monthArgs> unspentData = new List<Expense.monthArgs>();
             double totalLoansPaid = 0;
 
-            //Reset Expense Amounts and Times, and Date
-            ZeroTimes();
-            ClearPayments();
+
+            //Track time internally
+            DateTime timer = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            int monthsPaid = 0;
+
 
             //Store function results for efficiency
             double monthlyAvailable = MonthlyIncome();
             bool useLoans = UseLoans();
             double loanPayment = CalcLoanPayment();
-            txtMonthlyPayment.Text = loanPayment.ToString("C");
 
-            //if (useLoans) monthlyAvailable -= loanPayment;
-            LoanPayments = new List<Expense.monthArgs>();
-
-
+            double loansReset = Loans;
 
             //While Expenses remain, or there are outstanding Loans
             while (!CheckDone(timer)) {
@@ -504,80 +564,92 @@ namespace Loans_Web {
                 double leftThisMonth = monthlyAvailable;
 
                 //Loan logic
-                if (useLoans) {
+                if (useLoans && 1 < Loans) {
 
-                    //If Loans are not paid
-                    if (1 < Loans) {
+                    //If this is last payment
+                    if (Loans < loanPayment) {
 
-                        //If this is last payment
-                        if (Loans < loanPayment) {
-
-                            //Only pay the remainder
-                            loanPayment = Loans;
-                        }
-                        else {
-                            Loans *= (1 + Interest / 12);
-                        }
-
-                        leftThisMonth -= loanPayment;
-                        Loans -= loanPayment;
-                        totalLoansPaid += loanPayment;
-
-                        //Loan Payment record
-                        LoanPayments.Add(new Expense.monthArgs(timer.ToString("MM/yyyy"), Math.Truncate(loanPayment)));
-                        monthsPaid++;
+                        //Only pay the remainder
+                        loanPayment = Loans;
                     }
+                    else {
+                        Loans *= (1 + Interest / 12);
+                    }
+
+                    leftThisMonth -= loanPayment;
+                    Loans -= loanPayment;
+                    totalLoansPaid += loanPayment;
+                    
+                    //Loan Payment record
+                    loanPayments.Add(new Expense.monthArgs(timer.ToString("MM/yyyy"), Math.Truncate(loanPayment)));
+                    monthsPaid++;
                 }
+
 
                 //Expense logic
-                leftThisMonth = IncrementAll(leftThisMonth, timer);
+                leftThisMonth = IncrementAllExpenses(leftThisMonth, timer);
 
-                //Show over-budget result
+
+                //If Over-Budget
                 if (leftThisMonth < 0) {
+
                     OverBudget();
-                    return;
+                    break;
                 }
                 else {
-                    spendingMoney.Add(leftThisMonth);
-
+                    //Log On-Budget Month
                     xLabels.Add(timer.ToString("MM/yyyy"));
-
-                    //Unspent data;
-                    data.Add(new Expense.monthArgs(timer.ToString("MM/yyyy"), Math.Truncate(leftThisMonth)));
+                    unspentData.Add(new Expense.monthArgs(timer.ToString("MM/yyyy"), Math.Truncate(leftThisMonth)));
                 }
-
-                PrintExpenses();
             }
 
+            //Restore original Loans value for saving
+            //Loans = loansReset;
 
-            //Store LoanPayments data for chart
-            if (LoanPayments.Count > 0) {
+            //Store Expenses
+            //SaveInputsAndExpenses();
+            SaveExpenses();
 
-                string loanPaymentJson = JsonConvert.SerializeObject(LoanPayments);
+            //Store Loans
+            SaveLoanJSON(xLabels, loanPayments, unspentData);
+            
+            //Print Results
+            PrintLoansResults(CalcLoanPayment(), totalLoansPaid, monthsPaid);
+
+            rptExpenses.DataSource = Expenses;
+            rptExpenses.DataBind();
+        }
+
+
+        //<summary> Stores Label, Loan, and Unspent JSON data in Session objects </summary>
+        protected void SaveLoanJSON(List<string> xLabels, List<Expense.monthArgs> loanPayments, List<Expense.monthArgs> unspentData) {
+
+            //Store Date-Labels in Order
+            string xLabelData = JsonConvert.SerializeObject(xLabels);
+            Session["xLabels"] = xLabelData;
+
+            //Store LoanPayments
+            if (loanPayments.Count > 0) {
+
+                string loanPaymentJson = JsonConvert.SerializeObject(loanPayments);
                 Session.Remove("LoanPayments");
                 Session["LoanPayments"] = loanPaymentJson;
             }
 
-
-            //Generate Date-Labels in Order
-            string xLabelData = JsonConvert.SerializeObject(xLabels);
-            Session["xLabels"] = xLabelData;
-            //Store Date-Labels in Session for JS
-
-
-            //Display ToSpend charts data
-            string jsonData = JsonConvert.SerializeObject(data);
+            //Store Unspent
+            string jsonData = JsonConvert.SerializeObject(unspentData);
             Session["json"] = jsonData;
-
-            txtTotalPaid.Text = totalLoansPaid.ToString("C");
-            txtTimeToPay.Text = "" + (monthsPaid / 12).ToString() + " / " + (monthsPaid % 12).ToString();
-
-            SaveExpenses();
-            RefreshExpenses();
         }
 
 
 
+        //<summary> Format/Display calculated values </summary>
+        protected void PrintLoansResults(double loanPayment, double totalLoansPaid, int monthsPaid) {
+
+            txtMonthlyPayment.Text = loanPayment.ToString("C0");
+            txtTotalPaid.Text = totalLoansPaid.ToString("C0");
+            txtTimeToPay.Text = "" + (monthsPaid / 12).ToString() + " / " + (monthsPaid % 12).ToString();
+        }
 
 
 
@@ -587,6 +659,9 @@ namespace Loans_Web {
             string id = e.CommandArgument.ToString();
 
             if (func == "Edit") {
+
+                //SaveInputsAndExpenses();
+                SaveExpenses();
 
                 //Store this Expense in Session
                 Session["EditExpense"] = this[id];
@@ -607,8 +682,6 @@ namespace Loans_Web {
 
 
 
-
-
         public void OverBudget() {
             txtTimeToPay.Text = "Over Budget";
             txtMonthlyPayment.Text = "Over Budget";
@@ -618,9 +691,6 @@ namespace Loans_Web {
 
 
         public double CalcLoanPayment() {
-            if (Loans == 0) {
-                return 0;
-            }
             return MonthlyIncome() * ToLoans;
         }
 
@@ -644,8 +714,18 @@ namespace Loans_Web {
 
 
 
-        public void ZeroTimes() {
+        public void ZeroExpenses() {
+
+            if (Expenses == null) {
+                MsgBox("Expenses null when Zeroed", this.Page, this);
+                return;
+            }
+            
             foreach (Expense ex in Expenses) {
+
+                if (ex.Payments.Count > 0) ex.Payments = new List<Expense.monthArgs>();
+
+                ex.overBudget = false;
                 ex.Time = new int[2];
                 ex.CurrentAmount = ex.Amount;
             }
@@ -654,96 +734,11 @@ namespace Loans_Web {
 
 
         private void btnAddExpense_Click(object sender, EventArgs e) {
-
-            SaveSettings();
+            
             Server.Transfer("CreateExpense.aspx");
         }
 
 
-
-        private void PrintExpenses() {
-            string text = "Expenses: <br/><br/>";
-
-            if (Expenses != null) {
-                foreach (Expense e in Expenses) {
-                    if (e != null) {
-                        if (e.Name != null) {
-                            text += e.PrintExpense(MonthlyIncome() - CalcLoanPayment());
-                        }
-                    }
-                }
-            }
-            else {
-                MsgBox("Expenses was null in func PrintExpenses()", this.Page, this);
-            }
-        }
-
-
-
-        private void LoadExpenses() {
-
-            List<Expense> loadExpenses = new List<Expense>();
-            rptExpenses.DataSource = loadExpenses;
-
-            if (Expenses != null) {
-
-                foreach (Expense e in Expenses) {
-                    if (e != null) {
-                        if (e.Name != null) {
-                            loadExpenses.Add(e);
-                        }
-                    }
-                }
-            }
-            else {
-                MsgBox("Expenses was null in func LoadExpenses()", this.Page, this);
-            }
-
-            rptExpenses.DataBind();
-        }
-
-
-
-        private void PrintTimes() {
-            string text = "Times:<br/><br/>";
-
-            foreach (Expense e in Expenses) {
-                if (e != null) {
-                    if (e.Name != null) {
-                        if (e.recurring) {
-                            if (e.StartDate > DateTime.Today) {
-                                text += e.Name + " : " + e.Time[0].ToString() + " / " + e.Time[1].ToString() + "<br/><br/>";
-                            }
-                            else {
-                                text += e.Name + " : Recurring<br/><br/>";
-                            }
-                        }
-                        else if (e.StartDate >= DateTime.Today) {
-                            text += e.Name + " : " + e.Time[0].ToString() + " / " + e.Time[1].ToString() + "<br/>" +
-                                "Start: " + e.StartDate.ToShortDateString() + "<br/>";
-
-                            if (e.StartDate < e.EndDate && e.EndDate != DateTime.MaxValue) {
-                                text += "End: " + e.EndDate.ToShortDateString() + "<br/>";
-                            }
-                            else {
-                                text += "<br/>";
-                            }
-
-                        }
-                        else {
-                            text += e.Name + " : " + e.Time[0].ToString() + " / " + e.Time[1].ToString() + "<br/><br/>";
-                        }
-                    }
-                }
-            }
-
-        }
-
-        private void RefreshExpenses() {
-            LoadExpenses();  //Fills Expense Management Window
-            PrintExpenses(); //Fills Expenses Details Window
-            PrintTimes();    //Fills Times Window
-        }
 
 
 
@@ -824,8 +819,7 @@ namespace Loans_Web {
 
             //if there is a next Expense to swap with
             Swap(Expenses, index, index + 1);
-
-            RefreshExpenses();
+            
         }
 
 
@@ -843,53 +837,25 @@ namespace Loans_Web {
             if (index == 0) return;
 
             Swap(Expenses, index, index - 1);
-            RefreshExpenses();
         }
 
 
 
-        public void createStates() {
-            string[] stateNames = new string[] { "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY" };
+        public void CreateStates() {
+            string[] stateNames = new string[] { "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY" };
 
             int i = 0;
             foreach (string s in stateNames) {
                 States[i] = new State(s);
-                //cmbStates.Items.Add(s);
                 i++;
             }
+
+            FillStates();
         }
 
 
 
-        public State getState(string name) {
-            int i = 0;
-
-            foreach (State st in States) {
-                if (st.Name == name) {
-                    return st;
-                }
-                i++;
-            }
-            return null;
-        }
-
-
-
-        public int getStateIndex(string name) {
-            int i = 0;
-
-            foreach (State st in States) {
-                if (st.Name == name) {
-                    return i;
-                }
-                i++;
-            }
-            return -1;
-        }
-
-
-
-        public void fillStates() {
+        public void FillStates() {
             int index = getStateIndex("MA");
 
             double[] salaries = new double[] { 0 };
@@ -953,10 +919,45 @@ namespace Loans_Web {
         }
 
 
+        //<summary> Iterates over States to find state name </summary>
+        public State getState(string name) {
+            int i = 0;
 
-        private void printIncomeInfo() {
+            foreach (State st in States) {
+                if (st != null  &&  st.Name == name) {
+                    return st;
+                }
+                i++;
+            }
+            return null;
+        }
 
-            txtStateTax.Text = (Tax * 100).ToString() + "%";
+
+
+        public int getStateIndex(string name) {
+            int i = 0;
+
+            foreach (State st in States) {
+                if (st.Name == name) {
+                    return i;
+                }
+                i++;
+            }
+            return -1;
+        }
+
+
+
+
+        private void PrintTaxInfo() {
+
+            if (Tax < 0) {
+                txtStateTax.Text = "0%";
+            }
+            else {
+                txtStateTax.Text = (Tax * 100).ToString() + "%";
+            }
+            
             txtFederalTax.Text = (FederalTax() * 100).ToString() + "%";
         }
 
@@ -967,16 +968,11 @@ namespace Loans_Web {
             if (getState(name).getTax(Salary) == -1) {
                 MsgBox(ddlState.SelectedItem + "'" + "s tax rates are unknown, using 0%", this.Page, this);
             }
+
+            SetState(name);
             btnCalc_Click(sender, e);
         }
 
-
-
-        private void PrintError() {
-            txtTimeToPay.Text = "Over Budget";
-            txtMonthlyPayment.Text = "Over Budget";
-            txtTotalPaid.Text = "Over Budget";
-        }
 
 
         public void MsgBox(String ex, Page pg, Object obj) {
@@ -988,9 +984,8 @@ namespace Loans_Web {
 
         protected void btnCreateExpense_Click(object sender, EventArgs e) {
 
-            SaveSettings();
+            SaveInputsAndExpenses();
             Server.Transfer("CreateExpense.aspx");
-
         }
 
         protected void txtSalary_TextChanged(object sender, EventArgs e) {
@@ -1009,13 +1004,75 @@ namespace Loans_Web {
                 StreamReader reader = new StreamReader(uplExpenses.PostedFile.InputStream);
 
                 AllFromString(reader.ReadToEnd());
-
                 btnCalc_Click(sender, e);
             }
         }
+
+
+
+        //<summary> Populates Expense display in repeater </summary>
+        protected void rptExpenseBound(object sender, RepeaterItemEventArgs e) {
+
+            try {
+
+                //Found objects
+                System.Web.UI.HtmlControls.HtmlGenericControl divDataRow = (System.Web.UI.HtmlControls.HtmlGenericControl)e.Item.FindControl("divExpenseData");
+
+                string[] sa = e.Item.DataItem.ToString().Split(',');
+                bool recurring = bool.Parse(sa[3]);
+                bool overBudget = bool.Parse(sa[4]);
+                int paymentCount = sa.Count() - 7;
+                
+
+                //Generate Time div
+                Label lblTime = new Label();
+                divDataRow.Controls.Add(lblTime);
+
+
+                if (recurring) {
+
+                    //Populate fields
+                    lblTime.Text = "Payments: " + paymentCount;
+                }
+                else {
+
+                    //Generate ToExpense div
+                    Label lblAddToExpense = new Label();
+                    divDataRow.Controls.Add(lblAddToExpense);
+
+                    //Populate Fields
+                    double toExpense = double.Parse(sa[2]) * 100;
+                    lblAddToExpense.Text = "To Expense(%): " + toExpense.ToString();
+                    lblTime.Text = "Time(YY/MM): " + (paymentCount / 12).ToString() + '/' + (paymentCount % 12).ToString();
+
+                    //Add Controls
+                    divDataRow.Controls.Add(lblAddToExpense);
+                }
+
+                //If over-budget flag set
+                if(overBudget) {
+                    lblTime.Text = "<span class='text-danger'>OVER BUDGET</span>";
+                }
+
+                //Add controls
+                divDataRow.Controls.Add(lblTime);
+            }
+            catch (Exception ex) {
+            }
+        }
+
+
+
+        //<summary> Sets screen inputs to variable values </summary>
+        protected void PrintInputs() {
+
+            txtSalary.Text = Salary.ToString();
+            txtToLoans.Text = (ToLoans * 100).ToString();
+
+            txtLoans.Text = Loans.ToString();
+            txtLoanInterest.Text = (Interest * 100).ToString();
+        }
+
+
     }
-
-
-
-
 }

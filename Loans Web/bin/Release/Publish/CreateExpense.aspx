@@ -1,10 +1,11 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Master.Master" AutoEventWireup="true" CodeBehind="CreateExpense.aspx.cs" Inherits="Loans_Web.CreateExpense" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    Create Expense
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <div class="mx-auto my-5 bg-dark p-5" style="width:40%">
+    <div class="container-xl mx-auto my-5 bg-dark p-5" style="width:40%">
 
         <div class="text-white">
             <h2>Create an Expense</h2>
@@ -54,15 +55,13 @@
 
         <!-- Date Pickers -->
         <div class="d-flex justify-content-around" id="divDatePickers" runat="server">
-            
+
 
             <div class="col-6 bg-white p-1 m-1" style="border-radius: 8px">
 
                 <div class="d-flex justify-content-center h3">Start Date</div>
                 <asp:Calendar ID="cdrStart" CssClass="mx-2 px-2" runat="server" OnSelectionChanged="cdrStart_SelectionChanged" AutoPostBack="true"></asp:Calendar>
             </div>
-
-
 
             <div class="col-6 bg-white p-1 m-1 justify-content-center" style="border-radius: 8px">
                 
@@ -71,9 +70,6 @@
             </div>
 
         </div>
-
-
-
 
 
 

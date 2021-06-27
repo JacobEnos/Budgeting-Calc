@@ -6,11 +6,11 @@
 <head runat="server">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
-    <title>Master Title</title>
-    <asp:ContentPlaceHolder ID="head" runat="server">
-    </asp:ContentPlaceHolder>
+    <title>
+        <asp:ContentPlaceHolder ID="head" runat="server"/>
+    </title>
 </head>
-<body>
+<body class="stars" style="height:100vh">
 
     <style>
         @import "susy";
@@ -73,21 +73,14 @@
     </style>
 
 
+    <div class="clouds">
 
-    <form id="form1" runat="server">
-        
-        <div class="stars">
-            <div class="twinking">
-                <div class="clouds">
-                
-                    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-                    </asp:ContentPlaceHolder>
-                
-                </div>
-            </div>
-        </div>
-    
-    </form>
+        <form id="form1"  runat="server">
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server" />
+        </form>
+
+    </div>
+
 
 </body>
 </html>

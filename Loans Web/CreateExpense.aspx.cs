@@ -25,6 +25,8 @@ namespace Loans_Web {
                     LoadExpense(newExpense);
                     Session.Remove("EditExpense");
                     Session["ToReplace"] = newExpense.Name;
+
+                    divDatePickers.Visible = false;
                 }
 
                 //If creating
@@ -32,8 +34,8 @@ namespace Loans_Web {
                     newExpense = new Expense();
 
                     //Set Defaults
-                    cdrStart.Visible = false;
-                    cdrEnd.Visible = false;
+                    //cdrStart.Visible = false;
+                    //cdrEnd.Visible = false;
                     newExpense.recurring = false;
                     divDatePickers.Visible = false;
                 }
@@ -111,7 +113,7 @@ namespace Loans_Web {
 
         private bool ReadValues() {
 
-            if (!ReadName() || !ReadAmount() || !ReadToLoans()) return false;
+            if (!ReadName() || !ReadAmount() || !ReadToExpense()) return false;
             
             
 
@@ -130,6 +132,7 @@ namespace Loans_Web {
         }
 
 
+
         private bool ReadName() {
 
             if (txtName.Text != null && txtName.Text.Trim() != "") {
@@ -138,19 +141,40 @@ namespace Loans_Web {
 
                     case "unspent":
                         MB("Unspent is a reserved Expense name");
-                        return true;
+                        return false;
 
                     case "loans":
                         MB("Loans is a reserved Expense name");
-                        return true;
+                        return false;
                     default:
+
+                        //Check if name already exists
+                        Dictionary<string, object> savedData = (Dictionary<string, object>)Session["SavedSettings"];
+
+                        if (savedData.ContainsKey("Expenses")) {
+
+                            List<Expense> savedExpenses = (List<Expense>)savedData["Expenses"];
+                            foreach (Expense e in savedExpenses) {
+
+                                //If this Expenses already exists
+                                if (txtName.Text.ToLower() == e.Name.ToLower()) {
+
+                                    //And this Expenses is not being edited
+                                    if (e.Name.ToLower() != (string)Session["ToReplace"]) {
+
+                                        MB("You are not editing the Expense of this Name");
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+
                         newExpense.Name = txtName.Text;
                         return true;
                 }
             }
-            else {
-                MB("No Expense name entered");
-            }
+
+            MB("No Expense name entered");
             return false;
         }
 
@@ -272,17 +296,19 @@ namespace Loans_Web {
 
 
 
-        private bool ReadToLoans() {
+        private bool ReadToExpense() {
+
+            if (chbRecurring.Checked) return true;
 
             if (!newExpense.recurring) {
 
                 double z = -1;
-                double.TryParse(txtToExpense.Text, out z);
-                if (0 <= z && z < 100) {
+                bool parseable = double.TryParse(txtToExpense.Text, out z);
+                if (0 <= z && z < 100  && parseable) {
                     newExpense.ToExpense = z / 100;
                 }
                 else {
-                    MB("Couldn't read ToExpense");
+                    MB("Invalid ToExpense value");
                     return false;
                 }
             }

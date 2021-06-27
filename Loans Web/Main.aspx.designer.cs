@@ -85,6 +85,15 @@ namespace Loans_Web {
         protected global::System.Web.UI.WebControls.TextBox txtLoanInterest;
         
         /// <summary>
+        /// Panel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel1;
+        
+        /// <summary>
         /// txtMonthlyPayment control.
         /// </summary>
         /// <remarks>
@@ -130,15 +139,6 @@ namespace Loans_Web {
         protected global::System.Web.UI.WebControls.LinkButton btnSaveCSV;
         
         /// <summary>
-        /// rptExpenses control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptExpenses;
-        
-        /// <summary>
         /// uplExpenses control.
         /// </summary>
         /// <remarks>
@@ -164,5 +164,14 @@ namespace Loans_Web {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnCreateExpense;
+        
+        /// <summary>
+        /// rptExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptExpenses;
     }
 }

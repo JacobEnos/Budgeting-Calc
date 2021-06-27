@@ -72,6 +72,7 @@ namespace Loans_Web
         public double CurrentAmount;
         public double ToExpense;
         public bool recurring;
+        public bool overBudget = false;
         public int[] Time;
         public DateTime StartDate;
         public DateTime EndDate;
@@ -171,6 +172,7 @@ namespace Loans_Web
             storageString += this.Amount.ToString() + ",";            //double
             storageString += this.ToExpense.ToString() + ",";         //double
             storageString += this.recurring.ToString() + ",";
+            storageString += this.overBudget.ToString() + ",";
             storageString += this.StartDate.ToString() + ",";
             storageString += this.EndDate.ToString() + ",";
             storageString += string.Join(",", Payments);
@@ -186,19 +188,29 @@ namespace Loans_Web
             //Separate parameters
             string[] storageString = inputs.Split(',');
 
-            //Store params
-            this.Name = storageString[0];
-            this.Amount = double.Parse(storageString[1]);       //double
-            this.ToExpense = double.Parse(storageString[2]);    //double
-            this.recurring = bool.Parse(storageString[3]);
-            this.StartDate = DateTime.Parse(storageString[4]);
-            this.EndDate = DateTime.Parse(storageString[5]);
+            try {
 
-            //Remove params from array
-            List<string> temp = new List<string>(storageString.ToList());
-            temp.RemoveRange(0,6);
-            storageString = temp.ToArray();
+                //Store params
+                this.Name = storageString[0];
+                this.Amount = double.Parse(storageString[1]);       //double
+                this.ToExpense = double.Parse(storageString[2]);    //double
+                this.recurring = bool.Parse(storageString[3]);
+                this.overBudget = bool.Parse(storageString[4]);
+                this.StartDate = DateTime.Parse(storageString[5]);
+                this.EndDate = DateTime.Parse(storageString[6]);
 
+                //Remove params from array
+                List<string> temp = new List<string>(storageString.ToList());
+                temp.RemoveRange(0, 7);
+                storageString = temp.ToArray();
+
+            }
+            catch (IndexOutOfRangeException ex) {
+                //Improperly formed csv
+            }
+
+
+            
 
             //Re-build Payments in string
             List<monthArgs> copiedArgs = new List<monthArgs>();
