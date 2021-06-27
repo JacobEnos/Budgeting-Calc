@@ -28,40 +28,36 @@ namespace Loans_Web {
         }
 
         protected void Page_Load(object sender, EventArgs e) {
+
             rptExpenses.ItemCommand += new RepeaterCommandEventHandler(rptExpenses_ItemCommand);
             Expenses = new List<Expense>();
-
-            //Load States
             CreateStates();
 
 
             //Fist PageLoad
             if (!IsPostBack) {
 
+                //Setup
                 LoadSettings();
-
-                //Print inputs loaded after expense create/edit
-                PrintInputs();
-
+                
                 if (Session["NewExpense"] != null) {
                     AddExpense();
                 }
-
-
-                SaveInputs();
-                btnCalc_Click(sender, e);
             }
             //Postbacks
             else {
-                ReadValues();
-                PrintTaxInfo();
+
                 LoadExpenses();
-
-                SaveInputs();
-
-                rptExpenses.DataSource = Expenses;
-                rptExpenses.DataBind();
+                ReadInputs();
             }
+
+
+            PrintInputs();
+            SaveInputs();
+            CalculateLoansAndExpenses();
+
+            rptExpenses.DataSource = Expenses;
+            rptExpenses.DataBind();
         }
 
 
@@ -79,16 +75,22 @@ namespace Loans_Web {
         }
 
 
-        
+
+        //Reads state, sets ddlState, sets Tax
         private void SetState(string stateAbrv) {
 
             State toSet = getState(stateAbrv.ToUpper());
             if (toSet == null) return;
 
             ddlState.SelectedValue = toSet.Name;
-            Tax = toSet.getTax(Salary);
+            double thisStateTax = toSet.getTax(Salary);
+            if (thisStateTax < 0) {
+                thisStateTax = 0;
+            }
+            Tax = thisStateTax;
             PrintTaxInfo();
         }
+
 
 
         private void AddExpense() {
@@ -188,8 +190,7 @@ namespace Loans_Web {
 
             ToLoans = double.Parse(stuff[0]);
             stuff.RemoveAt(0);
-
-            //ddlState.SelectedValue = stuff[0];
+            
             ddlState.SelectedValue = stuff[0];
             stuff.RemoveAt(0);
 
@@ -267,7 +268,7 @@ namespace Loans_Web {
                 Loans = (double)toLoad["Loans"];
                 Interest = (double)toLoad["Interest"];
                 ToLoans = (double)toLoad["ToLoans"];
-                Tax = (double)toLoad["Tax"];
+                //Tax = (double)toLoad["Tax"];
                 SetState((string)toLoad["State"]);
 
                 //Load Expenses from Session
@@ -421,38 +422,7 @@ namespace Loans_Web {
 
 
 
-
-        private void SetState_Tax() {
-            State read = new State();
-
-            //if state was typed in
-            if (ddlState.SelectedIndex == -1) {
-                
-                //search for state by name
-                string search = ddlState.SelectedValue.ToUpper();
-                if (getState(search) != null) {
-                    read = getState(search);
-                }
-                else {
-                    MsgBox("State not found.<br/>Use the 2 letter abbreviation.", this.Page, this);
-                }
-            }
-            else {
-                read = getState(ddlState.SelectedValue);
-            }
-
-
-            if (read == null  ||  read.getTax(Salary) == -1) {
-                Tax = 0;
-            }
-            else {
-                Tax = read.getTax(Salary);
-            }
-        }
-
-
-
-        public void ReadValues() {
+        public void ReadInputs() {
             //Read & Display Salary
             Read_Salary();
 
@@ -466,7 +436,7 @@ namespace Loans_Web {
             Read_Interest();
 
             //Set Tax based off State & Salary
-            SetState_Tax();
+            SetState(ddlState.SelectedValue);
         }
 
 
@@ -521,10 +491,7 @@ namespace Loans_Web {
 
 
         //An improved version of the Calc function that performs the actual logic
-        protected void btnCalc_Click(object sender, EventArgs e) {
-
-            //ReadValues();
-            //PrintTaxInfo();
+        protected void CalculateLoansAndExpenses() {
 
             //Reset Expense Amounts and Times, and Dates
             ZeroExpenses();
@@ -603,11 +570,8 @@ namespace Loans_Web {
                 }
             }
 
-            //Restore original Loans value for saving
-            //Loans = loansReset;
-
+            
             //Store Expenses
-            //SaveInputsAndExpenses();
             SaveExpenses();
 
             //Store Loans
@@ -615,9 +579,6 @@ namespace Loans_Web {
             
             //Print Results
             PrintLoansResults(CalcLoanPayment(), totalLoansPaid, monthsPaid);
-
-            rptExpenses.DataSource = Expenses;
-            rptExpenses.DataBind();
         }
 
 
@@ -674,9 +635,10 @@ namespace Loans_Web {
 
                 //Delete Expense
                 Expenses.Remove(this[id]);
-                btnCalc_Click(source, e);
+                CalculateLoansAndExpenses();
             }
 
+            
             rptExpenses.DataBind();
         }
 
@@ -734,7 +696,6 @@ namespace Loans_Web {
 
 
         private void btnAddExpense_Click(object sender, EventArgs e) {
-            
             Server.Transfer("CreateExpense.aspx");
         }
 
@@ -950,27 +911,19 @@ namespace Loans_Web {
 
 
         private void PrintTaxInfo() {
-
-            if (Tax < 0) {
-                txtStateTax.Text = "0%";
-            }
-            else {
-                txtStateTax.Text = (Tax * 100).ToString() + "%";
-            }
             
+            txtStateTax.Text = (Tax * 100).ToString() + "%";
             txtFederalTax.Text = (FederalTax() * 100).ToString() + "%";
         }
 
 
 
         protected void ddlState_SelectedIndexChanged(object sender, EventArgs e) {
+            
             string name = ddlState.SelectedValue;
             if (getState(name).getTax(Salary) == -1) {
                 MsgBox(ddlState.SelectedItem + "'" + "s tax rates are unknown, using 0%", this.Page, this);
             }
-
-            SetState(name);
-            btnCalc_Click(sender, e);
         }
 
 
@@ -984,7 +937,7 @@ namespace Loans_Web {
 
         protected void btnCreateExpense_Click(object sender, EventArgs e) {
 
-            SaveInputsAndExpenses();
+            //SaveInputsAndExpenses();
             Server.Transfer("CreateExpense.aspx");
         }
 
@@ -1004,7 +957,7 @@ namespace Loans_Web {
                 StreamReader reader = new StreamReader(uplExpenses.PostedFile.InputStream);
 
                 AllFromString(reader.ReadToEnd());
-                btnCalc_Click(sender, e);
+                CalculateLoansAndExpenses();
             }
         }
 
