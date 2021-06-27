@@ -10,6 +10,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js" integrity="sha512-VCHVc5miKoln972iJPvkQrUYYq7XpxXzvqNfiul1H4aZDwGBGC0lq373KNleaB2LpnC2a/iNfE5zoRYmB4TRDQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous" />
 
+    <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
+
 </head>
 <body class="stars" onload="AjaxGetAndGraph();">
 
@@ -137,7 +139,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Salary ($)</span>
                                 </div>
-                                <asp:TextBox ID="txtSalary" CssClass="form-control" runat="server" OnTextChanged="txtSalary_TextChanged" AutoPostBack="true" />
+                                <asp:TextBox ID="txtSalary" CssClass="form-control" runat="server" />
                             </div>
 
 
@@ -267,7 +269,7 @@
                             <!-- Loan Interest Rate -->
                             <div class="input-group my-2">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Loan Interest Rate(%)</span>
+                                    <span class="input-group-text">Loan Interest Rate (%)</span>
                                 </div>
                                 <asp:TextBox ID="txtLoanInterest" CssClass="form-control" runat="server"></asp:TextBox>
                             </div>

@@ -5,7 +5,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <div class="mx-auto my-5 bg-dark p-5" style="width:40%">
+    <div class="container-xl mx-auto my-5 bg-dark p-5" style="width:40%">
 
         <div class="text-white">
             <h2>Create an Expense</h2>
