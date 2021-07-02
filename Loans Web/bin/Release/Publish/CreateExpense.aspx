@@ -5,7 +5,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <div class="container-xl mx-auto my-5 bg-dark p-5" style="width:40%">
+    <div class="container-lg mx-auto my-5 bg-dark p-5 m-5">
 
         <div class="text-white">
             <h2>Create an Expense</h2>
@@ -25,7 +25,7 @@
         <!-- Amount -->
         <div class="input-group my-2">
             <div class="input-group-prepend">
-                <span class="input-group-text">Amount</span>
+                <span class="input-group-text"><asp:Label ID="lblAmount" runat="server"/></span>
             </div>
 
             <asp:TextBox ID="txtAmount" CssClass="form-control" runat="server"></asp:TextBox>
@@ -35,16 +35,16 @@
         <!-- To Expense -->
         <div class="input-group my-2">
             <div class="input-group-prepend">
-                <span class="input-group-text">Salary to Expense(%)</span>
+                <span class="input-group-text">Salary to Expense (%)</span>
             </div>
 
-            <asp:TextBox ID="txtToExpense" CssClass="form-control" runat="server"></asp:TextBox>
+            <asp:TextBox ID="txtToExpense" tooltip="The % of your monthly free-income (after taxes and loans) devoted to this expense" CssClass="form-control" runat="server"></asp:TextBox>
         </div>
 
 
         <div class="text-white my-3">
             <label>Recurring:</label>
-            <asp:CheckBox ID="chbRecurring" runat="server" OnCheckedChanged="chbRecurring_CheckedChanged" AutoPostBack="true" />
+            <asp:CheckBox ID="chbRecurring" runat="server" OnCheckedChanged="chbRecurring_CheckedChanged" AutoPostBack="true" tooltip="Set monthly dollar amount for fixed-cost or pre-existing expenses"/>
 
             <br />
 
@@ -54,19 +54,19 @@
 
 
         <!-- Date Pickers -->
-        <div class="d-flex justify-content-around" id="divDatePickers" runat="server">
+        <div class="row justify-content-evenly" id="divDatePickers" runat="server">
 
 
-            <div class="col-6 bg-white p-1 m-1" style="border-radius: 8px">
+            <div id="divStart" class="col-xl-5 bg-white m-1 p-1" style="border-radius: 8px" runat="server">
 
                 <div class="d-flex justify-content-center h3">Start Date</div>
-                <asp:Calendar ID="cdrStart" CssClass="mx-2 px-2" runat="server" OnSelectionChanged="cdrStart_SelectionChanged" AutoPostBack="true"></asp:Calendar>
+                <asp:Calendar ID="cdrStart" CssClass="mx-auto mb-2" runat="server" OnSelectionChanged="cdrStart_SelectionChanged" AutoPostBack="true"></asp:Calendar>
             </div>
 
-            <div class="col-6 bg-white p-1 m-1 justify-content-center" style="border-radius: 8px">
+            <div id="divEnd" class="col-xl-5 bg-white p-1 m-1" style="border-radius: 8px" runat="server">
                 
                 <div class="d-flex justify-content-center h3">End Date</div>
-                <asp:Calendar ID="cdrEnd" CssClass="mx-2" runat="server" OnSelectionChanged="cdrEnd_SelectionChanged" AutoPostBack="true"></asp:Calendar>
+                <asp:Calendar ID="cdrEnd" CssClass="mx-auto mb-2" runat="server" OnSelectionChanged="cdrEnd_SelectionChanged" AutoPostBack="true"></asp:Calendar>
             </div>
 
         </div>

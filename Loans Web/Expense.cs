@@ -10,20 +10,17 @@ namespace Loans_Web
     [Serializable]
     public class Expense : IEquatable<Expense>
     {
+        public bool Equals(Expense other) => this.Name == other.Name;
 
-        public bool Equals(Expense other) {
 
-            if (this.Name == other.Name) {
-                return true;
-            }
-            return false;
-        }
-        
 
         public class monthArgs : EventArgs {
 
             public string x { get; set; }
             public double y { get; set; }
+
+            public override string ToString() => x + ":" + y.ToString();
+
 
             private void SetY(string value) { 
                 double z = -1;
@@ -55,17 +52,10 @@ namespace Loans_Web
                 this.x = input[0];
                 SetY(input[1]);
             }
-
-
-            public override string ToString() {
-
-                string toReturn = x + ":" + y.ToString();
-                return toReturn;
-            }
         }
 
 
-        
+
 
         public string Name;
         public double Amount;
@@ -75,7 +65,7 @@ namespace Loans_Web
         public bool overBudget = false;
         public int[] Time;
         public DateTime StartDate;
-        public DateTime EndDate;
+        public DateTime? EndDate;
         public double Payment;
         public List<monthArgs> Payments;
 
@@ -109,7 +99,7 @@ namespace Loans_Web
             this.recurring = false;
             this.Time = new int[2];
             StartDate = DateTime.Today;
-            EndDate = DateTime.MaxValue;
+            EndDate = null;
             Payments = new List<monthArgs>();
         }
 
@@ -207,6 +197,7 @@ namespace Loans_Web
             }
             catch (IndexOutOfRangeException ex) {
                 //Improperly formed csv
+                
             }
 
 
@@ -226,7 +217,7 @@ namespace Loans_Web
         }
 
 
-
+        /*
         public string PrintExpense(double MonthlyDisposable)
         {
             string toReturn;
@@ -266,7 +257,7 @@ namespace Loans_Web
             }
             return toReturn;
         }
-
+        */
 
 
         public double ExpenseAmount(double MonthlyIncome, DateTime today)

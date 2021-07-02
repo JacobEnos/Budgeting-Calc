@@ -19,14 +19,14 @@ namespace Loans_Web {
 
             if (!IsPostBack) {
 
+                lblAmount.Text = "Total Amount";
+
                 //If editing
                 if (Session["EditExpense"] != null) {
                     newExpense = new Expense((Expense)Session["EditExpense"]);
-                    LoadExpense(newExpense);
+                    LoadExpense(sender, e);
                     Session.Remove("EditExpense");
                     Session["ToReplace"] = newExpense.Name;
-
-                    divDatePickers.Visible = false;
                 }
 
                 //If creating
@@ -34,10 +34,13 @@ namespace Loans_Web {
                     newExpense = new Expense();
 
                     //Set Defaults
-                    //cdrStart.Visible = false;
-                    //cdrEnd.Visible = false;
-                    newExpense.recurring = false;
                     divDatePickers.Visible = false;
+
+                    divStart.Visible = false;
+                    cdrStart.Enabled = false;
+
+                    divEnd.Visible = false;
+                    cdrEnd.Enabled = false;
                 }
             }
 
@@ -57,52 +60,49 @@ namespace Loans_Web {
 
 
 
-        private void LoadExpense(Expense e) {
+        private void LoadExpense(object sender, EventArgs e) {
 
-            txtName.Text = e.Name;
-            txtAmount.Text = e.Amount.ToString();
+            txtName.Text = newExpense.Name;
+            txtAmount.Text = newExpense.Amount.ToString();
+            btnCreateExpense.Text = "Save Changes";
 
-            if (!e.recurring) {
-                txtToExpense.Text = (e.ToExpense * 100).ToString();
-                cdrEnd.Visible = false;
+            if (!newExpense.recurring) {
+                txtToExpense.Text = (newExpense.ToExpense * 100).ToString();
             }
             else {
-
-                try {
-                    newExpense.recurring = chbRecurring.Checked;
-                }
-                catch {
-                    //newExpense has not been instantiated yet;
-                }
                 chbRecurring.Checked = true;
-                txtToExpense.Text = "As Necessary";
-                txtToExpense.Enabled = false;
+                chbRecurring_CheckedChanged(sender, e);
             }
 
-            if (e.StartDate > DateTime.Today  ||  e.EndDate != DateTime.MaxValue) {
+
+            //If expense was made before today, update it to start today
+            if (newExpense.StartDate < DateTime.Today) newExpense.StartDate = DateTime.Today;
+
+            //If scheduled
+            if (DateTime.Today < newExpense.StartDate  ||  newExpense.EndDate != null) {
+                divDatePickers.Visible = true;
+            }
+
+            //If Start set
+            if (DateTime.Today.Date < newExpense.StartDate) {
 
                 chbScheduled.Checked = true;
+                chbScheduled_CheckedChanged(sender, e);
 
-                cdrStart.TodaysDate = e.StartDate;
-
-                int z = e.EndDate.CompareTo(DateTime.MaxValue);
-
-
-                if (e.EndDate.Year < 3000) {
-                    cdrEnd.TodaysDate = e.EndDate;
-                }
-                else {
-                    cdrEnd.TodaysDate = e.StartDate;
-                }
-
-                cdrStart.Visible = true;
+                //divStart.Visible = true;
+                //cdrStart.Enabled = true;
+                cdrStart.Text = newExpense.StartDate.ToString("yyyy-MM-dd");
             }
             else {
-                cdrStart.Visible = false;
-                cdrEnd.Visible = false;
+                divStart.Visible = false;
             }
 
-            btnCreateExpense.Text = "Save Changes";
+            //If EndDate set
+            if (newExpense.EndDate != null) {
+                
+                DateTime endDate = newExpense.EndDate ?? DateTime.MinValue;
+                cdrEnd.Text =  endDate.ToString("yyyy-MM-dd");
+            }
         }
 
 
@@ -115,19 +115,17 @@ namespace Loans_Web {
 
             if (!ReadName() || !ReadAmount() || !ReadToExpense()) return false;
             
-            
-
-            if (chbRecurring.Checked) {
-
-                newExpense.recurring = true;
-            }
-
+            //If Scheduled
             if (chbScheduled.Checked) {
 
-                ReadStartDate();
-                ReadEndDate();
+                //With invalid start date
+                if (!ReadStartDate()) return false;
+
+                //And recurring, with invalid end date
+                if (chbRecurring.Checked  &&  !ReadEndDate()) return false;
             }
 
+            newExpense.recurring = chbRecurring.Checked;
             return true;
         }
 
@@ -154,6 +152,7 @@ namespace Loans_Web {
                         if (savedData.ContainsKey("Expenses")) {
 
                             List<Expense> savedExpenses = (List<Expense>)savedData["Expenses"];
+
                             foreach (Expense e in savedExpenses) {
 
                                 //If this Expenses already exists
@@ -183,39 +182,57 @@ namespace Loans_Web {
 
         protected void chbScheduled_CheckedChanged(object sender, EventArgs e) {
 
+            /* 
+             *TODO: Invert if-statements, then extract commonalities of currently inner segments 
+             */
+
+            //If Recurring
             if (chbRecurring.Checked) {
 
+                //and scheduling
                 if (chbScheduled.Checked) {
 
-                    cdrStart.Visible = true;
-                    cdrEnd.Visible = true;
                     divDatePickers.Visible = true;
+                    divStart.Visible = true;
+                    cdrStart.Enabled = true;
+                    divEnd.Visible = true;
+                    cdrEnd.Enabled = true;
                 }
+                //but un-scheduling
                 else {
 
+                    //Reset start/end Dates
                     newExpense.StartDate = DateTime.Today;
-                    newExpense.EndDate = DateTime.MaxValue;
+                    newExpense.EndDate = null;
+                    //Reset inputs
+                    cdrStart.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                    cdrEnd.Text = "";
 
                     divDatePickers.Visible = false;
-                    cdrStart.Visible = false;
-                    cdrEnd.Visible = false;
+                    divStart.Visible = false;
+                    divEnd.Visible = false;
                 }
             }
+            //If not recurring
             else {
-
+                //and scheduling
                 if (chbScheduled.Checked) {
 
-                    cdrStart.Visible = true;
                     divDatePickers.Visible = true;
+                    divStart.Visible = true;
+                    cdrStart.Enabled = true;
                 }
+                //but un-scheduling
                 else {
 
                     newExpense.StartDate = DateTime.Today;
-                    newExpense.EndDate = DateTime.MaxValue;
+                    newExpense.EndDate = null;
+                    //Reset inputs
+                    cdrStart.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                    cdrEnd.Text = "";
 
                     divDatePickers.Visible = false;
-                    cdrStart.Visible = false;
-                    cdrEnd.Visible = false;
+                    divEnd.Visible = false;
                 }
             }
         }
@@ -224,53 +241,66 @@ namespace Loans_Web {
 
         protected void chbRecurring_CheckedChanged(object sender, EventArgs e) {
 
+            /* 
+             *TODO: Invert if-statements, then extract commonalities of currently inner segments 
+             */
+
+            //If scheduled
             if (chbScheduled.Checked) {
 
+                //and making recurring
                 if (chbRecurring.Checked) {
 
+                    //show start/end
+                    lblAmount.Text = "Monthly Amount";
                     txtToExpense.Text = "As Necessary";
                     txtToExpense.Enabled = false;
 
                     cdrEnd.Enabled = true;
-                    cdrEnd.Visible = true;
+                    divEnd.Visible = true;
                 }
+                //but making non-recurring
                 else {
 
+                    //Hide endDate
+                    cdrEnd.Enabled = false;
+                    divEnd.Visible = false;
+                    
+                    lblAmount.Text = "Total Amount";
                     txtToExpense.Enabled = true;
                     txtToExpense.Text = "";
-
-                    cdrEnd.Enabled = false;
-                    cdrEnd.Visible = false;
                 }
-
             }
+            //If unscheduled
             else {
-
-
+                //and making recurring
                 if (chbRecurring.Checked) {
 
-                    txtToExpense.Text = "As Necessary";
-                    txtToExpense.Enabled = false;
-                }
-                else {
+                    divEnd.Visible = true;
 
+                    txtToExpense.Enabled = false;
+                    txtToExpense.Text = "As Necessary";
+                    lblAmount.Text = "Monthly Amount";
+                }
+                //and making non-recurring
+                else {
+                    lblAmount.Text = "Total Amount";
                     txtToExpense.Enabled = true;
                     txtToExpense.Text = "";
                 }
-
             }
 
-            newExpense.recurring = chbRecurring.Checked;
+            //newExpense.recurring = chbRecurring.Checked;
         }
 
 
 
         protected void cdrStart_SelectionChanged(object sender, EventArgs e) {
 
-            if (cdrStart.SelectedDate.CompareTo(DateTime.Today) < 0) {
+            if (DateTime.Parse(cdrStart.Text).CompareTo(DateTime.Today) < 0) {
 
                 //Start date in the past, reject
-                cdrStart.SelectedDate = DateTime.Today;
+                cdrStart.Text = DateTime.Today.ToString(); ;
                 MB("Start date cannot be in the past");
             }
         }
@@ -279,17 +309,17 @@ namespace Loans_Web {
 
         protected void cdrEnd_SelectionChanged(object sender, EventArgs e) {
 
-            if (cdrEnd.SelectedDate.CompareTo(DateTime.Today) <= 0) {
+            if (DateTime.Parse(cdrEnd.Text).CompareTo(DateTime.Today) <= 0) {
 
                 //End date in the past, reject
-                cdrStart.SelectedDate = DateTime.Today;
+                cdrStart.Text = DateTime.Today.ToString();
                 MB("End date cannot be in the past");
             }
 
-            else if (cdrEnd.SelectedDate.CompareTo(newExpense.StartDate) < 0) {
+            else if (DateTime.Parse(cdrEnd.Text).CompareTo(newExpense.StartDate) < 0) {
 
                 //End Date before Start Date, reject
-                cdrEnd.SelectedDate = DateTime.Today;
+                cdrEnd.Text = DateTime.Today.ToString("");
                 MB("End date cannot be before Start date");
             }
         }
@@ -298,9 +328,9 @@ namespace Loans_Web {
 
         private bool ReadToExpense() {
 
-            if (chbRecurring.Checked) return true;
+            if(chbRecurring.Checked) return true;
 
-            if (!newExpense.recurring) {
+            if (!chbRecurring.Checked) {
 
                 double z = -1;
                 bool parseable = double.TryParse(txtToExpense.Text, out z);
@@ -322,9 +352,9 @@ namespace Loans_Web {
             //Validate Amount
             double t = -1;
             double.TryParse(txtAmount.Text, out t);
-            if (t < 0) {
+            if (t <= 0) {
 
-                lblError.Text = "Invalid amount!";
+                MB("Invalid amount!");
                 return false;
             }
             newExpense.Amount = t;
@@ -333,49 +363,71 @@ namespace Loans_Web {
 
 
 
-        private void ReadStartDate() {
+        private bool ReadStartDate() {
 
-            if (cdrStart.SelectedDate.CompareTo(DateTime.Today) < 0) {
+            if (cdrStart.Text == null || cdrStart.Text == "") return true;
 
-                //Start date in the past, reject
-                cdrStart.SelectedDate = DateTime.Today;
+            //Handle empty string
+            DateTime parsingHelper;
+            DateTime? temp = DateTime.TryParse(cdrStart.Text, out parsingHelper)?   parsingHelper : (DateTime?)null;
+
+            //Allow blank input
+            if (temp == null) return true;
+
+            //Start date in the past
+            if (parsingHelper < DateTime.Today) {
+
+                //Reject
+                cdrStart.Text = DateTime.Today.ToString();
                 MB("Start date cannot be in the past");
+                return false;
             }
             else {
-
-                newExpense.StartDate = cdrStart.SelectedDate;
+                newExpense.StartDate = parsingHelper;
+                return true;
             }
         }
 
 
 
-        private void ReadEndDate() {
+        private bool ReadEndDate() {
 
-            if (cdrEnd.SelectedDate.CompareTo(DateTime.Today) <= 0) {
+
+            //Handle empty string
+            DateTime parsingHelper;
+            DateTime? temp = DateTime.TryParse(cdrEnd.Text, out parsingHelper) ? parsingHelper : (DateTime?)null;
+
+            //Allow blank input
+            if (temp == null) return true;
+
+            if (temp < DateTime.Today) {
 
                 //End date in the past, reject
-                cdrStart.SelectedDate = DateTime.Today;
+                cdrStart.Text = DateTime.Today.ToString();
                 MB("End date cannot be in the past");
+                return false;
             }
 
-            else if (cdrEnd.SelectedDate.CompareTo(newExpense.StartDate) < 0) {
+            else if (temp < newExpense.StartDate) {
 
                 //End Date before Start Date, reject
-                cdrEnd.SelectedDate = DateTime.Today;
+                cdrEnd.Text = newExpense.StartDate.ToString("yyyy-MM-dd");
                 MB("End date cannot be before Start date");
+                return false;
             }
 
             else {
 
-                newExpense.EndDate = cdrEnd.SelectedDate;
+                newExpense.EndDate = DateTime.Parse(cdrEnd.Text);
+                return true;
             }
         }
 
 
 
-        public void MB(string print) {
-            MsgBox(print, this.Page, this);
-        }
+        public void MB(string print)    =>    MsgBox(print, this.Page, this);
+
+
 
         public void MsgBox(String ex, Page pg, Object obj) {
             string s = "<SCRIPT language='javascript'>alert('" + ex.Replace("\r\n", "\\n").Replace("'", "") + "'); </SCRIPT>";
