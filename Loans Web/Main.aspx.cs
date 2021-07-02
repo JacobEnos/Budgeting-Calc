@@ -22,9 +22,10 @@ namespace Loans_Web {
 
 
         protected override void OnPreInit(EventArgs e) {
-            
+            /*
             rptExpenses.DataSource = Expenses;
             rptExpenses.DataBind();
+            */
         }
 
         protected void Page_Load(object sender, EventArgs e) {
@@ -107,7 +108,6 @@ namespace Loans_Web {
                     Expenses[Expenses.IndexOf(this[toReplaceName])] = toAdd;
                 }
                 else {
-
                     Expenses.Add(toAdd);
                 }
 
@@ -360,8 +360,6 @@ namespace Loans_Web {
 
                 Salary = temp;
             }
-
-            //txtSalary.Text = Salary.ToString("0");
         }
 
 
@@ -470,7 +468,7 @@ namespace Loans_Web {
 
             foreach (Expense e in Expenses) {
 
-                if (e.StartDate.CompareTo(today) <= 0 && e.EndDate.CompareTo(today) > 0) {
+                if (e.StartDate <= today  &&  (e.EndDate == null || today <= e.EndDate)) {
 
                     if (e.CurrentAmount > 0) {
                         availableLeft -= e.IncrementMonth(available, today);
@@ -492,6 +490,8 @@ namespace Loans_Web {
 
         //An improved version of the Calc function that performs the actual logic
         protected void CalculateLoansAndExpenses() {
+
+            ClearSessionJSON();
 
             //Reset Expense Amounts and Times, and Dates
             ZeroExpenses();
@@ -524,14 +524,15 @@ namespace Loans_Web {
                     timer = timer.AddMonths(1);
                 }
                 catch {
-                    MsgBox("You were in an infinite loop", this.Page, this);
+                    MsgBox("Yikes, you're at the end of time...", this.Page, this);
+                    OverBudget();
                     return;
                 }
 
                 double leftThisMonth = monthlyAvailable;
 
                 //Loan logic
-                if (useLoans && 1 < Loans) {
+                if (useLoans &&  1 < Loans) {
 
                     //If this is last payment
                     if (Loans < loanPayment) {
@@ -598,8 +599,8 @@ namespace Loans_Web {
             }
 
             //Store Unspent
-            string jsonData = JsonConvert.SerializeObject(unspentData);
-            Session["json"] = jsonData;
+            string unspentJSON = JsonConvert.SerializeObject(unspentData);
+            Session["unspentData"] = unspentJSON;
         }
 
 
@@ -607,9 +608,16 @@ namespace Loans_Web {
         //<summary> Format/Display calculated values </summary>
         protected void PrintLoansResults(double loanPayment, double totalLoansPaid, int monthsPaid) {
 
-            txtMonthlyPayment.Text = loanPayment.ToString("C0");
-            txtTotalPaid.Text = totalLoansPaid.ToString("C0");
-            txtTimeToPay.Text = "" + (monthsPaid / 12).ToString() + " / " + (monthsPaid % 12).ToString();
+            if (loanPayment == 0) {
+                txtMonthlyPayment.Text = "N/A";
+                txtTotalPaid.Text = "N/A";
+                txtTimeToPay.Text = "N/A";
+            }
+            else {
+                txtMonthlyPayment.Text = loanPayment.ToString("C0");
+                txtTotalPaid.Text = totalLoansPaid.ToString("C0");
+                txtTimeToPay.Text = "" + (monthsPaid / 12).ToString() + " / " + (monthsPaid % 12).ToString();
+            }
         }
 
 
@@ -665,9 +673,8 @@ namespace Loans_Web {
                 if (!e.recurring && e.CurrentAmount > 0)
                     return false;
 
-
-                bool endDateSet = e.EndDate.Year < DateTime.MaxValue.Year;
-                if (e.recurring && e.StartDate.CompareTo(today) < 0 && endDateSet)
+                bool endDateSet = e.EndDate != null;
+                if (e.recurring  &&  e.StartDate < today  &&  endDateSet  && today < e.EndDate)
                     return false;
 
             }
@@ -698,8 +705,6 @@ namespace Loans_Web {
         private void btnAddExpense_Click(object sender, EventArgs e) {
             Server.Transfer("CreateExpense.aspx");
         }
-
-
 
 
 
@@ -1024,6 +1029,11 @@ namespace Loans_Web {
 
             txtLoans.Text = Loans.ToString();
             txtLoanInterest.Text = (Interest * 100).ToString();
+        }
+
+
+        private void ClearSessionJSON() {
+            Session.Remove("LoanPayments");
         }
 
 

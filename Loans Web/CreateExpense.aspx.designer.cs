@@ -31,6 +31,15 @@ namespace Loans_Web {
         protected global::System.Web.UI.WebControls.TextBox txtName;
         
         /// <summary>
+        /// lblAmount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblAmount;
+        
+        /// <summary>
         /// txtAmount control.
         /// </summary>
         /// <remarks>
@@ -76,13 +85,31 @@ namespace Loans_Web {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divDatePickers;
         
         /// <summary>
+        /// divStart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divStart;
+        
+        /// <summary>
         /// cdrStart control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Calendar cdrStart;
+        protected global::System.Web.UI.WebControls.TextBox cdrStart;
+        
+        /// <summary>
+        /// divEnd control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divEnd;
         
         /// <summary>
         /// cdrEnd control.
@@ -91,7 +118,7 @@ namespace Loans_Web {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Calendar cdrEnd;
+        protected global::System.Web.UI.WebControls.TextBox cdrEnd;
         
         /// <summary>
         /// btnCancel control.

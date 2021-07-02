@@ -4,14 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Budget-Calc</title>
+    <title>Budget Planner</title>
 
-    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js" integrity="sha512-VCHVc5miKoln972iJPvkQrUYYq7XpxXzvqNfiul1H4aZDwGBGC0lq373KNleaB2LpnC2a/iNfE5zoRYmB4TRDQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous" />
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js" ></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"  />
+    <script src="Charting.js"></script>
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
-
 </head>
 <body class="stars" onload="AjaxGetAndGraph();">
 
@@ -116,7 +114,8 @@
     <form id="form1" runat="server">
 
 
-        <div> <!-- class="twinkling" -->
+        <div>
+            <!-- class="twinkling" -->
 
             <!-- container -->
             <div id="bg" class="clouds p-5" style="z-index: 3">
@@ -127,7 +126,11 @@
                 <div id="tile" class="container-xl bg-white my-auto p-5" style="border-radius: 5px; box-shadow: 0px 0px 20px 5px;">
 
 
-
+                    <div class="flex-row px-5 py-2 border border-dark" style="background-color:lightblue; border-radius: 5px">
+                        1. Hover over any input field for a brief description<br/>
+                        2. Loans will be ignored if the 'Salary To Loans' field is '0'.<br/>
+                        *Note: A "Loan" can represent any expense with interest.
+                    </div>
 
 
                     <div class="row mr-4">
@@ -137,9 +140,9 @@
                             <!-- Salary -->
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Salary ($)</span>
+                                    <span class="input-group-text">Annual Salary ($)</span>
                                 </div>
-                                <asp:TextBox ID="txtSalary" CssClass="form-control" runat="server" />
+                                <asp:TextBox ID="txtSalary" tooltip="Your annual salary pre-tax.&#013;This is used to determine your tax bracket (if applicable).&#013;This is used to calculate dynamic expenses so only include liquid income." CssClass="form-control" runat="server" />
                             </div>
 
 
@@ -148,7 +151,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Salary To Loans (%)</span>
                                 </div>
-                                <asp:TextBox ID="txtToLoans" CssClass="form-control" runat="server"></asp:TextBox>
+                                <asp:TextBox ID="txtToLoans" ToolTip="The percentage of your monthly income (after tax) devoted to your Loan payment.&#013;*Note: This is not your minimum payment! To avoid excess interest you should allocate funds based on your income" CssClass="form-control" runat="server"></asp:TextBox>
                             </div>
 
                         </div>
@@ -165,7 +168,7 @@
                                 </div>
 
                                 <!-- State Selection -->
-                                <asp:DropDownList ID="ddlState" runat="server" OnSelectedIndexChanged="ddlState_SelectedIndexChanged" CssClass="form-control" AutoPostBack="true">
+                                <asp:DropDownList ID="ddlState" tooltip="The state you will be taxed/reside in." runat="server" OnSelectedIndexChanged="ddlState_SelectedIndexChanged" CssClass="form-control" AutoPostBack="true">
                                     <asp:ListItem Value="AL">Alabama</asp:ListItem>
                                     <asp:ListItem Value="AK">Alaska</asp:ListItem>
                                     <asp:ListItem Value="AZ">Arizona</asp:ListItem>
@@ -263,7 +266,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Loan Amount ($)</span>
                                 </div>
-                                <asp:TextBox ID="txtLoans" CssClass="form-control" runat="server" />
+                                <asp:TextBox ID="txtLoans" tooltip="Your current loan amount, if you have not yet begun payments this is the full amount" CssClass="form-control" runat="server" />
                             </div>
 
                             <!-- Loan Interest Rate -->
@@ -271,19 +274,19 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Loan Interest Rate (%)</span>
                                 </div>
-                                <asp:TextBox ID="txtLoanInterest" CssClass="form-control" runat="server"></asp:TextBox>
+                                <asp:TextBox ID="txtLoanInterest" tooltip="Your Loan's interest rate (compounded monthly)." CssClass="form-control" runat="server"></asp:TextBox>
                             </div>
                         </div>
 
 
-                        <div class="col-xl-6 offset-xl-2 pr-4">
+                        <div class="col-xl-5 border border-dark offset-xl-3 pb-2 pr-4" style="background-color:lightgrey">
                             <asp:Panel ID="Panel1" runat="server">
                                 <!-- Monthly Payment -->
                                 <div class="input-group my-2 justify-content-end">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Monthly Payment</span>
                                     </div>
-                                    <asp:TextBox ID="txtMonthlyPayment" Enabled="false" runat="server" />
+                                    <asp:TextBox ID="txtMonthlyPayment" tooltip="The dollar amount of Loans to pay monthly based on your salary, state, and loan allocation percentage" Enabled="false" runat="server" />
                                 </div>
 
                                 <!-- Time to Pay -->
@@ -291,7 +294,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Time to Pay (YY/MM)</span>
                                     </div>
-                                    <asp:TextBox ID="txtTimeToPay" Enabled="false" runat="server"></asp:TextBox>
+                                    <asp:TextBox ID="txtTimeToPay" tooltip="The amount of time until your loan is entirely paid off. Ex: (2/5 = 2 Years, 5 Months)" Enabled="false" runat="server"></asp:TextBox>
                                 </div>
 
                                 <!-- Total Paid -->
@@ -299,12 +302,12 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Total Paid</span>
                                     </div>
-                                    <asp:TextBox ID="txtTotalPaid" Enabled="false" runat="server"></asp:TextBox>
+                                    <asp:TextBox ID="txtTotalPaid" ToolTip="The total amount paid in loans (including accrued interest)" Enabled="false" runat="server"></asp:TextBox>
                                 </div>
 
 
                                 <div class="col-1-xs offset-9">
-                                    <asp:Button Text="Calculate" Style="position: relative; right: 0px" class="btn btn-light border border-secondary" runat="server" ID="btnCalc" OnClick="btnCalc_Click" />
+                                    <asp:Button Text="Calculate" Style="position: relative; right: 0px" class="btn btn-light border border-secondary" runat="server" ID="btnCalc" />
                                 </div>
                             </asp:Panel>
                         </div>
@@ -344,202 +347,27 @@
 
 
                     <script>
-                        "use strict"
-
                         function SaveCSV() { document.getElementById("btnSaveCSV").click(); };
-
                         function PickCSV() { document.getElementById("uplExpenses").click(); };
                         function ReadCSV() { document.getElementById("btnReadCSV").click(); };
-
                     </script>
 
-
-
-
-
                     <script>
-                        "use strict"
-
                         const moneyCanvas = document.getElementById("moneyChart").getContext("2d");
                         var xLabels = [];
                         const colorPalete = ["orange", "yellow", "darkorchid", "lightcoral", "lightseagreen", "navy", "springgreen"];
 
-
-                        var jsonData;
-                        //Gets Unspent data
-                        function GetSessionData() {
-
-                            jsonData = '<%= Session["json"] %>';
-
-                            if (jsonData != null && jsonData != "") {
-                                jsonData = JSON.parse(jsonData);
-                            }
-
-                        };
-                        //GetSessionData();
-
-
-                        //Gets Loan payment data
-                        var loansData;
-                        function GetLoansData() {
-
-                            loansData = '<%= Session["LoanPayments"] %>';
-
-                            if (loansData != null && loansData != "") {
-                                loansData == null;
-                                loansData = JSON.parse(loansData);
-                            }
-                        };
-                        //GetLoansData();
-
-
-                        //Get Expense payment data
-                        var sessionExpenses = [];
-                        function GetExpenseData() {
-
-                            //Get Expenses
-                            sessionExpenses = '<%= Session["Expenses"] %>';
-
-                            if (sessionExpenses != null && sessionExpenses != "") {
-                                sessionExpenses = JSON.parse(sessionExpenses);
-                            }
-                        };
-                        //GetExpenseData();
-
-
-                        //Gets Chronological labels
-                        var xLabelData = [];
-                        function GetxLabelData() {
-
-                            xLabelData = '<%= Session["xLabels"] %>';
-
-                            if (xLabelData != null && xLabelData != "") {
-                                xLabelData = JSON.parse(xLabelData);
-                            }
-                        };
-                        //GetxLabelData();
+                        var unspentData = '<%= Session["unspentData"] %>';
+                        var loansData = '<%= Session["LoanPayments"] %>';
 
 
 
-
-                        //Gets Expense data
-                        const exLines = [];
-                        function GetSessionExpenses() {
-
-                            //Unspent Data
-                            const graph1 = {
-                                label: 'Unspent',
-                                data: jsonData,
-                                borderColor: "lightgreen",
-                                backgroundColor: "green"
-                            };
-
-                            //Loans Data
-                            const loansGraph = {
-                                label: 'Loans',
-                                data: loansData,
-                                borderColor: "red",
-                                backgroundColor: "red"
-                            };
-
-                            exLines.push(graph1);
-                            exLines.push(loansGraph);
-
-
-                            var expenseIndex = 0;
-                            for (expenseIndex in sessionExpenses) {
-
-                                const thisExpense = {
-                                    label: sessionExpenses[expenseIndex].Name,
-                                    start: sessionExpenses[expenseIndex].StartDate,
-                                    end: sessionExpenses[expenseIndex].EndDate,
-                                    amount: sessionExpenses[expenseIndex].Amount,
-                                    payment: sessionExpenses[expenseIndex].Payment,
-                                    data: [],
-                                    recurring: sessionExpenses[expenseIndex].recurring,
-                                    overBudget: sessionExpenses[expenseIndex].overBudget,
-                                    borderColor: colorPalete[expenseIndex],
-                                    backgroundColor: colorPalete[expenseIndex],
-                                    Payments: sessionExpenses[expenseIndex].Payments
-                                };
-
-                                thisExpense.data = thisExpense.Payments;
-                                exLines.push(thisExpense);
-                            }
-
-                        };
-                        //GetSessionExpenses();
-
-
-
-
+                        var sessionExpenses = '<%= Session["Expenses"] %>';
+                        var xLabelData = '<%= Session["xLabels"] %>';
 
                         window.myChart = new Chart();
-
-
-
-                        function AjaxGetAndGraph() {
-
-                            GetSessionData();
-                            GetLoansData();
-                            GetExpenseData();
-                            GetxLabelData();
-                            GetSessionExpenses();
-
-
-                            console.log("Graph Labels");
-                            console.log(xLabelData);
-
-
-                            console.log("Data received by AJAX");
-                            console.log(exLines);
-
-
-                            console.log("Expenses Received:");
-                            console.log(sessionExpenses);
-
-                            const graphData = {
-                                labels: xLabelData,
-                                datasets: exLines
-                            };
-
-
-                            const config = {
-                                type: 'line',
-                                data: graphData,
-
-                                options: {
-                                    responsive: true,
-                                    plugins: {
-                                        legend: {
-                                            position: 'top',
-                                        },
-                                        title: {
-                                            display: true,
-                                            text: 'Budget Breakdown'
-                                        }
-                                    }
-                                }
-                            };
-
-
-                            if (window.myChart != null) {
-                                window.myChart.destroy();
-                                console.log("destroyed");
-                            }
-
-                            myChart = new Chart(
-                                moneyCanvas,
-                                config
-                            );
-
-                        };
-
-
-                            //myChart.defaults.global.defaultFontFamily = "Lato";
-                            //myChart.defaults.global.defaultFontSize = 18;
-
                     </script>
+
 
 
                     <!-- Expenses -->
@@ -601,7 +429,7 @@
 
 
                                             <div id="divExpenseData" class="flex-row d-flex justify-content-around" runat="server">
-                                                
+
                                                 <div class="d-inline">
                                                     <asp:Label Text="Amount:" runat="server" />
                                                     <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Amount.ToString("C0") %>' runat="server" />
