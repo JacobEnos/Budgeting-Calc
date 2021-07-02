@@ -17,40 +17,38 @@ namespace Loans_Web
         public class monthArgs : EventArgs {
 
             public string x { get; set; }
-            public double y { get; set; }
+            public double y {
+                get {return y;}
+                set { y = Math.Round(value, 0); }
+            }
 
-            public override string ToString() => x + ":" + y.ToString();
+            public override string ToString() => x + ":" + y.ToString("C0");
 
-
+            //Set y with a string
             private void SetY(string value) { 
                 double z = -1;
                 Double.TryParse(value, out z);
-                if (z > -1) this.y = z;
+                if (0 < z) y = z;
             }
 
 
             public monthArgs() {
                 this.x = null;
-                this.y = -1;
+                y = -1;
             }
 
 
             public monthArgs(string date, double remaining) {
 
                 this.x = date;
-                this.y = remaining;
+                y = remaining;
             }
 
             public monthArgs(string date, string remaining) {
 
                 this.x = date;
-
-                double z = -1;
-                Double.TryParse(remaining, out z);
-                if(z > -1)
-                    this.y = z;
+                SetY(remaining);
             }
-
 
             public monthArgs(string data) {
 
@@ -70,6 +68,11 @@ namespace Loans_Web
         public double ToExpense;
         public bool recurring;
         public bool overBudget = false;
+        private double _interest = -1;
+        public double Interest {
+            get => (_interest > 0) ? _interest : 0;
+            set => _interest = (0 < value && value < 1) ? value : -1;
+        }
         public int[] Time;
         public DateTime StartDate;
         public DateTime? EndDate;
@@ -91,67 +94,68 @@ namespace Loans_Web
             this.ToExpense = copy.ToExpense;
             this.recurring = copy.recurring;
             this.Time = copy.Time;
+            this.Interest = copy.Interest;
             StartDate = copy.StartDate;
             EndDate = copy.EndDate;
             Payments = copy.Payments;
         }
 
 
-        public Expense()
-        {
+        public Expense(){
             this.Name = null;
             this.Amount = 0;
             this.ToExpense = 0;
             this.recurring = false;
             this.Time = new int[2];
+            this.Interest = 0;
             StartDate = DateTime.Today;
             EndDate = null;
             Payments = new List<monthArgs>();
         }
 
-        public Expense(string Name)
-        {
+        public Expense(string Name){
             this.Name = Name;
             this.Amount = 0;
             this.ToExpense = 0;
             this.recurring = false;
             this.Time = new int[2];
+            this.Interest = 0;
         }
 
-        public Expense(double Amount)
-        {
+        public Expense(double Amount){
             this.Name = "";
             this.Amount = Amount;
             this.ToExpense = 0;
             this.recurring = false;
             this.Time = new int[2];
+            this.Interest = 0;
         }
 
-        public Expense(string Name, double Amount)
-        {
+        public Expense(string Name, double Amount){
             this.Name = Name;
             this.Amount = Amount;
             this.ToExpense = 0;
             this.recurring = false;
             this.Time = new int[2];
+            this.Interest = 0;
         }
 
-        public Expense(string Name, double Amount, double Percent)
-        {
+        public Expense(string Name, double Amount, double Percent){
             this.Name = Name;
             this.Amount = Amount;
             this.ToExpense = Percent/100;
             this.recurring = false;
             this.Time = new int[2];
+            this.Interest = 0;
         }
 
-        public Expense(double Amount, double Percent)
-        {
+        public Expense(double Amount, double Percent){
             this.Name = "";
             this.Amount = Amount;
             this.ToExpense = Percent/100;
             this.recurring = false;
             this.Time = new int[2];
+            this.Interest = 0;
         }
         
 
@@ -160,7 +164,7 @@ namespace Loans_Web
         }
 
 
-
+        /*
         //Construct a single Expense from the string
         public string FromString(string inputs) {
 
@@ -200,7 +204,7 @@ namespace Loans_Web
 
             return this.ToString();
         }
-
+        */
 
 
         public double ExpenseAmount(double MonthlyIncome, DateTime today)
@@ -277,6 +281,7 @@ namespace Loans_Web
             this.Amount = 0;
             this.ToExpense = 0;
             this.Time = new int[2];
+            this.Payments.Clear();
         }
     }
 }
