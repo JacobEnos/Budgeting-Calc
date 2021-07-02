@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -120,8 +121,11 @@ namespace Loans_Web {
         //Prepare a CSV string from the Expenses list
         private string ExpensesToString() {
 
+
+            string jsonExpenses = JsonConvert.SerializeObject(Expenses);
+
             string test = String.Join(";", Expenses.Select(x => x.ToString()).ToArray());
-            return test;
+            return jsonExpenses;
         }
 
 
@@ -154,6 +158,11 @@ namespace Loans_Web {
 
         private void ExpensesFromString(string fullString) {
 
+
+            List<Expense> x = (List<Expense>)JsonConvert.DeserializeObject<List<Expense>>(fullString);
+
+
+            /*
             //Split expenses on ';'
             List<string> expenseStringList = fullString.Split(';').ToList();
             List<Expense> expenseList = new List<Expense>();
@@ -167,9 +176,11 @@ namespace Loans_Web {
 
                 expenseList.Add(new Expense(toAdd));
             }
-
+            */
             Expenses.Clear();
-            Expenses = new List<Expense>(expenseList);
+            Expenses = new List<Expense>(x);
+            
+
         }
 
 
@@ -178,7 +189,7 @@ namespace Loans_Web {
 
             string master = input;
             List<string> stuff = master.Split(',').ToList();
-
+            
             Salary = double.Parse(stuff[0]);
             stuff.RemoveAt(0);
 
@@ -193,10 +204,12 @@ namespace Loans_Web {
             
             ddlState.SelectedValue = stuff[0];
             stuff.RemoveAt(0);
-
+            
             string savedExpenses = string.Join(",", stuff.ToArray());
             if (savedExpenses != null && savedExpenses != "")
                 ExpensesFromString(savedExpenses);
+            
+            Expenses = (List<Expense>)JsonConvert.DeserializeObject<List<Expense>>(savedExpenses);
 
             //Display updated Salary details
             PrintInputs();
@@ -571,6 +584,10 @@ namespace Loans_Web {
                 }
             }
 
+            Loans = loansReset;
+
+            rptExpenses.DataSource = Expenses;
+            rptExpenses.DataBind();
             
             //Store Expenses
             SaveExpenses();
@@ -962,7 +979,17 @@ namespace Loans_Web {
                 StreamReader reader = new StreamReader(uplExpenses.PostedFile.InputStream);
 
                 AllFromString(reader.ReadToEnd());
-                CalculateLoansAndExpenses();
+                SaveInputsAndExpenses();
+                
+                //Trigger postback to Calc with newly loaded data
+                StringBuilder sbScript = new StringBuilder();
+                sbScript.Append("<script language='JavaScript' type='text/javascript'>\n");
+                sbScript.Append("<!--\n");
+                sbScript.Append(this.GetPostBackEventReference(this, "PBArg") + ";\n");
+                sbScript.Append("// -->\n");
+                sbScript.Append("</script>\n");
+                this.RegisterStartupScript("AutoPostBackScript", sbScript.ToString());
+                //CalculateLoansAndExpenses();
             }
         }
 
@@ -976,11 +1003,10 @@ namespace Loans_Web {
                 //Found objects
                 System.Web.UI.HtmlControls.HtmlGenericControl divDataRow = (System.Web.UI.HtmlControls.HtmlGenericControl)e.Item.FindControl("divExpenseData");
 
-                string[] sa = e.Item.DataItem.ToString().Split(',');
-                bool recurring = bool.Parse(sa[3]);
-                bool overBudget = bool.Parse(sa[4]);
-                int paymentCount = sa.Count() - 7;
-                
+                Expense thisEx = (Expense)e.Item.DataItem;
+                bool recurring = thisEx.recurring;
+                bool overBudget = thisEx.overBudget;
+                int paymentCount = thisEx.Payments.Count;
 
                 //Generate Time div
                 Label lblTime = new Label();
@@ -999,7 +1025,7 @@ namespace Loans_Web {
                     divDataRow.Controls.Add(lblAddToExpense);
 
                     //Populate Fields
-                    double toExpense = double.Parse(sa[2]) * 100;
+                    double toExpense = thisEx.ToExpense * 100;
                     lblAddToExpense.Text = "To Expense(%): " + toExpense.ToString();
                     lblTime.Text = "Time(YY/MM): " + (paymentCount / 12).ToString() + '/' + (paymentCount % 12).ToString();
 

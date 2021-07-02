@@ -43,7 +43,6 @@ namespace Loans_Web {
                     cdrEnd.Enabled = false;
                 }
             }
-
         }
 
 
@@ -80,21 +79,15 @@ namespace Loans_Web {
 
             //If scheduled
             if (DateTime.Today < newExpense.StartDate  ||  newExpense.EndDate != null) {
+
                 divDatePickers.Visible = true;
+                chbScheduled.Checked = true;
+                chbScheduled_CheckedChanged(sender, e);
             }
 
             //If Start set
             if (DateTime.Today.Date < newExpense.StartDate) {
-
-                chbScheduled.Checked = true;
-                chbScheduled_CheckedChanged(sender, e);
-
-                //divStart.Visible = true;
-                //cdrStart.Enabled = true;
                 cdrStart.Text = newExpense.StartDate.ToString("yyyy-MM-dd");
-            }
-            else {
-                divStart.Visible = false;
             }
 
             //If EndDate set
@@ -102,6 +95,9 @@ namespace Loans_Web {
                 
                 DateTime endDate = newExpense.EndDate ?? DateTime.MinValue;
                 cdrEnd.Text =  endDate.ToString("yyyy-MM-dd");
+            }
+            else {
+                divEnd.Visible = false;
             }
         }
 
@@ -261,6 +257,10 @@ namespace Loans_Web {
                 }
                 //but making non-recurring
                 else {
+
+                    //Reset endDate
+                    newExpense.EndDate = null;
+                    cdrEnd.Text = "";
 
                     //Hide endDate
                     cdrEnd.Enabled = false;
