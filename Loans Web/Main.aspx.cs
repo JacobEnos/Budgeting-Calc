@@ -14,7 +14,6 @@ namespace Loans_Web {
 
 
         public double Salary;
-        public double Tax;
         public List<Expense> Expenses;
         State[] States = new State[51];
 
@@ -53,6 +52,8 @@ namespace Loans_Web {
         }
 
 
+        private double GetTax() => getState(ddlState.SelectedValue).getTax(Salary);
+
         //<summary> Sets screen inputs to variable values </summary>
         protected void PrintInputs() => txtSalary.Text = Salary.ToString();
 
@@ -72,7 +73,7 @@ namespace Loans_Web {
         protected void btnSaveCSV_Click(object sender, EventArgs e) => AllToString();
 
 
-        private double MonthlyIncome() => Salary / 12 * (1 - (Tax + FederalTax()));
+        private double MonthlyIncome() => (Salary / 12) * (1 - (GetTax() + FederalTax()));
 
 
 
@@ -101,7 +102,7 @@ namespace Loans_Web {
             if (thisStateTax < 0) {
                 thisStateTax = 0;
             }
-            Tax = thisStateTax;
+            //GetTax() = thisStateTax;
             PrintTaxInfo();
         }
 
@@ -157,12 +158,6 @@ namespace Loans_Web {
             
             Salary = double.Parse(stuff[0]);
             stuff.RemoveAt(0);
-
-            //Interest = double.Parse(stuff[0]);
-            stuff.RemoveAt(0);
-
-            //ToLoans = double.Parse(stuff[0]);
-            stuff.RemoveAt(0);
             
             ddlState.SelectedValue = stuff[0];
             stuff.RemoveAt(0);
@@ -202,11 +197,8 @@ namespace Loans_Web {
 
             //Store Inputs
             Dictionary<string, object> toSave = new Dictionary<string, object>();
-            
             toSave.Add("Salary", Salary);
-            toSave.Add("Tax", Tax);
             toSave.Add("State", ddlState.SelectedValue);
-
             Session["SavedSettings"] = toSave;
         }
 
@@ -246,7 +238,6 @@ namespace Loans_Web {
                 Dictionary<string, object> toLoad = (Dictionary<string, object>)Session["SavedSettings"];
 
                 Salary = (double)toLoad["Salary"];
-                Tax = (double)toLoad["Tax"];
                 SetState((string)toLoad["State"]);
 
                 //Load Expenses from Session
@@ -322,7 +313,6 @@ namespace Loans_Web {
             double temp = -1;
             double.TryParse(txtSalary.Text, out temp);
             if (temp > -1) {
-
                 Salary = temp;
             }
         }
@@ -451,7 +441,6 @@ namespace Loans_Web {
                 Expenses.Remove(this[id]);
                 CalculateExpenses();
             }
-
             
             rptExpenses.DataBind();
         }
@@ -500,8 +489,6 @@ namespace Loans_Web {
                 ex.CurrentAmount = ex.Amount;
             }
         }
-
-
 
 
 
@@ -708,7 +695,7 @@ namespace Loans_Web {
 
         private void PrintTaxInfo() {
             
-            txtStateTax.Text = (Tax * 100).ToString() + "%";
+            txtStateTax.Text = (GetTax() * 100).ToString() + "%";
             txtFederalTax.Text = (FederalTax() * 100).ToString() + "%";
         }
 
