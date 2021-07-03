@@ -14,9 +14,6 @@ namespace Loans_Web {
 
 
         public double Salary;
-        //public double Loans;
-        //public double Interest;
-        //public double ToLoans;
         public double Tax;
         public List<Expense> Expenses;
         State[] States = new State[51];
@@ -47,7 +44,6 @@ namespace Loans_Web {
                 ReadInputs();
             }
 
-
             PrintInputs();
             SaveInputs();
             CalculateExpenses();
@@ -55,6 +51,28 @@ namespace Loans_Web {
             rptExpenses.DataSource = Expenses;
             rptExpenses.DataBind();
         }
+
+
+        //<summary> Sets screen inputs to variable values </summary>
+        protected void PrintInputs() => txtSalary.Text = Salary.ToString();
+
+
+        //Prepare a CSV string from the Expenses list
+        private string ExpensesToString() => JsonConvert.SerializeObject(Expenses);
+
+
+        //<summary> Format/Display calculated values </summary>
+        protected void PrintLoansResults(double loanPayment, double totalLoansPaid, int monthsPaid) =>
+            txtMonthlyPayment.Text = (loanPayment == 0) ? "N/A" : loanPayment.ToString("C0");
+
+
+        protected void btnCreateExpense_Click(object sender, EventArgs e) => Server.Transfer("CreateExpense.aspx");
+
+
+        protected void btnSaveCSV_Click(object sender, EventArgs e) => AllToString();
+
+
+        private double MonthlyIncome() => Salary / 12 * (1 - (Tax + FederalTax()));
 
 
 
@@ -112,18 +130,6 @@ namespace Loans_Web {
 
 
 
-        //Prepare a CSV string from the Expenses list
-        private string ExpensesToString() {
-
-
-            string jsonExpenses = JsonConvert.SerializeObject(Expenses);
-
-            string test = String.Join(";", Expenses.Select(x => x.ToString()).ToArray());
-            return jsonExpenses;
-        }
-
-
-
         public void AllToString() {
 
             string master = "";
@@ -140,15 +146,6 @@ namespace Loans_Web {
             Response.Flush();
             Response.End();
             //Response.Write(master);
-        }
-
-
-
-        private void ExpensesFromString(string fullString) {
-
-            List<Expense> x = (List<Expense>)JsonConvert.DeserializeObject<List<Expense>>(fullString);
-            Expenses.Clear();
-            Expenses = new List<Expense>(x);
         }
 
 
@@ -179,6 +176,16 @@ namespace Loans_Web {
             //Display updated Salary details
             PrintInputs();
         }
+
+
+
+        private void ExpensesFromString(string fullString) {
+
+            List<Expense> x = (List<Expense>)JsonConvert.DeserializeObject<List<Expense>>(fullString);
+            Expenses.Clear();
+            Expenses = new List<Expense>(x);
+        }
+
 
 
         //Stores Inputs
@@ -305,8 +312,7 @@ namespace Loans_Web {
             //Set State/Tax
             SetState("MA");
 
-            if (Expenses == null) MsgBox("Expenses initialization failed", this.Page, this);
-            
+            if (Expenses == null) MsgBox("Expenses initialization failed", this.Page, this);   
         }
 
 
@@ -422,13 +428,6 @@ namespace Loans_Web {
 
 
 
-        //<summary> Format/Display calculated values </summary>
-        protected void PrintLoansResults(double loanPayment, double totalLoansPaid, int monthsPaid) =>
-            txtMonthlyPayment.Text = (loanPayment == 0)?  "N/A" : loanPayment.ToString("C0");
-        
-
-
-
         private void rptExpenses_ItemCommand(object source, RepeaterCommandEventArgs e) {
 
             string func = e.CommandName;
@@ -503,16 +502,6 @@ namespace Loans_Web {
         }
 
 
-
-        private void btnAddExpense_Click(object sender, EventArgs e) {
-            Server.Transfer("CreateExpense.aspx");
-        }
-
-
-
-        private double MonthlyIncome() {
-            return Salary / 12 * (1 - (Tax + FederalTax()));
-        }
 
 
 
@@ -727,10 +716,8 @@ namespace Loans_Web {
 
         protected void ddlState_SelectedIndexChanged(object sender, EventArgs e) {
             
-            string name = ddlState.SelectedValue;
-            if (getState(name).getTax(Salary) == -1) {
-                MsgBox(ddlState.SelectedItem + "'" + "s tax rates are unknown, using 0%", this.Page, this);
-            }
+            if (getState(ddlState.SelectedValue).getTax(Salary) == -1)
+                MsgBox(ddlState.SelectedItem + "'" + "s tax rates are unknown, using 0%", this.Page, this);   
         }
 
 
@@ -742,20 +729,7 @@ namespace Loans_Web {
             cs.RegisterClientScriptBlock(cstype, s, s.ToString());
         }
 
-        protected void btnCreateExpense_Click(object sender, EventArgs e) {
-
-            //SaveInputsAndExpenses();
-            Server.Transfer("CreateExpense.aspx");
-        }
-
-        protected void txtSalary_TextChanged(object sender, EventArgs e) {
-            Read_Salary();
-        }
-
-        protected void btnSaveCSV_Click(object sender, EventArgs e) {
-            AllToString();
-        }
-
+        
         protected void btnReadCSV_Click(object sender, EventArgs e) {
 
             if (uplExpenses.HasFile) {
@@ -829,12 +803,6 @@ namespace Loans_Web {
             }
         }
 
-
-
-        //<summary> Sets screen inputs to variable values </summary>
-        protected void PrintInputs() => txtSalary.Text = Salary.ToString();
-
-        
 
     }
 }
