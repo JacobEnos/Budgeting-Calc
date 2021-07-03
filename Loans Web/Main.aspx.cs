@@ -14,20 +14,14 @@ namespace Loans_Web {
 
 
         public double Salary;
-        public double Loans;
-        public double Interest;
-        public double ToLoans;
+        //public double Loans;
+        //public double Interest;
+        //public double ToLoans;
         public double Tax;
         public List<Expense> Expenses;
         State[] States = new State[51];
 
-
-        protected override void OnPreInit(EventArgs e) {
-            /*
-            rptExpenses.DataSource = Expenses;
-            rptExpenses.DataBind();
-            */
-        }
+        
 
         protected void Page_Load(object sender, EventArgs e) {
 
@@ -135,9 +129,9 @@ namespace Loans_Web {
             string master = "";
 
             master += Salary.ToString() + ",";
-            master += Loans.ToString() + ",";
-            master += Interest.ToString() + ",";
-            master += ToLoans.ToString() + ",";
+            //master += Loans.ToString() + ",";
+            //master += Interest.ToString() + ",";
+            //master += ToLoans.ToString() + ",";
             master += ddlState.SelectedValue.ToString() + ",";
 
             master += ExpensesToString();
@@ -173,13 +167,13 @@ namespace Loans_Web {
             Salary = double.Parse(stuff[0]);
             stuff.RemoveAt(0);
 
-            Loans = double.Parse(stuff[0]);
+            //Loans = double.Parse(stuff[0]);
+            //stuff.RemoveAt(0);
+
+            //Interest = double.Parse(stuff[0]);
             stuff.RemoveAt(0);
 
-            Interest = double.Parse(stuff[0]);
-            stuff.RemoveAt(0);
-
-            ToLoans = double.Parse(stuff[0]);
+            //ToLoans = double.Parse(stuff[0]);
             stuff.RemoveAt(0);
             
             ddlState.SelectedValue = stuff[0];
@@ -213,9 +207,9 @@ namespace Loans_Web {
             Dictionary<string, object> toSave = new Dictionary<string, object>();
             
             toSave.Add("Salary", Salary);
-            toSave.Add("Loans", Loans);
-            toSave.Add("Interest", Interest);
-            toSave.Add("ToLoans", ToLoans);
+            //toSave.Add("Loans", Loans);
+            //toSave.Add("Interest", Interest);
+            //toSave.Add("ToLoans", ToLoans);
             toSave.Add("Tax", Tax);
             toSave.Add("State", ddlState.SelectedValue);
 
@@ -258,9 +252,9 @@ namespace Loans_Web {
                 Dictionary<string, object> toLoad = (Dictionary<string, object>)Session["SavedSettings"];
 
                 Salary = (double)toLoad["Salary"];
-                Loans = (double)toLoad["Loans"];
-                Interest = (double)toLoad["Interest"];
-                ToLoans = (double)toLoad["ToLoans"];
+                //Loans = (double)toLoad["Loans"];
+                //Interest = (double)toLoad["Interest"];
+                //ToLoans = (double)toLoad["ToLoans"];
                 //Tax = (double)toLoad["Tax"];
                 SetState((string)toLoad["State"]);
 
@@ -323,19 +317,19 @@ namespace Loans_Web {
             //Set Salary
             txtSalary.Text = "60000";
             Salary = 60000;
-
+            /*
             //Set Loans
             txtLoans.Text = "40000";
-            Loans = 40000;
+            //Loans = 40000;
 
             //Set Interest
             txtLoanInterest.Text = "3";
-            Interest = .03;
+            //Interest = .03;
 
             //Set ToLoans
             txtToLoans.Text = "40";
-            ToLoans = .4;
-            
+            //ToLoans = .4;
+            */
             //Set State/Tax
             SetState("MA");
 
@@ -356,13 +350,13 @@ namespace Loans_Web {
         }
 
 
-
+        /*
         private void txtLoans_Leave(object sender, EventArgs e) {
             Read_Loans();
         }
+        */
 
-
-
+        /*
         private void Read_Loans() {
             double save;
             if (double.TryParse(txtLoans.Text, out save))
@@ -372,34 +366,29 @@ namespace Loans_Web {
                 MsgBox("Loans could not be read.", this.Page, this);
             }
         }
+        */
 
-
-
+        /*
         private void txtInterest_Leave(object sender, EventArgs e) {
             Read_Interest();
         }
+        */
 
-
-
+        /*
         private void Read_Interest() {
-            double save;
-            if (double.TryParse(txtLoanInterest.Text, out save))
-                Interest = save / 100;
+            //double save;
+            //if (double.TryParse(txtLoanInterest.Text, out save))
+                //Interest = save / 100;
             else {
-                Interest = 0;
+                //Interest = 0;
                 MsgBox("Interest could not be read.", this.Page, this);
             }
-            txtLoanInterest.Text = (Interest * 100).ToString();
+            //txtLoanInterest.Text = (Interest * 100).ToString();
         }
+        */
 
 
-
-        private void txtToLoans_Leave(object sender, EventArgs e) {
-            Read_ToLoans();
-        }
-
-
-
+        /*
         private void Read_ToLoans() {
             double save;
             if (double.TryParse(txtToLoans.Text, out save))
@@ -410,7 +399,7 @@ namespace Loans_Web {
             }
             txtToLoans.Text = (ToLoans * 100).ToString();
         }
-
+        */
 
 
         public void ReadInputs() {
@@ -418,20 +407,20 @@ namespace Loans_Web {
             Read_Salary();
 
             //Read Loans
-            Read_Loans();
+            //Read_Loans();
 
             //Read ToLoans
-            Read_ToLoans();
+            //Read_ToLoans();
 
             //Read Interest
-            Read_Interest();
+            //Read_Interest();
 
             //Set Tax based off State & Salary
             SetState(ddlState.SelectedValue);
         }
 
 
-
+        /*
         //Determine if a loan payment should be subtracted from the salary
         private bool UseLoans() {
 
@@ -440,7 +429,7 @@ namespace Loans_Web {
             }
             return true;
         }
-
+        */
 
 
         //Determine if there are ongoing expenses or an outstanding loan amount
@@ -506,10 +495,10 @@ namespace Loans_Web {
 
             //Store function results for efficiency
             double monthlyAvailable = MonthlyIncome();
-            bool useLoans = UseLoans();
-            double loanPayment = CalcLoanPayment();
+            //bool useLoans = UseLoans();
+            //double loanPayment = CalcLoanPayment();
 
-            double loansReset = Loans;
+            //double loansReset = Loans;
 
             //While Expenses remain, or there are outstanding Loans
             while (!CheckDone(timer)) {
@@ -567,7 +556,7 @@ namespace Loans_Web {
                 }
             }
 
-            Loans = loansReset;
+            //Loans = loansReset;
 
             rptExpenses.DataSource = Expenses;
             rptExpenses.DataBind();
@@ -665,11 +654,11 @@ namespace Loans_Web {
         }
 
 
-
+        /*
         public double CalcLoanPayment() {
             return MonthlyIncome() * ToLoans;
         }
-
+        */
 
 
         public bool ExpensesFinished(DateTime today) {
@@ -1040,10 +1029,10 @@ namespace Loans_Web {
         protected void PrintInputs() {
 
             txtSalary.Text = Salary.ToString();
-            txtToLoans.Text = (ToLoans * 100).ToString();
+            //txtToLoans.Text = (ToLoans * 100).ToString();
 
-            txtLoans.Text = Loans.ToString();
-            txtLoanInterest.Text = (Interest * 100).ToString();
+            //txtLoans.Text = Loans.ToString();
+            //txtLoanInterest.Text = (Interest * 100).ToString();
         }
 
 

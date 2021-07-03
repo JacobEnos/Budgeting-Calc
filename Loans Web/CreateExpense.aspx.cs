@@ -120,7 +120,7 @@ namespace Loans_Web {
         private bool ReadValues() {
 
             if (!ReadName() || !ReadAmount() || !ReadToExpense()  ||  !ReadInterest()) return false;
-
+            
             //If Scheduled
             if (chbScheduled.Checked) {
 
@@ -461,7 +461,7 @@ namespace Loans_Web {
 
         private bool ReadInterest() {
 
-            if (txtInterest.Text.Trim() == "") return true;
+            if (chbInterest.Checked == false  ||  txtInterest.Text.Trim() == "") return true;
 
             double save;
             if (double.TryParse(txtInterest.Text, out save)) {
