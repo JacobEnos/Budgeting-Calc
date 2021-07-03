@@ -41,6 +41,8 @@ namespace Loans_Web {
 
                     divEnd.Visible = false;
                     cdrEnd.Enabled = false;
+
+                    txtInterest.Enabled = false;
                 }
             }
         }
@@ -99,6 +101,14 @@ namespace Loans_Web {
             else {
                 divEnd.Visible = false;
             }
+
+
+            if (newExpense.Interest > 0) {
+                chbInterest.Checked = true;
+                chbInterest_CheckedChanged(sender, e);
+                txtInterest.Text = (newExpense.Interest * 100).ToString();
+            }
+
         }
 
 
@@ -279,6 +289,11 @@ namespace Loans_Web {
                 txtToExpense.Text = "As Necessary";
                 txtToExpense.Enabled = false;
 
+                //Lock Interest
+                chbInterest.Checked = false;
+                chbInterest.Enabled = false;
+                chbInterest_CheckedChanged(sender, e);
+
                 //and scheduled
                 if (chbScheduled.Checked) {
                     cdrEnd.Enabled = true;
@@ -291,6 +306,11 @@ namespace Loans_Web {
                 lblAmount.Text = "Total Amount";
                 txtToExpense.Enabled = true;
                 txtToExpense.Text = "";
+
+                //Un-Lock Interest
+                chbInterest.Enabled = true;
+                chbInterest_CheckedChanged(sender, e);
+
 
                 //and scheduled
                 if (chbScheduled.Checked) {
@@ -441,6 +461,8 @@ namespace Loans_Web {
 
         private bool ReadInterest() {
 
+            if (txtInterest.Text.Trim() == "") return true;
+
             double save;
             if (double.TryParse(txtInterest.Text, out save)) {
 
@@ -488,12 +510,8 @@ namespace Loans_Web {
                 txtInterest.Text = "";
             }
             else {
-
-                if (chbRecurring.Checked) {
-                    txtInterest.Text = "N/A (Recurring)";
-                    txtInterest.Enabled = false;
-                }
-                
+                txtInterest.Text = (chbRecurring.Checked) ? "N/A (Recurring)" : "";
+                txtInterest.Enabled = false;
             }
         }
     }

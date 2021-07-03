@@ -8,8 +8,7 @@ using System.Windows;
 namespace Loans_Web
 {
     [Serializable]
-    public class Expense : IEquatable<Expense>
-    {
+    public class Expense : IEquatable<Expense> {
         public bool Equals(Expense other) => this.Name == other.Name;
 
 
@@ -17,9 +16,10 @@ namespace Loans_Web
         public class monthArgs : EventArgs {
 
             public string x { get; set; }
+            private double Y;
             public double y {
-                get {return y;}
-                set { y = Math.Round(value, 0); }
+                get {return Y;}
+                set { Y = Math.Truncate(value);}
             }
 
             public override string ToString() => x + ":" + y.ToString("C0");
@@ -68,7 +68,7 @@ namespace Loans_Web
         public double ToExpense;
         public bool recurring;
         public bool overBudget = false;
-        private double _interest = -1;
+        private double _interest = 0;
         public double Interest {
             get => (_interest > 0) ? _interest : 0;
             set => _interest = (0 < value && value < 1) ? value : -1;
@@ -164,51 +164,11 @@ namespace Loans_Web
         }
 
 
-        /*
-        //Construct a single Expense from the string
-        public string FromString(string inputs) {
-
-            //Separate parameters
-            string[] storageString = inputs.Split(',');
-
-            try {
-
-                //Store params
-                this.Name = storageString[0];
-                this.Amount = double.Parse(storageString[1]);       //double
-                this.ToExpense = double.Parse(storageString[2]);    //double
-                this.recurring = bool.Parse(storageString[3]);
-                this.overBudget = bool.Parse(storageString[4]);
-                this.StartDate = DateTime.Parse(storageString[5]);
-                this.EndDate = DateTime.Parse(storageString[6]);
-
-                //Remove params from array
-                List<string> temp = new List<string>(storageString.ToList());
-                temp.RemoveRange(0, 7);
-                storageString = temp.ToArray();
-            }
-            catch (IndexOutOfRangeException ex) {
-                //Improperly formed csv   
-            }
-            
-            
-            //Re-build Payments in string
-            List<monthArgs> copiedArgs = new List<monthArgs>();
-            for(int i=0; i<storageString.Length-1; i+=2) {
-
-                monthArgs mA = new monthArgs(storageString[i]);
-                copiedArgs.Add(mA);
-            }
-            
-            this.Payments = copiedArgs;
-
-            return this.ToString();
-        }
-        */
+        public double PaymentAmount(double monthlyIncome) => (this.recurring) ? this.Amount : (monthlyIncome * this.ToExpense);
 
 
-        public double ExpenseAmount(double MonthlyIncome, DateTime today)
-        {
+        public double ExpenseAmount(double MonthlyIncome, DateTime today){
+
             if (this.recurring){
                 return this.Amount;
             }
@@ -219,20 +179,7 @@ namespace Loans_Web
                 return -1;
             }
         }
-
-
-
-        public double PaymentAmount(double MonthlyIncome)
-        {
-            if (this.recurring){
-                return this.Amount;
-            }
-            else{
-                return MonthlyIncome * this.ToExpense;
-            }
-        }
-
-
+        
 
         public double IncrementMonth(double MonthlyIncome, DateTime today) {
 
@@ -254,6 +201,8 @@ namespace Loans_Web
             CurrentAmount -= toPay;
             Payments.Add(new monthArgs(today.ToString("MM/yyyy"), toPay));
 
+            //Add Interest
+            if (Interest > 0) CurrentAmount *= (1 + Interest/12);
 
             return toPay;
         }

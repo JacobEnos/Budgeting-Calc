@@ -45,6 +45,20 @@
         </div>
 
 
+        <!-- Interest -->
+        <div class="input-group my-2">
+            <div class="input-group-prepend">
+                <div class="input-group-text">
+                    <asp:CheckBox ID="chbInterest" CssClass="chbBig form-control mr-2" runat="server" OnCheckedChanged="chbInterest_CheckedChanged" AutoPostBack="true" />
+                    Interest Rate (APR): 
+                </div>
+            </div>
+
+            <asp:TextBox ID="txtInterest" ToolTip="Interest rate of this expenses, compounded monthly" CssClass="form-control" runat="server"></asp:TextBox>
+        </div>
+
+
+
         <div class="d-inline-block col-1 justify-content-end text-white my-3">
 
             <div class="d-flex flex-row">
@@ -54,7 +68,7 @@
 
             <div class="d-flex flex-row">
                 <label class="my-auto">Schedule:</label>
-                <asp:CheckBox ID="chbScheduled" class="chbBig my-auto" runat="server" OnCheckedChanged="chbScheduled_CheckedChanged" AutoPostBack="true" />
+                <asp:CheckBox ID="chbScheduled" class="chbBig my-auto" runat="server" OnCheckedChanged="chbScheduled_CheckedChanged2" AutoPostBack="true" />
             </div>
         </div>
 

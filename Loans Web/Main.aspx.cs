@@ -158,29 +158,9 @@ namespace Loans_Web {
 
         private void ExpensesFromString(string fullString) {
 
-
             List<Expense> x = (List<Expense>)JsonConvert.DeserializeObject<List<Expense>>(fullString);
-
-
-            /*
-            //Split expenses on ';'
-            List<string> expenseStringList = fullString.Split(';').ToList();
-            List<Expense> expenseList = new List<Expense>();
-
-            //for each expense
-            foreach (string expense in expenseStringList) {
-
-                //Construct Expense
-                Expense toAdd = new Expense();
-                toAdd.FromString(expense);
-
-                expenseList.Add(new Expense(toAdd));
-            }
-            */
             Expenses.Clear();
             Expenses = new List<Expense>(x);
-            
-
         }
 
 
@@ -206,8 +186,8 @@ namespace Loans_Web {
             stuff.RemoveAt(0);
             
             string savedExpenses = string.Join(",", stuff.ToArray());
-            if (savedExpenses != null && savedExpenses != "")
-                ExpensesFromString(savedExpenses);
+            //if (savedExpenses != null && savedExpenses != "")
+            //    ExpensesFromString(savedExpenses);
             
             Expenses = (List<Expense>)JsonConvert.DeserializeObject<List<Expense>>(savedExpenses);
 
