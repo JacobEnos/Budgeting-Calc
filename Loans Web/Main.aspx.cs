@@ -247,7 +247,6 @@ namespace Loans_Web {
 
                 //Delete save version
                 Session.Remove("SavedSettings"); 
-                
             }
             else {
                 Set_Defaults();
