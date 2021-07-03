@@ -109,7 +109,7 @@ namespace Loans_Web {
 
         private bool ReadValues() {
 
-            if (!ReadName() || !ReadAmount() || !ReadToExpense()) return false;
+            if (!ReadName() || !ReadAmount() || !ReadToExpense()  ||  !ReadInterest()) return false;
 
             //If Scheduled
             if (chbScheduled.Checked) {
@@ -271,27 +271,30 @@ namespace Loans_Web {
 
         protected void chbRecurring_CheckedChanged(object sender, EventArgs e) {
 
-            /* 
-             *TODO: Invert if-statements, then extract commonalities of currently inner segments 
-             */
+            //If recurring
+            if (chbRecurring.Checked) {
 
-            //If scheduled
-            if (chbScheduled.Checked) {
+                //show start/end
+                lblAmount.Text = "Monthly Amount";
+                txtToExpense.Text = "As Necessary";
+                txtToExpense.Enabled = false;
 
-                //and making recurring
-                if (chbRecurring.Checked) {
-
-                    //show start/end
-                    lblAmount.Text = "Monthly Amount";
-                    txtToExpense.Text = "As Necessary";
-                    txtToExpense.Enabled = false;
-
+                //and scheduled
+                if (chbScheduled.Checked) {
                     cdrEnd.Enabled = true;
                     divEnd.Visible = true;
                 }
-                //but making non-recurring
-                else {
+            }
+            //If un-recurring
+            else {
 
+                lblAmount.Text = "Total Amount";
+                txtToExpense.Enabled = true;
+                txtToExpense.Text = "";
+
+                //and scheduled
+                if (chbScheduled.Checked) {
+                    
                     //Reset endDate
                     newExpense.EndDate = null;
                     cdrEnd.Text = "";
@@ -299,28 +302,6 @@ namespace Loans_Web {
                     //Hide endDate
                     cdrEnd.Enabled = false;
                     divEnd.Visible = false;
-
-                    lblAmount.Text = "Total Amount";
-                    txtToExpense.Enabled = true;
-                    txtToExpense.Text = "";
-                }
-            }
-            //If unscheduled
-            else {
-                //and making recurring
-                if (chbRecurring.Checked) {
-
-                    divEnd.Visible = true;
-
-                    txtToExpense.Enabled = false;
-                    txtToExpense.Text = "As Necessary";
-                    lblAmount.Text = "Monthly Amount";
-                }
-                //and making non-recurring
-                else {
-                    lblAmount.Text = "Total Amount";
-                    txtToExpense.Enabled = true;
-                    txtToExpense.Text = "";
                 }
             }
 
@@ -458,6 +439,26 @@ namespace Loans_Web {
         }
 
 
+        private bool ReadInterest() {
+
+            double save;
+            if (double.TryParse(txtInterest.Text, out save)) {
+
+                if (save <= 0) {
+                    MB("Invalid interest value");
+                    return false;
+                }
+
+                newExpense.Interest = save / 100;
+                return true;
+            }
+            else {
+                MB("Interest could not be read.");
+                return false;
+            }
+        }
+
+
 
         public void MB(string print) => MsgBox(print, this.Page, this);
 
@@ -480,6 +481,20 @@ namespace Loans_Web {
 
         protected void chbInterest_CheckedChanged(object sender, EventArgs e) {
 
+            //If adding interest
+            if (chbInterest.Checked) {
+
+                txtInterest.Enabled = true;
+                txtInterest.Text = "";
+            }
+            else {
+
+                if (chbRecurring.Checked) {
+                    txtInterest.Text = "N/A (Recurring)";
+                    txtInterest.Enabled = false;
+                }
+                
+            }
         }
     }
 }
