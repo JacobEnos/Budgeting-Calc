@@ -147,13 +147,14 @@
 
 
                             <!-- Salary to Loans -->
+                            <!--
                             <div class="input-group my-2">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Salary To Loans (%)</span>
                                 </div>
                                 <asp:TextBox ID="txtToLoans" ToolTip="The percentage of your monthly income (after tax) devoted to your Loan payment.&#013;*Note: This is not your minimum payment! To avoid excess interest you should allocate funds based on your income" CssClass="form-control" runat="server"></asp:TextBox>
                             </div>
-
+                            -->
                         </div>
 
 
@@ -254,14 +255,16 @@
                         </div>
                     </div>
 
-
-
+                    
+                    
                     <div class="row">
 
                         <!-- Loans Info -->
+                        <!--
                         <div class="col-xl-4 my-4">
 
                             <!-- Loan Amount -->
+                            <!--
                             <div class="input-group my-2 mr-4">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Loan Amount ($)</span>
@@ -270,7 +273,8 @@
                             </div>
 
                             <!-- Loan Interest Rate -->
-                            <div class="input-group my-2">
+                        <!--    
+                        <div class="input-group my-2">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Loan Interest Rate (%)</span>
                                 </div>
@@ -282,6 +286,7 @@
                         <div class="col-xl-5 border border-dark offset-xl-3 pb-2 pr-4" style="background-color:lightgrey">
                             <asp:Panel ID="Panel1" runat="server">
                                 <!-- Monthly Payment -->
+                                <!--
                                 <div class="input-group my-2 justify-content-end">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Monthly Payment</span>
@@ -290,7 +295,8 @@
                                 </div>
 
                                 <!-- Time to Pay -->
-                                <div class="input-group my-2 justify-content-end">
+                        <!--        
+                        <div class="input-group my-2 justify-content-end">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Time to Pay (YY/MM)</span>
                                     </div>
@@ -298,7 +304,8 @@
                                 </div>
 
                                 <!-- Total Paid -->
-                                <div class="input-group my-2 justify-content-end">
+                        <!--        
+                        <div class="input-group my-2 justify-content-end">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Total Paid</span>
                                     </div>
@@ -311,7 +318,9 @@
                                 </div>
                             </asp:Panel>
                         </div>
+                    -->
                     </div>
+                    
 
                     <br />
 
