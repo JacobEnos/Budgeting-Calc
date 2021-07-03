@@ -575,9 +575,14 @@ namespace Loans_Web {
             //Store Expenses
             SaveExpenses();
 
+
+            //Store Unspent
+            string unspentJSON = JsonConvert.SerializeObject(unspentData);
+            Session["unspentData"] = unspentJSON;
+
             //Store Loans
             //SaveLoanJSON(xLabels, loanPayments, unspentData);
-            
+
             //Print Results
             //PrintLoansResults(CalcLoanPayment(), totalLoansPaid, monthsPaid);
         }

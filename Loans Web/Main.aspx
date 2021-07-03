@@ -127,9 +127,7 @@
 
 
                     <div class="flex-row px-5 py-2 border border-dark" style="background-color:lightblue; border-radius: 5px">
-                        1. Hover over any input field for a brief description<br/>
-                        2. Loans will be ignored if the 'Salary To Loans' field is '0'.<br/>
-                        *Note: A "Loan" can represent any expense with interest.
+                        Hover over any input field for a brief description<br/>
                     </div>
 
 
@@ -363,14 +361,9 @@
 
                     <script>
                         const moneyCanvas = document.getElementById("moneyChart").getContext("2d");
-                        var xLabels = [];
                         const colorPalete = ["orange", "yellow", "darkorchid", "lightcoral", "lightseagreen", "navy", "springgreen"];
 
                         var unspentData = '<%= Session["unspentData"] %>';
-                        var loansData = '<%= Session["LoanPayments"] %>';
-
-
-
                         var sessionExpenses = '<%= Session["Expenses"] %>';
                         var xLabelData = '<%= Session["xLabels"] %>';
 
