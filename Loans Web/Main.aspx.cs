@@ -446,10 +446,12 @@ namespace Loans_Web {
         //Determine if there are ongoing expenses or an outstanding loan amount
         private bool CheckDone(DateTime today) {
 
-            if (!ExpensesFinished(today)) return false;
-            if (Loans <= 0) return true;
-            if (!UseLoans()) return true;
-            return false;
+            return ExpensesFinished(today);
+
+            //if (!ExpensesFinished(today)) return false;
+            //if (Loans <= 0) return true;
+            //if (!UseLoans()) return true;
+            //return false;
         }
 
 
@@ -525,6 +527,7 @@ namespace Loans_Web {
                 double leftThisMonth = monthlyAvailable;
 
                 //Loan logic
+                /*
                 if (useLoans &&  1 < Loans) {
 
                     //If this is last payment
@@ -545,7 +548,7 @@ namespace Loans_Web {
                     loanPayments.Add(new Expense.monthArgs(timer.ToString("MM/yyyy"), Math.Truncate(loanPayment)));
                     monthsPaid++;
                 }
-
+                */
 
                 //Expense logic
                 leftThisMonth = IncrementAllExpenses(leftThisMonth, timer);
@@ -573,14 +576,15 @@ namespace Loans_Web {
             SaveExpenses();
 
             //Store Loans
-            SaveLoanJSON(xLabels, loanPayments, unspentData);
+            //SaveLoanJSON(xLabels, loanPayments, unspentData);
             
             //Print Results
-            PrintLoansResults(CalcLoanPayment(), totalLoansPaid, monthsPaid);
+            //PrintLoansResults(CalcLoanPayment(), totalLoansPaid, monthsPaid);
         }
 
 
         //<summary> Stores Label, Loan, and Unspent JSON data in Session objects </summary>
+        /*
         protected void SaveLoanJSON(List<string> xLabels, List<Expense.monthArgs> loanPayments, List<Expense.monthArgs> unspentData) {
 
             //Store Date-Labels in Order
@@ -599,7 +603,7 @@ namespace Loans_Web {
             string unspentJSON = JsonConvert.SerializeObject(unspentData);
             Session["unspentData"] = unspentJSON;
         }
-
+        */
 
 
         //<summary> Format/Display calculated values </summary>
