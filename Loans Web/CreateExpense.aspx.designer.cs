@@ -58,6 +58,24 @@ namespace Loans_Web {
         protected global::System.Web.UI.WebControls.TextBox txtToExpense;
         
         /// <summary>
+        /// chbInterest control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chbInterest;
+        
+        /// <summary>
+        /// txtInterest control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtInterest;
+        
+        /// <summary>
         /// chbRecurring control.
         /// </summary>
         /// <remarks>
