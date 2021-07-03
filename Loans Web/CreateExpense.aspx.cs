@@ -78,7 +78,7 @@ namespace Loans_Web {
             if (newExpense.StartDate < DateTime.Today) newExpense.StartDate = DateTime.Today;
 
             //If scheduled
-            if (DateTime.Today < newExpense.StartDate  ||  newExpense.EndDate != null) {
+            if (DateTime.Today < newExpense.StartDate || newExpense.EndDate != null) {
 
                 divDatePickers.Visible = true;
                 chbScheduled.Checked = true;
@@ -92,9 +92,9 @@ namespace Loans_Web {
 
             //If EndDate set
             if (newExpense.EndDate != null) {
-                
+
                 DateTime endDate = newExpense.EndDate ?? DateTime.MinValue;
-                cdrEnd.Text =  endDate.ToString("yyyy-MM-dd");
+                cdrEnd.Text = endDate.ToString("yyyy-MM-dd");
             }
             else {
                 divEnd.Visible = false;
@@ -110,7 +110,7 @@ namespace Loans_Web {
         private bool ReadValues() {
 
             if (!ReadName() || !ReadAmount() || !ReadToExpense()) return false;
-            
+
             //If Scheduled
             if (chbScheduled.Checked) {
 
@@ -118,7 +118,7 @@ namespace Loans_Web {
                 if (!ReadStartDate()) return false;
 
                 //And recurring, with invalid end date
-                if (chbRecurring.Checked  &&  !ReadEndDate()) return false;
+                if (chbRecurring.Checked && !ReadEndDate()) return false;
             }
 
             newExpense.recurring = chbRecurring.Checked;
@@ -131,41 +131,35 @@ namespace Loans_Web {
 
             if (txtName.Text != null && txtName.Text.Trim() != "") {
 
-                switch (txtName.Text.ToLower()) {
+                if (txtName.Text.ToLower() == "unspent") {
+                    MB("Unspent is a reserved Expense name");
+                    return false;
+                }
+                else {
+                    //Check if name already exists
+                    Dictionary<string, object> savedData = (Dictionary<string, object>)Session["SavedSettings"];
 
-                    case "unspent":
-                        MB("Unspent is a reserved Expense name");
-                        return false;
+                    if (savedData.ContainsKey("Expenses")) {
 
-                    case "loans":
-                        MB("Loans is a reserved Expense name");
-                        return false;
-                    default:
+                        List<Expense> savedExpenses = (List<Expense>)savedData["Expenses"];
 
-                        //Check if name already exists
-                        Dictionary<string, object> savedData = (Dictionary<string, object>)Session["SavedSettings"];
+                        foreach (Expense e in savedExpenses) {
 
-                        if (savedData.ContainsKey("Expenses")) {
+                            //If this Expenses already exists
+                            if (txtName.Text.ToLower() == e.Name.ToLower()) {
 
-                            List<Expense> savedExpenses = (List<Expense>)savedData["Expenses"];
+                                //And this Expenses is not being edited
+                                if (e.Name.ToLower() != (string)Session["ToReplace"]) {
 
-                            foreach (Expense e in savedExpenses) {
-
-                                //If this Expenses already exists
-                                if (txtName.Text.ToLower() == e.Name.ToLower()) {
-
-                                    //And this Expenses is not being edited
-                                    if (e.Name.ToLower() != (string)Session["ToReplace"]) {
-
-                                        MB("You are not editing the Expense of this Name");
-                                        return false;
-                                    }
+                                    MB("You are not editing the Expense of this Name");
+                                    return false;
                                 }
                             }
                         }
+                    }
 
-                        newExpense.Name = txtName.Text;
-                        return true;
+                    newExpense.Name = txtName.Text;
+                    return true;
                 }
             }
 
@@ -235,6 +229,46 @@ namespace Loans_Web {
 
 
 
+        protected void chbScheduled_CheckedChanged2(object sender, EventArgs e) {
+
+            //If scheduling
+            if (chbScheduled.Checked) {
+
+                //Show DatePickers
+                divDatePickers.Visible = true;
+                divStart.Visible = true;
+                cdrStart.Enabled = true;
+
+                //a recurring expenses
+                if (chbRecurring.Checked) {
+                    divEnd.Visible = true;
+                    cdrEnd.Enabled = true;
+                }
+            }
+            //If un-scheduling
+            else {
+
+                //Reset start/end Dates
+                newExpense.StartDate = DateTime.Today;
+                newExpense.EndDate = null;
+
+                //Reset inputs
+                cdrStart.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                cdrEnd.Text = "";
+
+                divDatePickers.Visible = false;
+                divEnd.Visible = false;             //Needed?
+
+                //a recurring expense
+                if (chbRecurring.Checked) divStart.Visible = false;
+            }
+        }
+
+
+
+
+
+
         protected void chbRecurring_CheckedChanged(object sender, EventArgs e) {
 
             /* 
@@ -265,7 +299,7 @@ namespace Loans_Web {
                     //Hide endDate
                     cdrEnd.Enabled = false;
                     divEnd.Visible = false;
-                    
+
                     lblAmount.Text = "Total Amount";
                     txtToExpense.Enabled = true;
                     txtToExpense.Text = "";
@@ -328,13 +362,13 @@ namespace Loans_Web {
 
         private bool ReadToExpense() {
 
-            if(chbRecurring.Checked) return true;
+            if (chbRecurring.Checked) return true;
 
             if (!chbRecurring.Checked) {
 
                 double z = -1;
                 bool parseable = double.TryParse(txtToExpense.Text, out z);
-                if (0 <= z && z < 100  && parseable) {
+                if (0 <= z && z < 100 && parseable) {
                     newExpense.ToExpense = z / 100;
                 }
                 else {
@@ -369,7 +403,7 @@ namespace Loans_Web {
 
             //Handle empty string
             DateTime parsingHelper;
-            DateTime? temp = DateTime.TryParse(cdrStart.Text, out parsingHelper)?   parsingHelper : (DateTime?)null;
+            DateTime? temp = DateTime.TryParse(cdrStart.Text, out parsingHelper) ? parsingHelper : (DateTime?)null;
 
             //Allow blank input
             if (temp == null) return true;
@@ -425,7 +459,7 @@ namespace Loans_Web {
 
 
 
-        public void MB(string print)    =>    MsgBox(print, this.Page, this);
+        public void MB(string print) => MsgBox(print, this.Page, this);
 
 
 
@@ -444,5 +478,8 @@ namespace Loans_Web {
             Response.Redirect("Main.aspx");
         }
 
+        protected void chbInterest_CheckedChanged(object sender, EventArgs e) {
+
+        }
     }
 }
