@@ -35,7 +35,7 @@ namespace Loans_Web {
                     newExpense = new Expense();
 
                     //Set Defaults
-                    //divDatePickers.Visible = false;
+                    divDatePickers.Visible = false;
 
                     divStart.Visible = false;
                     cdrStart.Enabled = false;
