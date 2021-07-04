@@ -7,7 +7,6 @@ namespace Loans_Web {
     public static class US51 {
 
         public static readonly Dictionary<string, TaxLadder> stateDict = new Dictionary<string, TaxLadder> {
-
             {"AL", new TaxLadder(new double[]{0}, new double[]{-1})},
             {"AK", new TaxLadder(new double[]{0}, new double[]{-1})},
             {"AZ", new TaxLadder(new double[]{0}, new double[]{-1})},

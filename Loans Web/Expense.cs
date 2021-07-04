@@ -71,15 +71,8 @@ namespace Loans_Web
         public DateTime StartDate;
         public DateTime? EndDate;
         public List<monthArgs> Payments;
+        
 
-        public Expense this[int i]{
-            get{
-                return this[i];
-            }
-            set{
-                this[i] = value;
-            }
-        }
 
         public Expense(Expense copy) {
 
@@ -153,12 +146,10 @@ namespace Loans_Web
         }
         
 
-        public void Recur(){
-            this.recurring = true;
-        }
-
+        public void Recur() => this.recurring = true;
 
         public double PaymentAmount(double monthlyIncome) => (this.recurring) ? this.Amount : (monthlyIncome * this.ToExpense);
+
 
 
         public double ExpenseAmount(double MonthlyIncome, DateTime today){
