@@ -17,6 +17,7 @@ namespace Loans_Web {
 
             newExpense = new Expense();
 
+
             if (!IsPostBack) {
 
                 lblAmount.Text = "Total Amount";

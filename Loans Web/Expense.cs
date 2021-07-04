@@ -31,29 +31,23 @@ namespace Loans_Web
                 if (0 < z) y = z;
             }
 
-
             public monthArgs() {
                 this.x = null;
                 y = -1;
             }
 
-
             public monthArgs(string date, double remaining) {
-
                 this.x = date;
                 y = remaining;
             }
 
             public monthArgs(string date, string remaining) {
-
                 this.x = date;
                 SetY(remaining);
             }
 
             public monthArgs(string data) {
-
                 string[] input = data.Split(':');
-
                 this.x = input[0];
                 SetY(input[1]);
             }
@@ -77,15 +71,8 @@ namespace Loans_Web
         public DateTime StartDate;
         public DateTime? EndDate;
         public List<monthArgs> Payments;
+        
 
-        public Expense this[int i]{
-            get{
-                return this[i];
-            }
-            set{
-                this[i] = value;
-            }
-        }
 
         public Expense(Expense copy) {
 
@@ -159,12 +146,10 @@ namespace Loans_Web
         }
         
 
-        public void Recur(){
-            this.recurring = true;
-        }
-
+        public void Recur() => this.recurring = true;
 
         public double PaymentAmount(double monthlyIncome) => (this.recurring) ? this.Amount : (monthlyIncome * this.ToExpense);
+
 
 
         public double ExpenseAmount(double MonthlyIncome, DateTime today){

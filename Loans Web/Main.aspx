@@ -167,7 +167,7 @@
                                 </div>
 
                                 <!-- State Selection -->
-                                <asp:DropDownList ID="ddlState" tooltip="The state you will be taxed/reside in." runat="server" OnSelectedIndexChanged="ddlState_SelectedIndexChanged" CssClass="form-control" AutoPostBack="true">
+                                <asp:DropDownList ID="ddlState" tooltip="The state you will be taxed/reside in." runat="server" CssClass="form-control" AutoPostBack="true">
                                     <asp:ListItem Value="AL">Alabama</asp:ListItem>
                                     <asp:ListItem Value="AK">Alaska</asp:ListItem>
                                     <asp:ListItem Value="AZ">Arizona</asp:ListItem>

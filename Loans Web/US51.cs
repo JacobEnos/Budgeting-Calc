@@ -7,7 +7,6 @@ namespace Loans_Web {
     public static class US51 {
 
         public static readonly Dictionary<string, TaxLadder> stateDict = new Dictionary<string, TaxLadder> {
-
             {"AL", new TaxLadder(new double[]{0}, new double[]{-1})},
             {"AK", new TaxLadder(new double[]{0}, new double[]{-1})},
             {"AZ", new TaxLadder(new double[]{0}, new double[]{-1})},
@@ -58,8 +57,7 @@ namespace Loans_Web {
             {"WA", new TaxLadder(new double[]{0}, new double[]{0})},
             {"WV", new TaxLadder(new double[]{0}, new double[]{-1})},
             {"WI", new TaxLadder(new double[]{0}, new double[]{-1})},
-            {"WY", new TaxLadder(new double[]{0}, new double[]{-1})},
-            {"AL", new TaxLadder(new double[]{0}, new double[]{-1})},
+            {"WY", new TaxLadder(new double[]{0}, new double[]{-1})}
         };
 
         public static TaxLadder GetState(string stateAbv) => stateDict[stateAbv];
