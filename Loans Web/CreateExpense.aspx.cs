@@ -178,68 +178,9 @@ namespace Loans_Web {
         }
 
 
-
+        
 
         protected void chbScheduled_CheckedChanged(object sender, EventArgs e) {
-
-            /* 
-             *TODO: Invert if-statements, then extract commonalities of currently inner segments 
-             */
-
-            //If Recurring
-            if (chbRecurring.Checked) {
-
-                //and scheduling
-                if (chbScheduled.Checked) {
-
-                    divDatePickers.Visible = true;
-                    divStart.Visible = true;
-                    cdrStart.Enabled = true;
-                    divEnd.Visible = true;
-                    cdrEnd.Enabled = true;
-                }
-                //but un-scheduling
-                else {
-
-                    //Reset start/end Dates
-                    newExpense.StartDate = DateTime.Today;
-                    newExpense.EndDate = null;
-                    //Reset inputs
-                    cdrStart.Text = DateTime.Today.ToString("yyyy-MM-dd");
-                    cdrEnd.Text = "";
-
-                    divDatePickers.Visible = false;
-                    divStart.Visible = false;
-                    divEnd.Visible = false;
-                }
-            }
-            //If not recurring
-            else {
-                //and scheduling
-                if (chbScheduled.Checked) {
-
-                    divDatePickers.Visible = true;
-                    divStart.Visible = true;
-                    cdrStart.Enabled = true;
-                }
-                //but un-scheduling
-                else {
-
-                    newExpense.StartDate = DateTime.Today;
-                    newExpense.EndDate = null;
-                    //Reset inputs
-                    cdrStart.Text = DateTime.Today.ToString("yyyy-MM-dd");
-                    cdrEnd.Text = "";
-
-                    divDatePickers.Visible = false;
-                    divEnd.Visible = false;
-                }
-            }
-        }
-
-
-
-        protected void chbScheduled_CheckedChanged2(object sender, EventArgs e) {
 
             //If scheduling
             if (chbScheduled.Checked) {
@@ -273,9 +214,6 @@ namespace Loans_Web {
                 if (chbRecurring.Checked) divStart.Visible = false;
             }
         }
-
-
-
 
 
 

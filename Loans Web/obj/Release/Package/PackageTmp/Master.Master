@@ -51,6 +51,13 @@
             background-repeat: repeat;
         }
 
+
+        .chbBig input {
+            width: 30px;
+            height: 30px
+        }
+
+
         @keyframes move-twink-back {
             from {
                 background-position: 0 0;
