@@ -31,29 +31,23 @@ namespace Loans_Web
                 if (0 < z) y = z;
             }
 
-
             public monthArgs() {
                 this.x = null;
                 y = -1;
             }
 
-
             public monthArgs(string date, double remaining) {
-
                 this.x = date;
                 y = remaining;
             }
 
             public monthArgs(string date, string remaining) {
-
                 this.x = date;
                 SetY(remaining);
             }
 
             public monthArgs(string data) {
-
                 string[] input = data.Split(':');
-
                 this.x = input[0];
                 SetY(input[1]);
             }

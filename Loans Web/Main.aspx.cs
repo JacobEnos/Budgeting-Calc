@@ -15,15 +15,12 @@ namespace Loans_Web {
 
         public double Salary;
         public List<Expense> Expenses;
-        //State[] States = new State[51];
-
         
 
         protected void Page_Load(object sender, EventArgs e) {
 
             rptExpenses.ItemCommand += new RepeaterCommandEventHandler(rptExpenses_ItemCommand);
             Expenses = new List<Expense>();
-            //CreateStates();
 
 
             //Fist PageLoad
@@ -34,11 +31,9 @@ namespace Loans_Web {
                 
                 if (Session["NewExpense"] != null)
                     AddExpense();
-                
             }
             //Postbacks
             else {
-
                 LoadExpenses();
                 ReadInputs();
             }
@@ -83,10 +78,8 @@ namespace Loans_Web {
             if (Session["SavedSettings"] != null) {
 
                 Dictionary<string, object> toLoad = (Dictionary<string, object>)Session["SavedSettings"];
-                if (toLoad.ContainsKey("Expenses")) {
-                    List<Expense> temp = (List<Expense>)toLoad["Expenses"];
-                    Expenses = temp;
-                }
+                if (toLoad.ContainsKey("Expenses"))
+                    Expenses = (List<Expense>)toLoad["Expenses"];
             }
         }
 
@@ -99,12 +92,14 @@ namespace Loans_Web {
             if (toSet == null) return;
 
             ddlState.SelectedValue = stateAbrv;
-            double thisStateTax = US51.GetState(stateAbrv)[Salary];
+            double thisStateTax = GetTax();
+
             if (thisStateTax < 0) {
+                MsgBox(ddlState.SelectedItem + "'" + "s tax rates are unknown, using 0%", this.Page, this);
                 thisStateTax = 0;
             }
-            //GetTax() = thisStateTax;
-            PrintTaxInfo();
+
+            PrintTaxInfo(thisStateTax);
         }
 
 
@@ -583,131 +578,13 @@ namespace Loans_Web {
 
             Swap(Expenses, index, index - 1);
         }
+        
 
-
-        /*
-        public void CreateStates() {
-            string[] stateNames = new string[] { "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY" };
-
-            int i = 0;
-            foreach (string s in stateNames) {
-                States[i] = new State(s);
-                i++;
-            }
-
-            FillStates();
-        }
-
-
-
-        public void FillStates() {
-            int index = getStateIndex("MA");
-
-            double[] salaries = new double[] { 0 };
-            double[] taxes = new double[] { 5 };
-            States[index] = new State("MA", salaries, taxes);
-
-            index = getStateIndex("NH");
-            salaries = new double[] { 0 };
-            taxes = new double[] { 5 };
-            States[index] = new State("NH", salaries, taxes);
-
-            index = getStateIndex("VT");
-            salaries = new double[] { 39600, 96000, 200200 };
-            taxes = new double[] { 3.35, 6.6, 7.6, 8.75 };
-            States[index] = new State("VT", salaries, taxes);
-
-            index = getStateIndex("ME");
-            salaries = new double[] { 22200, 52600 };
-            taxes = new double[] { 5.8, 6.75, 7.15 };
-            States[index] = new State("ME", salaries, taxes);
-
-            index = getStateIndex("RI");
-            salaries = new double[] { 65250, 148350 };
-            taxes = new double[] { 3.75, 4.75, 5.99 };
-            States[index] = new State("RI", salaries, taxes);
-
-            index = getStateIndex("NY");
-            salaries = new double[] { 8500, 11700, 13900, 21400, 80650, 215400, 1077550 };
-            taxes = new double[] { 4, 4.5, 5.25, 5.9, 6.21, 6.49, 6.85, 8.82 };
-            States[index] = new State("NY", salaries, taxes);
-
-            index = getStateIndex("PA");
-            salaries = new double[] { 0 };
-            taxes = new double[] { 3.7 };
-            States[index] = new State("PA", salaries, taxes);
-
-            index = getStateIndex("CT");
-            salaries = new double[] { 10000, 50000, 100000, 200000, 250000, 500000 };
-            taxes = new double[] { 3, 5, 5.5, 6, 6.5, 6.9, 6.99 };
-            States[index] = new State("CT", salaries, taxes);
-
-            index = getStateIndex("CA");
-            salaries = new double[] { 8809, 20883, 32960, 45753, 57824, 295373, 354445, 590742, 1000000 };
-            taxes = new double[] { 1, 2, 4, 6, 8, 9.3, 10.3, 11.3, 12.3, 13.3 };
-            States[index] = new State("CA", salaries, taxes);
-
-            index = getStateIndex("WA");
-            salaries = new double[] { 0 };
-            taxes = new double[] { 0 };
-            States[index] = new State("WA", salaries, taxes);
-
-            index = getStateIndex("TX");
-            salaries = new double[] { 0 };
-            taxes = new double[] { 0 };
-            States[index] = new State("TX", salaries, taxes);
-
-            index = getStateIndex("FL");
-            salaries = new double[] { 0 };
-            taxes = new double[] { 0 };
-            States[index] = new State("FL", salaries, taxes);
-        }
-
-
-        //<summary> Iterates over States to find state name </summary>
-        public State getState(string name) {
-            int i = 0;
-
-            foreach (State st in States) {
-                if (st != null  &&  st.Name == name) {
-                    return st;
-                }
-                i++;
-            }
-            return null;
-        }
-
-
-
-        public int getStateIndex(string name) {
-            int i = 0;
-
-            foreach (State st in States) {
-                if (st.Name == name) {
-                    return i;
-                }
-                i++;
-            }
-            return -1;
-        }
-
-        */
-
-
-        private void PrintTaxInfo() {
+        private void PrintTaxInfo(double stateTax) {
             
-            txtStateTax.Text = (GetTax() * 100).ToString() + "%";
+            txtStateTax.Text = (stateTax * 100).ToString() + "%";
             txtFederalTax.Text = (FederalTax() * 100).ToString() + "%";
         }
-
-
-
-        protected void ddlState_SelectedIndexChanged(object sender, EventArgs e) {
-            
-            if (US51.GetState(ddlState.SelectedValue)[Salary] == -1)
-                MsgBox(ddlState.SelectedItem + "'" + "s tax rates are unknown, using 0%", this.Page, this);   
-        }
-
 
 
         public void MsgBox(String ex, Page pg, Object obj) {
