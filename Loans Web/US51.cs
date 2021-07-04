@@ -12,7 +12,7 @@ namespace Loans_Web {
             {"AZ", new TaxLadder(new double[]{0}, new double[]{-1})},
             {"AR", new TaxLadder(new double[]{0}, new double[]{-1})},
             {"CA", new TaxLadder(new double[]{8809, 20883, 32960, 45753, 57824, 295373, 354445, 590742, 1000000}, new double[]{1, 2, 4, 6, 8, 9.3, 10.3, 11.3, 12.3, 13.3})},
-            {"CO", new TaxLadder(new double[]{8809}, new double[]{1})},
+            {"CO", new TaxLadder(new double[]{0}, new double[]{-1})},
             {"CT", new TaxLadder(new double[]{10000, 50000, 100000, 200000, 250000, 500000}, new double[]{3, 5, 5.5, 6, 6.5, 6.9, 6.99})},
             {"DC", new TaxLadder(new double[]{0}, new double[]{-1})},
             {"DE", new TaxLadder(new double[]{0}, new double[]{-1})},
