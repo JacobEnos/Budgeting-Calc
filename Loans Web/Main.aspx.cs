@@ -15,7 +15,7 @@ namespace Loans_Web {
 
         public double Salary;
         public List<Expense> Expenses;
-        State[] States = new State[51];
+        //State[] States = new State[51];
 
         
 
@@ -23,7 +23,7 @@ namespace Loans_Web {
 
             rptExpenses.ItemCommand += new RepeaterCommandEventHandler(rptExpenses_ItemCommand);
             Expenses = new List<Expense>();
-            CreateStates();
+            //CreateStates();
 
 
             //Fist PageLoad
@@ -32,9 +32,9 @@ namespace Loans_Web {
                 //Setup
                 LoadSettings();
                 
-                if (Session["NewExpense"] != null) {
+                if (Session["NewExpense"] != null)
                     AddExpense();
-                }
+                
             }
             //Postbacks
             else {
@@ -52,7 +52,8 @@ namespace Loans_Web {
         }
 
 
-        private double GetTax() => getState(ddlState.SelectedValue).getTax(Salary);
+        //private double GetTax() => getState(ddlState.SelectedValue).getTax(Salary);
+        private double GetTax() => US51.GetState(ddlState.SelectedValue)[Salary];
 
         //<summary> Sets screen inputs to variable values </summary>
         protected void PrintInputs() => txtSalary.Text = Salary.ToString();
@@ -94,11 +95,11 @@ namespace Loans_Web {
         //Reads state, sets ddlState, sets Tax
         private void SetState(string stateAbrv) {
 
-            State toSet = getState(stateAbrv.ToUpper());
+            TaxLadder toSet = US51.GetState(stateAbrv.ToUpper());
             if (toSet == null) return;
 
-            ddlState.SelectedValue = toSet.Name;
-            double thisStateTax = toSet.getTax(Salary);
+            ddlState.SelectedValue = stateAbrv;
+            double thisStateTax = US51.GetState(stateAbrv)[Salary];
             if (thisStateTax < 0) {
                 thisStateTax = 0;
             }
@@ -492,6 +493,7 @@ namespace Loans_Web {
 
 
         private double FederalTax() {
+
             if (Salary <= 9875) {
                 return .1;
             }
@@ -583,7 +585,7 @@ namespace Loans_Web {
         }
 
 
-
+        /*
         public void CreateStates() {
             string[] stateNames = new string[] { "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY" };
 
@@ -689,7 +691,7 @@ namespace Loans_Web {
             return -1;
         }
 
-
+        */
 
 
         private void PrintTaxInfo() {
@@ -702,7 +704,7 @@ namespace Loans_Web {
 
         protected void ddlState_SelectedIndexChanged(object sender, EventArgs e) {
             
-            if (getState(ddlState.SelectedValue).getTax(Salary) == -1)
+            if (US51.GetState(ddlState.SelectedValue)[Salary] == -1)
                 MsgBox(ddlState.SelectedItem + "'" + "s tax rates are unknown, using 0%", this.Page, this);   
         }
 
