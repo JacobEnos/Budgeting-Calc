@@ -64,7 +64,7 @@ namespace Loans_Web
         public bool overBudget = false;
         private double _interest = 0;
         public double Interest {
-            get => (_interest > 0) ? _interest : 0;
+            get => (_interest < 0) ? 0 : _interest;
             set => _interest = (0 < value && value < 1) ? value : -1;
         }
         public int[] Time;
