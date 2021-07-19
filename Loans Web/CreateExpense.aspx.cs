@@ -20,7 +20,17 @@ namespace Loans_Web {
 
             if (!IsPostBack) {
 
+                //Set Defaults
                 lblAmount.Text = "Total Amount";
+                txtInterest.Enabled = false;
+
+                divDatePickers.Visible = false;
+                divStart.Visible = false;
+                cdrStart.Enabled = false;
+                divEnd.Visible = false;
+                cdrEnd.Enabled = false;
+
+
 
                 //If editing
                 if (Session["EditExpense"] != null) {
@@ -29,25 +39,9 @@ namespace Loans_Web {
                     Session.Remove("EditExpense");
                     Session["ToReplace"] = newExpense.Name;
                 }
-
-                //If creating
-                else {
-                    newExpense = new Expense();
-
-                    //Set Defaults
-                    divDatePickers.Visible = false;
-
-                    divStart.Visible = false;
-                    cdrStart.Enabled = false;
-
-                    divEnd.Visible = false;
-                    cdrEnd.Enabled = false;
-
-                    txtInterest.Enabled = false;
-                }
             }
         }
-
+        
 
 
         protected void btnCreateExpense_Click(object sender, EventArgs e) {
@@ -68,17 +62,22 @@ namespace Loans_Web {
             txtAmount.Text = newExpense.Amount.ToString();
             btnCreateExpense.Text = "Save Changes";
 
+            //If expense was made before today, update it to start today
+            if (newExpense.StartDate < DateTime.Today)
+                newExpense.StartDate = DateTime.Today;
+
+            //if not recurring
             if (!newExpense.recurring) {
+                //Print ToExpense
                 txtToExpense.Text = (newExpense.ToExpense * 100).ToString();
             }
             else {
+                //load recurring
                 chbRecurring.Checked = true;
                 chbRecurring_CheckedChanged(sender, e);
             }
 
 
-            //If expense was made before today, update it to start today
-            if (newExpense.StartDate < DateTime.Today) newExpense.StartDate = DateTime.Today;
 
             //If scheduled
             if (DateTime.Today < newExpense.StartDate || newExpense.EndDate != null) {
@@ -86,22 +85,26 @@ namespace Loans_Web {
                 divDatePickers.Visible = true;
                 chbScheduled.Checked = true;
                 chbScheduled_CheckedChanged(sender, e);
+
+
+                //If Start set
+                if (DateTime.Today.Date < newExpense.StartDate) {
+                    cdrStart.Text = newExpense.StartDate.ToString("yyyy-MM-dd");
+                }
+
+
+                //if recurring and EndDate set
+                if (newExpense.recurring  && newExpense.EndDate != null){
+
+                    divEnd.Visible = true;
+                    cdrEnd.Enabled = true;
+                    DateTime endDate = newExpense.EndDate ?? DateTime.MinValue;
+
+                    if(endDate != DateTime.MinValue)
+                        cdrEnd.Text = endDate.ToString("yyyy-MM-dd");
+                }
             }
 
-            //If Start set
-            if (DateTime.Today.Date < newExpense.StartDate) {
-                cdrStart.Text = newExpense.StartDate.ToString("yyyy-MM-dd");
-            }
-
-            //If EndDate set
-            if (newExpense.EndDate != null) {
-
-                DateTime endDate = newExpense.EndDate ?? DateTime.MinValue;
-                cdrEnd.Text = endDate.ToString("yyyy-MM-dd");
-            }
-            else {
-                divEnd.Visible = false;
-            }
 
 
             if (newExpense.Interest > 0) {

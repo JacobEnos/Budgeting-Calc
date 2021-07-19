@@ -68,7 +68,7 @@
 
             <div class="d-flex flex-row">
                 <label class="my-auto">Schedule:</label>
-                <asp:CheckBox ID="chbScheduled" class="chbBig my-auto" runat="server" OnCheckedChanged="chbScheduled_CheckedChanged" AutoPostBack="true" />
+                <asp:CheckBox ID="chbScheduled" class="chbBig my-auto" runat="server" OnCheckedChanged="chbScheduled_CheckedChanged" AutoPostBack="true" ToolTip="Set a date to begin making payments.&#013;End dates can also be set for recurring expenses" />
             </div>
         </div>
 

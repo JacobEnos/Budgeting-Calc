@@ -35,14 +35,16 @@ namespace Loans_Web {
         protected void ddlState_SelectedIndexChanged(object sender, EventArgs e) {
             
             if (US51.GetState(ddlState.SelectedValue)[Salary] < 0)
-                MsgBox(ddlState.SelectedItem + "'" + "s tax rates are unknown, using 0%", this.Page, this);
-            
-            PrintTaxInfo();
+                MsgBox(ddlState.SelectedItem + "'s tax rates are unknown, using 0%", this.Page, this);
+
+            //Only update state info, not federal tax
+            txtStateTax.Text = (GetTax()*100).ToString() + "%";
         }
 
-        
+
         private double GetTax() => (US51.GetState(ddlState.SelectedValue)[Salary] < 0)? 
-            0 : US51.GetState(ddlState.SelectedValue)[Salary];
+            0 : (US51.GetState(ddlState.SelectedValue)[Salary]);
+        
 
         //<summary> Sets screen inputs to variable values </summary>
         protected void PrintSalary() => txtSalary.Text = Salary.ToString();
@@ -123,20 +125,20 @@ namespace Loans_Web {
         private void AllFromString(string input) {
 
             string master = input;
-            string[] dataToParse = input.Split(new[] {'{'}, 2);
+            string[] dataToParse = input.Split(new[] {'['}, 2);
             string[] inputs = dataToParse[0].Split(',');
-            string expensesToLoad = dataToParse[1];
+            string expensesToLoad =  "[" + dataToParse[1];
 
             Salary = double.Parse(inputs[0]);
             txtSalary.Text = Salary.ToString();
             
             ddlState.SelectedValue = inputs[1];
-            PrintTaxInfo();
-
-            Expenses = (List<Expense>)JsonConvert.DeserializeObject<List<Expense>>(expensesToLoad);
 
             //Display updated Salary details
             PrintSalary();
+            PrintTaxInfo();
+
+            Expenses = (List<Expense>)JsonConvert.DeserializeObject<List<Expense>>(expensesToLoad);
         }
 
 
@@ -199,6 +201,7 @@ namespace Loans_Web {
         //Loads Salary/State and Expenses from Session["SavedSettings"]
         private void LoadSettings(object sender, EventArgs e) {
 
+            //Load State & Expenses
             if (Session["SavedSettings"] != null) {
 
                 Dictionary<string, object> toLoad = (Dictionary<string, object>)Session["SavedSettings"];
@@ -208,27 +211,32 @@ namespace Loans_Web {
                     Expenses = new List<Expense>((List<Expense>)toLoad["Expenses"]);
                 }
 
-
+                //Only on FPL
                 //Dont override user input
                 if (!IsPostBack){
-                    txtSalary.Text = toLoad["Salary"].ToString();
+                    double loadedSalary = (double)toLoad["Salary"];
+                    txtSalary.Text = loadedSalary.ToString();
+                    Salary = loadedSalary;
 
                     ddlState.SelectedValue = (string)toLoad["State"];
-                    PrintTaxInfo();
 
                     //Check for a Created Expense
                     AddExpense();
                 }
 
-                //Delete save version
+                //Delete save version, new version saved in SaveInputsAndExpenses();
                 Session.Remove("SavedSettings");
             }
             else {
                 Set_Defaults();
             }
 
-            PrintTaxInfo();
+
             Read_Salary();
+
+            //Display According Taxes
+            //Needs Salary & State
+            PrintTaxInfo();
         }
 
 
@@ -273,8 +281,12 @@ namespace Loans_Web {
 
         private void Set_Defaults() {
 
-            txtSalary.Text = "60000";
+            
+            Salary = 60000;
+            txtSalary.Text = Salary.ToString();
             ddlState.SelectedValue = "MA";
+            //Might need to call ddlState_SelectedIndexChanged() or something here
+
 
             if (Expenses == null) MsgBox("Expenses initialization failed", this.Page, this);
         }
@@ -481,21 +493,6 @@ namespace Loans_Web {
                 return .37;
             }
 
-            return -1;
-        }
-
-
-
-        private int GetExpenseByName(string name) {
-            int index = 0;
-
-            foreach (Expense e in Expenses) {
-                if (e.Name == name) {
-                    return index;
-                }
-
-                index++;
-            }
             return -1;
         }
 
