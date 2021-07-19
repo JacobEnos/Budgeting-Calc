@@ -404,13 +404,18 @@ namespace Loans_Web {
 
                 //Send to Management page
                 Server.Transfer("CreateExpense.aspx");
-
             }
             else if (func == "Delete") {
 
                 //Delete Expense
                 Expenses.Remove(this[id]);
                 CalculateExpenses();
+            }
+            else if (func == "Up") {
+                btnPriorityUp_Click(id);
+            }
+            else if (func == "Down") {
+                btnPriorityDown_Click(id);
             }
 
             rptExpenses.DataBind();
@@ -507,32 +512,30 @@ namespace Loans_Web {
 
 
         //Priority Down
-        private void btnPriorityDown_Click(object sender, EventArgs e) {
-            //if no Expense is selected, exit
-            //if (lstExpenses.SelectedItem == null) return;
+        private void btnPriorityDown_Click(string expenseName) {
 
-            //string name = lstExpenses.SelectedItem.ToString();
-            //int index = GetExpenseByName(name);
-            int index = -1;
+            Expense e = this[expenseName];
 
+            int index = Expenses.IndexOf(e);
+            
             //if this is the last Expense, exit
             if (index == Expenses.Count - 1) return;
 
             //if there is a next Expense to swap with
             Swap(Expenses, index, index + 1);
-
         }
 
 
 
         //Priority Up
-        private void btnPriorityUp_Click(object sender, EventArgs e) {
-            //if no Expense is selected, exit
-            //if (lstExpenses.SelectedItem == null) return;
+        private void btnPriorityUp_Click(string expenseName) {
 
-            //string name = lstExpenses.SelectedItem.ToString();
-            //int index = GetExpenseByName(name);
-            int index = 0;
+            Expense e = this[expenseName];
+
+            //if no Expense is selected, exit
+            if (e == null) return;
+
+            int index = Expenses.IndexOf(e);
 
             //if it is already top priority, exit
             if (index == 0) return;
