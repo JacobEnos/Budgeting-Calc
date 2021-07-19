@@ -403,17 +403,17 @@
 
 
                                             <div class="col-1 p-0">
-                                                <asp:LinkButton CommandName="Up" class="d-block w-100" ID="btnPriorityUp" text="^" 
-                                                    CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>' runat="server" />
-                                                <asp:LinkButton CommandName="Down" class="d-block w-100" ID="btnPriorityDown" text=">" 
-                                                    CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>' runat="server" />
+                                                <asp:LinkButton CommandName="Up" class="d-block w-100 bg-success border border-dark text-center my-1" ID="btnPriorityUp" text="^" 
+                                                    CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>' style="border-radius:5px" runat="server" />
+                                                <asp:LinkButton CommandName="Down" class="d-block w-100 bg-success border border-dark text-center my-1" ID="btnPriorityDown" text=">" 
+                                                    CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>' style="border-radius:5px" runat="server" />
                                             </div>
 
                                             <div class="col-10">
 
                                                 <div class="row">
                                                     <!-- Title -->
-                                                    <div class="col-8 h2">
+                                                    <div class="col-10 h2">
                                                         <%# ((Loans_Web.Expense)Container.DataItem).Name %>
                                                     </div>
 
