@@ -6,8 +6,8 @@
 <head runat="server">
     <title>Budget Planner</title>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js" ></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"  />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="Charting.js"></script>
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
 </head>
@@ -126,8 +126,8 @@
                 <div id="tile" class="container-xl bg-white my-auto p-5" style="border-radius: 5px; box-shadow: 0px 0px 20px 5px;">
 
 
-                    <div class="flex-row px-5 py-2 border border-dark" style="background-color:lightblue; border-radius: 5px">
-                        Hover over any input field for a brief description<br/>
+                    <div class="flex-row text-center px-5 py-2 border border-dark" style="background-color: lightblue; border-radius: 5px">
+                        You can hover over any input field for a brief description<br />
                     </div>
 
 
@@ -140,7 +140,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Annual Salary ($)</span>
                                 </div>
-                                <asp:TextBox ID="txtSalary" tooltip="Your annual salary pre-tax.&#013;This is used to determine your tax bracket (if applicable).&#013;This is used to calculate dynamic expenses so only include liquid income." CssClass="form-control" runat="server" />
+                                <asp:TextBox ID="txtSalary" ToolTip="Your annual salary pre-tax.&#013;This is used to determine your tax bracket (if applicable).&#013;This is used to calculate dynamic expenses so only include liquid income." CssClass="form-control" runat="server" />
                             </div>
 
 
@@ -167,7 +167,7 @@
                                 </div>
 
                                 <!-- State Selection -->
-                                <asp:DropDownList ID="ddlState" tooltip="The state you will be taxed/reside in." runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlState_SelectedIndexChanged">
+                                <asp:DropDownList ID="ddlState" ToolTip="The state you will be taxed/reside in." runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlState_SelectedIndexChanged">
                                     <asp:ListItem Value="AL">Alabama</asp:ListItem>
                                     <asp:ListItem Value="AK">Alaska</asp:ListItem>
                                     <asp:ListItem Value="AZ">Arizona</asp:ListItem>
@@ -253,8 +253,8 @@
                         </div>
                     </div>
 
-                    
-                    
+
+
                     <div class="row">
 
                         <!-- Loans Info -->
@@ -262,7 +262,7 @@
                         <div class="col-xl-4 my-4">
 
                             <!-- Loan Amount -->
-                            <!--
+                        <!--
                             <div class="input-group my-2 mr-4">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Loan Amount ($)</span>
@@ -284,7 +284,7 @@
                         <div class="col-xl-5 border border-dark offset-xl-3 pb-2 pr-4" style="background-color:lightgrey">
                             <asp:Panel ID="Panel1" runat="server">
                                 <!-- Monthly Payment -->
-                                <!--
+                        <!--
                                 <div class="input-group my-2 justify-content-end">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Monthly Payment</span>
@@ -318,7 +318,7 @@
                         </div>
                     -->
                     </div>
-                    
+
 
                     <br />
 
@@ -399,32 +399,44 @@
                                     </HeaderTemplate>
 
                                     <ItemTemplate>
-                                        <div class="my-2 p-2" style="background-color: lightgray; border-radius: 5px; box-shadow: 0px 3px 5px -4px;">
-
-                                            <div class="row">
-
-                                                <div class="col-1 offset-1 h2">
-                                                    <%# ((Loans_Web.Expense)Container.DataItem).Name %>
-                                                </div>
+                                        <div class="row my-2 p-2" style="background-color: lightgray; border-radius: 5px; box-shadow: 0px 3px 5px -4px;">
 
 
-                                                <div class="col-2 offset-6 d-flex justify-content-end">
-
-                                                    <asp:LinkButton ID="btnManageExpense" class="btn btn-warning border border-dark mx-1" runat="server" CommandName="Edit"
-                                                        CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Edit</asp:LinkButton>
-
-                                                    <asp:LinkButton ID="btnDeleteExpense" class="btn btn-danger border border-dark mx-1" runat="server" CommandName="Delete"
-                                                        CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Delete</asp:LinkButton>
-                                                </div>
+                                            <div class="col-1 p-0">
+                                                <asp:LinkButton CommandName="Up" class="d-block w-100 bg-success border border-dark text-center my-1" ID="btnPriorityUp" text="^" 
+                                                    CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>' style="border-radius:5px" runat="server" />
+                                                <asp:LinkButton CommandName="Down" class="d-block w-100 bg-success border border-dark text-center my-1" ID="btnPriorityDown" text=">" 
+                                                    CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>' style="border-radius:5px" runat="server" />
                                             </div>
 
+                                            <div class="col-10">
 
-                                            <div id="divExpenseData" class="flex-row d-flex justify-content-around" runat="server">
+                                                <div class="row">
+                                                    <!-- Title -->
+                                                    <div class="col-10 h2">
+                                                        <%# ((Loans_Web.Expense)Container.DataItem).Name %>
+                                                    </div>
 
-                                                <div class="d-inline">
-                                                    <asp:Label Text="Amount:" runat="server" />
-                                                    <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Amount.ToString("C0") %>' runat="server" />
+                                                    <!-- Edit/Delete -->
+                                                    <div class="col-2 d-flex justify-content-end">
+
+                                                        <asp:LinkButton ID="btnManageExpense" class="btn btn-warning border border-dark mx-1" runat="server" CommandName="Edit"
+                                                            CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Edit</asp:LinkButton>
+
+                                                        <asp:LinkButton ID="btnDeleteExpense" class="btn btn-danger border border-dark mx-1" runat="server" CommandName="Delete"
+                                                            CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>'>Delete</asp:LinkButton>
+                                                    </div>
                                                 </div>
+
+                                                <div id="divExpenseData" class="flex-row d-flex justify-content-around" runat="server">
+
+                                                    <div class="d-inline">
+                                                        <asp:Label Text="Amount:" runat="server" />
+                                                        <asp:Label Text='<%# ((Loans_Web.Expense)Container.DataItem).Amount.ToString("C0") %>' runat="server" />
+                                                    </div>
+
+                                                </div>
+
 
                                             </div>
 
