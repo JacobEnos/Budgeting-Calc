@@ -11,8 +11,7 @@ using System.Web.UI.WebControls;
 
 namespace Loans_Web {
     public partial class Main : System.Web.UI.Page {
-
-
+        
         public double Salary;
         public List<Expense> Expenses;
 
@@ -23,7 +22,15 @@ namespace Loans_Web {
             Expenses = new List<Expense>();
             
             LoadSettings(sender, e);
-            SaveInputs();
+            SaveInputsAndExpenses();
+            //CalculateExpenses();
+
+            //rptExpenses.DataSource = Expenses;
+            //rptExpenses.DataBind();
+        }
+
+
+        protected void Page_PreRender(object sender, EventArgs e) {
             CalculateExpenses();
 
             rptExpenses.DataSource = Expenses;
@@ -141,15 +148,6 @@ namespace Loans_Web {
             Expenses = (List<Expense>)JsonConvert.DeserializeObject<List<Expense>>(expensesToLoad);
         }
 
-
-        /*
-        private void ExpensesFromString(string fullString) {
-
-            List<Expense> x = (List<Expense>)JsonConvert.DeserializeObject<List<Expense>>(fullString);
-            Expenses.Clear();
-            Expenses = new List<Expense>(x);
-        }
-        */
 
 
         //Stores Inputs
@@ -281,12 +279,10 @@ namespace Loans_Web {
 
         private void Set_Defaults() {
 
-            
             Salary = 60000;
             txtSalary.Text = Salary.ToString();
             ddlState.SelectedValue = "MA";
             //Might need to call ddlState_SelectedIndexChanged() or something here
-
 
             if (Expenses == null) MsgBox("Expenses initialization failed", this.Page, this);
         }
@@ -597,9 +593,8 @@ namespace Loans_Web {
 
                 //Generate Time div
                 Label lblTime = new Label();
-                divDataRow.Controls.Add(lblTime);
 
-
+                
                 if (recurring) {
 
                     //Populate fields
@@ -627,8 +622,23 @@ namespace Loans_Web {
 
                 //Add controls
                 divDataRow.Controls.Add(lblTime);
-            }
-            catch (Exception ex) {
+
+                Label lblTotalPaid = new Label();
+                lblTotalPaid.Text = "Total Paid: " + thisEx.SumPayments().ToString("C0");
+                divDataRow.Controls.Add(lblTotalPaid);
+                double interestRatio = thisEx.SumPayments() / thisEx.Amount;
+                switch (interestRatio) {
+                    case double n when interestRatio < 1.1:
+                        lblTotalPaid.CssClass = "text-success";
+                        break;
+                    case double n when interestRatio < 1.25:
+                        lblTotalPaid.ForeColor = System.Drawing.Color.Yellow;
+                        break;
+                     default:
+                        lblTotalPaid.CssClass = "text-danger";
+                        break;
+                }
+                } catch (Exception ex) {
             }
         }
 

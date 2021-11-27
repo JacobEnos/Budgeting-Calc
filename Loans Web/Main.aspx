@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="Charting.js"></script>
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"/>
 </head>
 <body class="stars" onload="AjaxGetAndGraph();">
 
@@ -404,9 +405,13 @@
 
                                             <div class="col-1 p-0">
                                                 <asp:LinkButton CommandName="Up" class="d-block w-100 bg-success border border-dark text-center my-1" ID="btnPriorityUp" text="^" 
-                                                    CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>' style="border-radius:5px" runat="server" />
+                                                    CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>' style="border-radius:5px" runat="server">
+                                                    <i class="material-icons-outlined" style="color:black">arrow_upward</i>
+                                                </asp:LinkButton>
                                                 <asp:LinkButton CommandName="Down" class="d-block w-100 bg-success border border-dark text-center my-1" ID="btnPriorityDown" text=">" 
-                                                    CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>' style="border-radius:5px" runat="server" />
+                                                    CommandArgument='<%# ((Loans_Web.Expense)Container.DataItem).Name %>' style="border-radius:5px" runat="server">
+                                                    <i class="material-icons-outlined" style="color:black">arrow_downward</i>
+                                                 </asp:LinkButton>
                                             </div>
 
                                             <div class="col-10">

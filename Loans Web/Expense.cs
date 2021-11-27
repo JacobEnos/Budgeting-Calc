@@ -146,10 +146,14 @@ namespace Loans_Web
         }
         
 
-        public void Recur() => this.recurring = true;
+        public void Recur() => 
+            this.recurring = true;
 
-        public double PaymentAmount(double monthlyIncome) => (this.recurring) ? this.Amount : (monthlyIncome * this.ToExpense);
+        public double PaymentAmount(double monthlyIncome) => 
+            (this.recurring) ? this.Amount : (monthlyIncome * this.ToExpense);
 
+        public double SumPayments() =>
+            (Payments.Select(month => month.y).ToArray()).Sum();
 
 
         public double ExpenseAmount(double MonthlyIncome, DateTime today){
@@ -217,5 +221,11 @@ namespace Loans_Web
             this.Time = new int[2];
             this.Payments.Clear();
         }
+
+
+
+        
+
+
     }
 }

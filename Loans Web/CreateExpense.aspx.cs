@@ -162,8 +162,10 @@ namespace Loans_Web {
                             //If this Expenses already exists
                             if (txtName.Text.ToLower() == e.Name.ToLower()) {
 
+
+                                string possibleReplaceName = (string)Session["ToReplace"] ?? "";
                                 //And this Expenses is not being edited
-                                if (e.Name.ToLower() != (string)Session["ToReplace"]) {
+                                if (e.Name.ToLower() != possibleReplaceName.ToLower()) {
 
                                     MB("You are not editing the Expense of this Name");
                                     return false;
